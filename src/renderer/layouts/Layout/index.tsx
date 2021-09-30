@@ -1,19 +1,9 @@
-import { FindInPage, } from "@mui/icons-material";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import SettingsIcon from "@mui/icons-material/Settings";
-import ListIcon from "@mui/icons-material/List";
-import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
+import { Box, Divider, Drawer, Icon, List, ListItem, ListItemButton, ListItemIcon } from "@mui/material";
 import React, { ReactNode } from "react";
+import { Link } from "react-router-dom";
+import { PAGE_LINKS } from "./constants";
 
-const drawerWidth = 240;
+const drawerWidth = 65;
 
 type LayoutProps = {
   children?: ReactNode;
@@ -31,40 +21,43 @@ const Layout = (props: LayoutProps): JSX.Element => {
           "& .MuiDrawer-paper": {
             width: drawerWidth,
             boxSizing: "border-box",
-          },
+          }
         }}
       >
-        <Toolbar>
-          <FindInPage color="primary" fontSize="large" />
-          <Typography variant="h6" color="inherit" ml={1}>
-            ScrapThatPage
-          </Typography>
-        </Toolbar>
+        <Box my={1} display="flex" justifyContent="center">
+          <Icon color="primary" fontSize="large">find_in_page</Icon>
+        </Box>
         <Divider />
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <ListIcon />
-            </ListItemIcon>
-            <ListItemText primary="All Scripts" />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <FavoriteIcon />
-            </ListItemIcon>
-            <ListItemText primary="Favourites" />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <SettingsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Settings" />
-          </ListItem>
+        <List
+          sx={{
+            "& .MuiListItemIcon-root, .MuiListItemButton-root": {
+              justifyContent: "center"
+            }
+          }}
+        >
+          {PAGE_LINKS.map((item) => (
+            <ListItem
+              disableGutters
+              disablePadding
+              key={`link-${item.name}`}
+            >
+              <ListItemButton
+                disableGutters
+                component={Link}
+                title={item.name}
+                to={item.href}
+              >
+                <ListItemIcon>
+                  <Icon>{item.icon}</Icon>
+                </ListItemIcon>
+              </ListItemButton>
+            </ListItem>
+          ))}
         </List>
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: "background.paper", p: 3 }}
+        sx={{ flexGrow: 1, bgcolor: "background.default", p: 2 }}
       >
         {props.children}
       </Box>

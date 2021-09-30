@@ -1,5 +1,8 @@
-interface Settings {
+export interface ISettings {
   theme: string;
 }
 
-export default Settings;
+export interface ISettingsContext {
+  settings: ISettings;
+  setSettings: (settings: ISettings) => void;
+}

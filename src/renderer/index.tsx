@@ -3,4 +3,7 @@ import ReactDOM from "react-dom";
 
 import App from "./App";
 
+import "material-design-icons/iconfont/material-icons.css";
+import "typeface-roboto/index.css";
+
 ReactDOM.render(<App />, document.getElementById("root"))
