@@ -1,11 +1,9 @@
 import { createTheme } from "@mui/material";
 import indigo from "@mui/material/colors/indigo";
 import pink from "@mui/material/colors/pink";
-import Themes from "../interfaces/themes";
+import { IThemes, IThemesOptions } from "../interfaces/themes";
 
-export const DEFAULT_THEME = "th001";
-
-export const THEME_OPTIONS = [
+export const THEME_OPTIONS: IThemesOptions[] = [
   {
     id: "th001",
     name: "Indigo",
@@ -18,7 +16,7 @@ export const THEME_OPTIONS = [
   }
 ];
 
-const THEMES: Themes = {
+const THEMES: IThemes = {
   th001: createTheme({
     palette: {
       mode: "light",

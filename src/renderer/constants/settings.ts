@@ -1,1 +1,8 @@
-export const THEME_KEY = "settings.theme";
+import { ISettings } from "../interfaces/settings";
+
+export const SETTINGS_KEY = "app_settings";
+
+export const SETTINGS_DEFAULT_VALUES: ISettings = {
+  theme: "th001"
+};
+

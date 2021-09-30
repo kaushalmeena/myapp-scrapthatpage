@@ -1,7 +1,11 @@
 import { Theme } from "@mui/material";
 
-interface Themes {
+export interface IThemes {
   [themeId: string]: Theme;
 }
 
-export default Themes;
+export interface IThemesOptions {
+  id: string;
+  name: string;
+  color: string;
+}
