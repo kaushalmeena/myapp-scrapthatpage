@@ -1,31 +1,35 @@
-import { Box, Divider, Drawer, Icon, List, ListItem, ListItemButton, ListItemIcon } from "@mui/material";
+import { Box, Divider, Drawer, Icon, IconButton, List, ListItem, ListItemButton, ListItemIcon } from "@mui/material";
 import React, { ReactNode } from "react";
-import { Link } from "react-router-dom";
-import { PAGE_LINKS } from "./constants";
-
-const drawerWidth = 65;
+import { useHistory } from "react-router";
+import { DRAWER_WIDTH, PAGE_LINKS } from "./constants";
 
 type LayoutProps = {
   children?: ReactNode;
 };
 
 const Layout = (props: LayoutProps): JSX.Element => {
+  const history = useHistory();
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box display="flex">
       <Drawer
         variant="permanent"
         anchor="left"
         sx={{
-          width: drawerWidth,
+          width: DRAWER_WIDTH,
           flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width: drawerWidth,
+            width: DRAWER_WIDTH,
             boxSizing: "border-box",
           }
         }}
       >
-        <Box my={1} display="flex" justifyContent="center">
-          <Icon color="primary" fontSize="large">find_in_page</Icon>
+        <Box marginY={1} display="flex" justifyContent="center">
+          <IconButton
+            color="primary"
+            onClick={() => history.push("/dashboard")}
+          >
+            <Icon color="primary" fontSize="large">find_in_page</Icon>
+          </IconButton>
         </Box>
         <Divider />
         <List
@@ -36,28 +40,21 @@ const Layout = (props: LayoutProps): JSX.Element => {
           }}
         >
           {PAGE_LINKS.map((item) => (
-            <ListItem
-              disableGutters
-              disablePadding
+            <ListItemButton
               key={`link-${item.name}`}
+              title={item.name}
+              onClick={() => history.push(item.route)}
             >
-              <ListItemButton
-                disableGutters
-                component={Link}
-                title={item.name}
-                to={item.href}
-              >
-                <ListItemIcon>
-                  <Icon>{item.icon}</Icon>
-                </ListItemIcon>
-              </ListItemButton>
-            </ListItem>
+              <ListItemIcon>
+                <Icon>{item.icon}</Icon>
+              </ListItemIcon>
+            </ListItemButton>
           ))}
         </List>
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: "background.default", p: 2 }}
+        sx={{ padding: 2, flexGrow: 1, backgroundColor: "background.default" }}
       >
         {props.children}
       </Box>
