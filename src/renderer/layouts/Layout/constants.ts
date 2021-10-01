@@ -1,22 +1,24 @@
+export const DRAWER_WIDTH = 70;
+
 export const PAGE_LINKS = [
   {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: "dashboard"
+    name: "Create",
+    route: "/create",
+    icon: "dashboard_customize"
   },
   {
     name: "Favorites",
-    href: "/favorites",
+    route: "/favorites",
     icon: "favorite"
   },
   {
     name: "Search",
-    href: "/search",
+    route: "/search",
     icon: "search"
   },
   {
     name: "Settings",
-    href: "/settings",
+    route: "/settings",
     icon: "settings"
   }
 ];

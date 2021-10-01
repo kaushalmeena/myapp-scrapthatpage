@@ -5,7 +5,7 @@ import THEMES from "../../constants/themes";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import { ISettings, ISettingsContext } from "../../interfaces/settings";
 
-export const SettingsContext = createContext<ISettingsContext>(null);
+export const SettingsContext = createContext<ISettingsContext | null>(null);
 
 type SettingsProviderProps = {
   children?: ReactNode;
