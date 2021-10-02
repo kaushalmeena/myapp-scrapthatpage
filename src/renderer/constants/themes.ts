@@ -16,7 +16,7 @@ export const THEME_OPTIONS: IThemesOptions[] = [
   }
 ];
 
-const THEMES: IThemes = {
+export const THEMES: IThemes = {
   th001: createTheme({
     palette: {
       mode: "light",
@@ -32,5 +32,3 @@ const THEMES: IThemes = {
     }
   })
 };
-
-export default THEMES;
