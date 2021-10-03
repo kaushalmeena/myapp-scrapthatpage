@@ -1,4 +1,13 @@
-import { Box, Divider, Drawer, Icon, IconButton, List, ListItem, ListItemButton, ListItemIcon } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Drawer,
+  Icon,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon
+} from "@mui/material";
 import React, { ReactNode } from "react";
 import { useHistory } from "react-router";
 import { DRAWER_WIDTH, PAGE_LINKS } from "./constants";
@@ -19,7 +28,7 @@ const Layout = (props: LayoutProps): JSX.Element => {
           flexShrink: 0,
           "& .MuiDrawer-paper": {
             width: DRAWER_WIDTH,
-            boxSizing: "border-box",
+            boxSizing: "border-box"
           }
         }}
       >
@@ -28,13 +37,15 @@ const Layout = (props: LayoutProps): JSX.Element => {
             color="primary"
             onClick={() => history.push("/dashboard")}
           >
-            <Icon color="primary" fontSize="large">find_in_page</Icon>
+            <Icon color="primary" fontSize="large">
+              find_in_page
+            </Icon>
           </IconButton>
         </Box>
         <Divider />
         <List
           sx={{
-            "& .MuiListItemIcon-root, .MuiListItemButton-root": {
+            "& .MuiListItemButton-root, .MuiListItemIcon-root": {
               justifyContent: "center"
             }
           }}
@@ -53,13 +64,15 @@ const Layout = (props: LayoutProps): JSX.Element => {
         </List>
       </Drawer>
       <Box
+        padding={2}
+        flexGrow={1}
+        bgcolor="background.default"
         component="main"
-        sx={{ padding: 2, flexGrow: 1, backgroundColor: "background.default" }}
       >
         {props.children}
       </Box>
     </Box>
   );
-}
+};
 
 export default Layout;
