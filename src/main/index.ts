@@ -13,7 +13,7 @@ const createWindow = (): void => {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false
-    },
+    }
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
