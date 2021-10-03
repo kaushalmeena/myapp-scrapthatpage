@@ -1,25 +1,24 @@
-import { Box, Button, Card, CardActionArea, CardHeader, Icon, InputAdornment, List, ListItemButton, ListItemIcon, ListItemText, Paper, TextField, Typography } from "@mui/material";
+import { Box, Icon, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Typography } from "@mui/material";
 import React from "react";
 import { useHistory } from "react-router";
 import { DASHBOARD_CARDS } from "./constants";
+
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
   return (
     <>
-      <Typography variant="h5">
+      <Typography fontSize={28} fontWeight="400">
         Dashboard
       </Typography>
       <Box
-        sx={{
-          marginTop: 2,
-          display: "flex",
-          flexDirection: { xs: 'column', md: 'row' }
-        }}
+        marginTop={2}
+        display="flex"
+        flexDirection="row"
       >
-        <Box flex={{ xs: 1, md: 2 }}>
+        <Box flex={2}>
           {DASHBOARD_CARDS.map((card) => (
-            <List disablePadding>
+            <List disablePadding key={`card-${card.title}`}>
               <ListItemButton onClick={() => history.push(card.route)}>
                 <ListItemIcon>
                   <Icon fontSize="large">{card.icon}</Icon>
@@ -32,8 +31,46 @@ const Dashboard = (): JSX.Element => {
             </List>
           ))}
         </Box>
-        <Box flex={{ xs: 1, md: 1 }}>
-          efer
+        <Box marginX={2} display="flex" flexDirection="row" flex={1}>
+          <Icon sx={{ color: "primary.main", fontSize: 84 }}>find_in_page</Icon>
+          <Box>
+            <Typography variant="h5">ScrapThatPage!</Typography>
+            <Typography variant="subtitle1">v{process.env.npm_package_version}</Typography>
+          </Box>
+        </Box>
+      </Box>
+      <Box
+        marginTop={2}
+        display="flex"
+        flexDirection="row"
+      >
+        <Box flex={1}>
+          <List
+            dense
+            subheader={
+              <ListSubheader>
+                Unsaved Scripts
+              </ListSubheader>
+            }
+          >
+            <ListItemButton>
+              <ListItemText primary="My script 1" />
+            </ListItemButton>
+          </List>
+        </Box>
+        <Box flex={1}>
+          <List
+            dense
+            subheader={
+              <ListSubheader>
+                Recent Scripts
+              </ListSubheader>
+            }
+          >
+            <ListItemButton>
+              <ListItemText primary="My script 1" />
+            </ListItemButton>
+          </List>
         </Box>
       </Box>
     </>

@@ -3,6 +3,7 @@
   "productName": "ScrapThatPage!",
   "version": "1.0.0",
   "description": "Automate web scraper with easy to use script actions.",
+  "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",

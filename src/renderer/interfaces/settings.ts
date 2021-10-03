@@ -1,5 +1,5 @@
 export interface ISettings {
-  theme: string;
+  darkMode: boolean;
 }
 
 export interface ISettingsContext {
