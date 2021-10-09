@@ -1,25 +1,30 @@
-import { createTheme } from "@mui/material";
+import { deepOrange, deepPurple, indigo, pink } from "@mui/material/colors";
+import { IThemes } from "../interfaces/themes";
 
-export const LIGHT_THEME = createTheme({
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#3949ab"
-    },
-    secondary: {
-      main: "#d81b60"
+export const ThemeOptions = [
+  {
+    name: "Light",
+    value: "light"
+  },
+  {
+    name: "Dark",
+    value: "dark"
+  }
+];
+
+export const THEMES: IThemes = {
+  light: {
+    palette: {
+      mode: "light",
+      primary: indigo,
+      secondary: pink
+    }
+  },
+  dark: {
+    palette: {
+      mode: "dark",
+      primary: deepPurple,
+      secondary: deepOrange
     }
   }
-});
-
-export const DARK_THEME = createTheme({
-  palette: {
-    mode: "dark",
-    primary: {
-      main: "#5f6478"
-    },
-    secondary: {
-      main: "#f50057"
-    }
-  }
-});
+};

@@ -1,16 +1,20 @@
 import {
   Box,
+  Card,
+  CardActionArea,
+  CardHeader,
   Icon,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  Stack,
   Typography
 } from "@mui/material";
 import React from "react";
 import { useHistory } from "react-router";
-import { DASHBOARD_CARDS } from "./constants";
+import { DASHBOARD_LINKS } from "./constants";
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
@@ -19,18 +23,22 @@ const Dashboard = (): JSX.Element => {
       <Typography fontSize={28} fontWeight="400">
         Dashboard
       </Typography>
-      <Box marginTop={2} display="flex" flexDirection="row">
-        <Box flex={2}>
-          {DASHBOARD_CARDS.map((card) => (
-            <List disablePadding key={`card-${card.title}`}>
-              <ListItemButton onClick={() => history.push(card.route)}>
-                <ListItemIcon>
-                  <Icon fontSize="large">{card.icon}</Icon>
-                </ListItemIcon>
-                <ListItemText primary={card.title} secondary={card.subtitle} />
-              </ListItemButton>
-            </List>
-          ))}
+      <Stack marginTop={2} direction="row">
+        <Box flex={1}>
+          <Stack gap={1}>
+            {DASHBOARD_LINKS.map((link) => (
+              <Card key={`link-${link.title}`} variant="outlined">
+                <CardActionArea onClick={() => history.push(link.route)}>
+                  <CardHeader
+                    avatar={<Icon fontSize="large">{link.icon}</Icon>}
+                    title={link.title}
+                    titleTypographyProps={{ fontSize: 18, fontWeight: "400" }}
+                    subheader={link.subtitle}
+                  />
+                </CardActionArea>
+              </Card>
+            ))}
+          </Stack>
         </Box>
         <Box marginX={2} display="flex" flexDirection="row" flex={1}>
           <Icon sx={{ color: "primary.main", fontSize: 84 }}>find_in_page</Icon>
@@ -41,7 +49,7 @@ const Dashboard = (): JSX.Element => {
             </Typography>
           </Box>
         </Box>
-      </Box>
+      </Stack>
       <Box marginTop={2} display="flex" flexDirection="row">
         <Box flex={1}>
           <List

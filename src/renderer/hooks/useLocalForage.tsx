@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import localForage from "localforage";
 
 export function useLocalForage<T>(
@@ -8,31 +8,26 @@ export function useLocalForage<T>(
   const [storedValue, setStoredValue] = useState<T>(initialValue);
 
   useEffect(() => {
-    async function get() {
-      try {
-        const value = await localForage.getItem<T>(key);
-        setStoredValue(value == null ? initialValue : value);
-      } catch (err) {
+    localForage
+      .getItem<T>(key)
+      .then((value) => {
+        setStoredValue(value || initialValue);
+      })
+      .catch((err) => {
         console.log(err);
-      }
-    }
-    get();
+      });
   }, []);
 
-  const setValue = useCallback(
-    (value: T) => {
-      async function set(value: T) {
-        try {
-          setStoredValue(value);
-          await localForage.setItem<T>(key, value);
-        } catch (err) {
-          console.log(err);
-        }
-      }
-      set(value);
-    },
-    [key]
-  );
+  const setValue = (value: T) => {
+    localForage
+      .setItem<T>(key, value)
+      .then(() => {
+        setStoredValue(value);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return [storedValue, setValue];
 }

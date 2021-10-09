@@ -1,4 +1,4 @@
-export const DASHBOARD_CARDS = [
+export const DASHBOARD_LINKS = [
   {
     title: "Create",
     subtitle: "Create a new script.",
