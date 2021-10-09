@@ -1,35 +1,48 @@
-import { InputAdornment, Paper, TextField, Typography, Box, Button, Icon } from "@mui/material";
+import {
+  InputAdornment,
+  Card,
+  CardActionArea,
+  CardHeader,
+  Paper,
+  TextField,
+  Typography,
+  Box,
+  Button,
+  Icon,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  OutlinedInput,
+  Stack
+} from "@mui/material";
 import React from "react";
+import { useHistory } from "react-router";
+import Script from "../../shared/Script";
 
 const Search = (): JSX.Element => {
+  const history = useHistory();
   return (
     <>
-      <Typography variant="h5">
+      <Typography marginBottom={1} fontSize={28} fontWeight="400">
         Search
       </Typography>
-      <Box display="flex" justifyContent="flex-end" mt={1} mb={2}>
-        <Button variant="contained" startIcon={<Icon>add</Icon>} >
-          Create
-        </Button>
-      </Box>
-      <Paper elevation={1}>
-        <TextField
-          fullWidth
-          size="small"
-          type="search"
-          margin="none"
-          variant="outlined"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Icon>search</Icon>
-              </InputAdornment>
-            )
-          }}
-        />
-      </Paper>
+      <OutlinedInput
+        fullWidth
+        size="small"
+        startAdornment={
+          <InputAdornment position="start">
+            <Icon>search</Icon>
+          </InputAdornment>
+        }
+      />
+      <Stack marginY={2} gap={1}>
+        <Script title="myscript" description="helloo aqdwd" />
+        <Script title="myscript" description="helloo aqdwd" />
+      </Stack>
     </>
-  )
+  );
 };
 
 export default Search;

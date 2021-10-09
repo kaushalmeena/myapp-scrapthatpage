@@ -1,10 +1,11 @@
+import { createTheme } from "@mui/material";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, { createContext, ReactNode } from "react";
 import {
   SETTINGS_DEFAULT_VALUES,
   SETTINGS_KEY
 } from "../../constants/settings";
-import { DARK_THEME, LIGHT_THEME } from "../../constants/themes";
+import { THEMES } from "../../constants/themes";
 import { useLocalForage } from "../../hooks/useLocalForage";
 import { ISettings, ISettingsContext } from "../../interfaces/settings";
 
@@ -18,16 +19,17 @@ type SettingsProviderProps = {
 };
 
 export const SettingsProvider = (props: SettingsProviderProps): JSX.Element => {
-  const [value, setValue] = useLocalForage<ISettings>(
+  const [settings, setSettings] = useLocalForage<ISettings>(
     SETTINGS_KEY,
     SETTINGS_DEFAULT_VALUES
   );
-  const theme = value.darkMode ? DARK_THEME : LIGHT_THEME;
+  const theme = THEMES[settings.theme];
+  const muiTheme = createTheme(theme);
   return (
     <SettingsContext.Provider
-      value={{ settings: value, setSettings: setValue }}
+      value={{ settings: settings, setSettings: setSettings }}
     >
-      <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+      <ThemeProvider theme={muiTheme}>{props.children}</ThemeProvider>
     </SettingsContext.Provider>
   );
 };
