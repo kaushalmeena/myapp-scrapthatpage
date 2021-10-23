@@ -1,7 +1,6 @@
 import {
   ListItemText,
   Box,
-  ListSubheader,
   Typography,
   ListItemIcon,
   List,
@@ -12,6 +11,7 @@ import {
   MenuItem
 } from "@mui/material";
 import React, { useContext } from "react";
+import { SETTINGS_KEYS } from "../../constants/settings";
 import { ThemeOptions } from "../../constants/themes";
 import { SettingsContext } from "../../context/Settings";
 
@@ -28,7 +28,7 @@ const Settings = (): JSX.Element => {
         Settings
       </Typography>
       <Box maxWidth={500}>
-        <List dense subheader={<ListSubheader>Appearance</ListSubheader>}>
+        <List>
           <ListItem>
             <ListItemIcon>
               <Icon>color_lens</Icon>
@@ -41,7 +41,7 @@ const Settings = (): JSX.Element => {
               <Select
                 value={settings.theme}
                 onChange={(event) => {
-                  updateSettings("theme", event.target.value);
+                  updateSettings(SETTINGS_KEYS.Theme, event.target.value);
                 }}
               >
                 {ThemeOptions.map((item) => (
