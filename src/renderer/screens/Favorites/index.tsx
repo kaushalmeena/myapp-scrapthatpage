@@ -7,7 +7,7 @@ import {
   Button
 } from "@mui/material";
 import React from "react";
-import Script from "../../shared/Script";
+import ScriptCard from "../../shared/ScriptCard";
 
 const Favorites = (): JSX.Element => {
   return (
@@ -16,8 +16,8 @@ const Favorites = (): JSX.Element => {
         Favorites
       </Typography>
       <Stack gap={1} marginY={1}>
-        <Script title="myscript" description="helloo aqdwd" />
-        <Script title="myscript" description="helloo aqdwd" />
+        <ScriptCard title="myscript" description="helloo aqdwd" />
+        <ScriptCard title="myscript" description="helloo aqdwd" />
       </Stack>
     </>
   );

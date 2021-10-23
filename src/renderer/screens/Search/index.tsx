@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useHistory } from "react-router";
-import Script from "../../shared/Script";
+import ScriptCard from "../../shared/ScriptCard";
 
 const Search = (): JSX.Element => {
   const history = useHistory();
@@ -38,8 +38,8 @@ const Search = (): JSX.Element => {
         }
       />
       <Stack marginY={2} gap={1}>
-        <Script title="myscript" description="helloo aqdwd" />
-        <Script title="myscript" description="helloo aqdwd" />
+        <ScriptCard title="myscript" description="helloo aqdwd" />
+        <ScriptCard title="myscript" description="helloo aqdwd" />
       </Stack>
     </>
   );
