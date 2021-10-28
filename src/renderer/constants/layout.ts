@@ -2,22 +2,26 @@ export const DRAWER_WIDTH = 70;
 
 export const PAGE_LINKS = [
   {
-    name: "Create",
+    title: "Create",
+    subtitle: "Create a new script.",
     route: "/create",
     icon: "dashboard_customize"
   },
   {
-    name: "Favorites",
+    title: "Favorites",
+    subtitle: "List your favorites scripts.",
     route: "/favorites",
     icon: "favorite"
   },
   {
-    name: "Search",
+    title: "Search",
+    subtitle: "Search scripts using a query.",
     route: "/search",
     icon: "search"
   },
   {
-    name: "Settings",
+    title: "Settings",
+    subtitle: "Show app settings.",
     route: "/settings",
     icon: "settings"
   }

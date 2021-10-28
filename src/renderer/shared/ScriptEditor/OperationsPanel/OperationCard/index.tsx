@@ -1,54 +1,99 @@
 import {
   Box,
-  CardContent,
-  Collapse,
   Card,
+  CardContent,
   CardHeader,
-  Drawer,
+  Collapse,
   Icon,
   IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
   Stack
 } from "@mui/material";
-import React, { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import React, { Dispatch } from "react";
+import {
+  deleteOperation,
+  moveDownOperation,
+  moveUpOperation,
+  ScriptEditorAction,
+  toogleCardContent
+} from "../../../../actions/scriptEditor";
+import { IOperationLarge } from "../../../../interfaces/operations";
+import { formatHeading } from "../../../../utils/operations";
+import OperationInput from "./OperationInput";
 
-type OperationCardProps = {};
+type OperationCardProps = {
+  path: string;
+  operation: IOperationLarge;
+  dispatch: Dispatch<ScriptEditorAction>;
+};
 
 const OperationCard = (props: OperationCardProps): JSX.Element => {
-  const [expanded, setExpanded] = React.useState<boolean>(false);
+  const handleExpandToogle = () => {
+    props.dispatch(toogleCardContent(props.path));
+  };
 
-  function handleExpandToogle() {
-    setExpanded((state) => !state);
-  }
+  const handleMoveUpClick = () => {
+    props.dispatch(moveUpOperation(props.path));
+  };
+
+  const handleMoveDownClick = () => {
+    props.dispatch(moveDownOperation(props.path));
+  };
+
+  const handleDeleteClick = () => {
+    props.dispatch(deleteOperation(props.path));
+  };
 
   return (
     <Card variant="outlined">
       <CardHeader
-        title={"OPEEN"}
-        subheader={"sdsdgsgjsdkgskdgskg"}
+        title={props.operation.name}
+        subheader={formatHeading(props.operation.format, props.operation.data)}
         action={
           <Stack direction="row">
-            <IconButton color="primary">
+            <IconButton title="Move-up operation" onClick={handleMoveUpClick}>
               <Icon>arrow_upward</Icon>
             </IconButton>
-            <IconButton color="primary">
+            <IconButton
+              title="Move-down operation"
+              onClick={handleMoveDownClick}
+            >
               <Icon>arrow_downward</Icon>
             </IconButton>
-            <IconButton color="primary" onClick={handleExpandToogle}>
-              <Icon>{expanded ? "edit" : "border_color"}</Icon>
+            <IconButton
+              title="Edit operation"
+              color="primary"
+              onClick={handleExpandToogle}
+            >
+              <Icon>{props.operation.expanded ? "edit_off" : "edit"}</Icon>
             </IconButton>
-            <IconButton color="secondary">
+            <IconButton
+              title="Delete operation"
+              color="secondary"
+              onClick={handleDeleteClick}
+            >
               <Icon>clear</Icon>
             </IconButton>
           </Stack>
         }
       />
-      <Collapse in={expanded} timeout="auto">
-        <CardContent>this is content</CardContent>
+      <Collapse in={props.operation.expanded} timeout="auto">
+        <CardContent>
+          <Stack gap={2} direction="row" flexWrap="wrap">
+            {props.operation.data.map((item, index) => (
+              <Box
+                key={`${props.path}.data.${index}`}
+                display="flex"
+                flex={item.width}
+              >
+                <OperationInput
+                  path={`${props.path}.data.${index}`}
+                  input={item}
+                  dispatch={props.dispatch}
+                />
+              </Box>
+            ))}
+          </Stack>
+        </CardContent>
       </Collapse>
     </Card>
   );

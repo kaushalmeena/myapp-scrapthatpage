@@ -1,5 +1,7 @@
+import { THEME_TYPES } from "../constants/themes";
+
 export interface ISettings {
-  theme: string;
+  theme: THEME_TYPES;
 }
 
 export interface ISettingsContext {

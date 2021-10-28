@@ -1,14 +1,6 @@
-import {
-  InputAdornment,
-  Tab,
-  TextField,
-  Typography,
-  Box,
-  Tabs,
-  Stack,
-  Button
-} from "@mui/material";
+import { Typography } from "@mui/material";
 import React from "react";
+import { initialScriptEditorState } from "../../constants/scriptEditor";
 import ScriptEditor from "../../shared/ScriptEditor";
 
 const Create = (): JSX.Element => {
@@ -17,7 +9,7 @@ const Create = (): JSX.Element => {
       <Typography fontSize={28} fontWeight="400">
         Create
       </Typography>
-      <ScriptEditor />
+      <ScriptEditor initialState={initialScriptEditorState} />
     </>
   );
 };
