@@ -1,23 +1,21 @@
-import {
-  InputAdornment,
-  Tab,
-  TextField,
-  Typography,
-  Box,
-  Tabs,
-  Stack,
-  Button,
-  Paper
-} from "@mui/material";
-import React from "react";
+import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
+import React, { SyntheticEvent, useReducer } from "react";
+import { changeTab } from "../../actions/scriptEditor";
+import { IScriptEditorState } from "../../interfaces/scriptEditor";
+import { scriptEditorReducer } from "../../reducers/scriptEditor";
 import InformationPanel from "./InformationPanel";
+import OperationSelector from "./OperationSelector";
 import OperationsPanel from "./OperationsPanel";
 
-const ScriptEditor = (): JSX.Element => {
-  const [value, setValue] = React.useState(0);
+type ScriptEditorProps = {
+  initialState: IScriptEditorState;
+};
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
+  const [state, dispatch] = useReducer(scriptEditorReducer, props.initialState);
+
+  const handleTabChange = (event: SyntheticEvent, value: number) => {
+    dispatch(changeTab(value));
   };
 
   return (
@@ -41,16 +39,27 @@ const ScriptEditor = (): JSX.Element => {
             borderBottomColor: "action.disabledBackground"
           }}
         >
-          <Tabs centered value={value} onChange={handleChange}>
+          <Tabs centered value={state.activeTab} onChange={handleTabChange}>
             <Tab label="Information" />
             <Tab label="Operations" />
           </Tabs>
         </Box>
         <Box padding={2}>
-          {value === 0 && <InformationPanel />}
-          {value === 1 && <OperationsPanel />}
+          <Box display={state.activeTab === 0 ? "block" : "none"}>
+            <InformationPanel
+              information={state.information}
+              dispatch={dispatch}
+            />
+          </Box>
+          <Box display={state.activeTab === 1 ? "block" : "none"}>
+            <OperationsPanel
+              operations={state.operations}
+              dispatch={dispatch}
+            />
+          </Box>
         </Box>
       </Box>
+      <OperationSelector selector={state.selector} dispatch={dispatch} />
     </>
   );
 };

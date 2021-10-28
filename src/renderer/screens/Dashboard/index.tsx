@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useHistory } from "react-router";
-import { DASHBOARD_LINKS } from "./constants";
+import { PAGE_LINKS } from "../../constants/layout";
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
@@ -26,7 +26,7 @@ const Dashboard = (): JSX.Element => {
       <Stack marginTop={2} direction="row">
         <Box flex={1}>
           <Stack gap={1}>
-            {DASHBOARD_LINKS.map((link) => (
+            {PAGE_LINKS.map((link) => (
               <Card key={`link-${link.title}`} variant="outlined">
                 <CardActionArea onClick={() => history.push(link.route)}>
                   <CardHeader

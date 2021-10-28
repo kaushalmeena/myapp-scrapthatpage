@@ -1,10 +1,8 @@
 import { ThemeOptions } from "@mui/material";
+import { THEME_TYPES } from "../constants/themes";
 
-export interface IThemeOptions {
+export interface ITheme {
   name: string;
-  value: string;
-}
-
-export interface IThemes {
-  [key: string]: ThemeOptions;
+  type: THEME_TYPES;
+  data: ThemeOptions;
 }

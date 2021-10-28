@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import React, { ReactNode } from "react";
 import { useHistory } from "react-router";
-import { DRAWER_WIDTH, PAGE_LINKS } from "./constants";
+import { DRAWER_WIDTH, PAGE_LINKS } from "../../constants/layout";
 
 type LayoutProps = {
   children?: ReactNode;
@@ -50,14 +50,14 @@ const Layout = (props: LayoutProps): JSX.Element => {
             }
           }}
         >
-          {PAGE_LINKS.map((item) => (
+          {PAGE_LINKS.map((link) => (
             <ListItemButton
-              key={`link-${item.name}`}
-              title={item.name}
-              onClick={() => history.push(item.route)}
+              key={`link-${link.title}`}
+              title={link.title}
+              onClick={() => history.push(link.route)}
             >
               <ListItemIcon>
-                <Icon>{item.icon}</Icon>
+                <Icon>{link.icon}</Icon>
               </ListItemIcon>
             </ListItemButton>
           ))}
