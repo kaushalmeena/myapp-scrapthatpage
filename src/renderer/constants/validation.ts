@@ -4,11 +4,6 @@ export enum VALIDATION_TYPES {
   EMAIL
 }
 
-export enum INPUT_TYPES {
-  TEXT,
-  TEXTAREA
-}
-
 export const VALIDATION_REGEXES = [
   new RegExp(".+"),
   new RegExp(

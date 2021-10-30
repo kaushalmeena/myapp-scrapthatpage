@@ -1,11 +1,11 @@
-import { ITheme } from "../interfaces/themes";
+import { Theme } from "../types/theme";
 
 export enum THEME_TYPES {
   LIGHT,
   DARK
 }
 
-export const THEMES: ITheme[] = [
+export const THEMES: Theme[] = [
   {
     name: "Light",
     type: THEME_TYPES.LIGHT,

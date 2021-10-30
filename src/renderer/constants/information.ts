@@ -1,7 +1,6 @@
-import { IInformation } from "../interfaces/information";
-import { VALIDATION_TYPES } from "./input";
+import { VALIDATION_TYPES } from "./validation";
 
-export const initialInformationState: IInformation = {
+export const INITIAL_INFORMATION = {
   name: {
     value: "",
     error: "",

@@ -1,21 +1,19 @@
 import { TextField } from "@mui/material";
 import React, { Dispatch } from "react";
-import {
-  ScriptEditorAction,
-  updateInput
-} from "../../../../../actions/scriptEditor";
-import { INPUT_TYPES } from "../../../../../constants/input";
-import { IOperationData } from "../../../../../interfaces/operations";
+import { updateOperation } from "../../../../../actions/scriptEditor";
+import { INPUT_TYPES } from "../../../../../constants/operations";
+import { Input } from "../../../../../types/operation";
+import { ScriptEditorAction } from "../../../../../types/scriptEditor";
 
 type OperationInputProps = {
   path: string;
-  input: IOperationData;
+  input: Input;
   dispatch: Dispatch<ScriptEditorAction>;
 };
 
 const OperationInput = (props: OperationInputProps): JSX.Element | null => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.dispatch(updateInput(event.target.value, props.path));
+    props.dispatch(updateOperation(event.target.value, props.path));
   };
 
   switch (props.input.type) {

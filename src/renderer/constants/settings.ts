@@ -1,4 +1,4 @@
-import { ISettings } from "../interfaces/settings";
+import { Settings } from "../types/settings";
 import { THEME_TYPES } from "./themes";
 
 export enum SETTINGS_KEYS {
@@ -7,6 +7,6 @@ export enum SETTINGS_KEYS {
 
 export const SETTINGS_KEY = "app_settings";
 
-export const initialSettings: ISettings = {
+export const INITIAL_SETTINGS: Settings = {
   theme: THEME_TYPES.LIGHT
 };

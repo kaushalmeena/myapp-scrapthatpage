@@ -1,27 +1,40 @@
 import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
-import React, { SyntheticEvent, useReducer } from "react";
-import { changeTab } from "../../actions/scriptEditor";
-import { IScriptEditorState } from "../../interfaces/scriptEditor";
+import React, { SyntheticEvent, useReducer, useState } from "react";
+import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
 import { scriptEditorReducer } from "../../reducers/scriptEditor";
+import { Script } from "../../types/script";
+import { convertToScript } from "../../utils/scriptEditor";
 import InformationPanel from "./InformationPanel";
 import OperationSelector from "./OperationSelector";
 import OperationsPanel from "./OperationsPanel";
 
 type ScriptEditorProps = {
-  initialState: IScriptEditorState;
+  script?: Script;
+  onSubmit: (script: Script) => void;
 };
 
 const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
-  const [state, dispatch] = useReducer(scriptEditorReducer, props.initialState);
+  const [state, dispatch] = useReducer(
+    scriptEditorReducer,
+    INITIAL_SCRIPT_EDITOR_STATE
+  );
+  const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event: SyntheticEvent, value: number) => {
-    dispatch(changeTab(value));
+    setTabValue(value);
+  };
+
+  const handleSaveClick = () => {
+    const convertedScript = convertToScript(state);
+    props.onSubmit(convertedScript);
   };
 
   return (
     <>
       <Stack marginBottom={2} direction="row" justifyContent="flex-end">
-        <Button variant="contained">Save</Button>
+        <Button variant="contained" onClick={handleSaveClick}>
+          Save
+        </Button>
       </Stack>
       <Box
         sx={{
@@ -39,19 +52,19 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
             borderBottomColor: "action.disabledBackground"
           }}
         >
-          <Tabs centered value={state.activeTab} onChange={handleTabChange}>
+          <Tabs centered value={tabValue} onChange={handleTabChange}>
             <Tab label="Information" />
             <Tab label="Operations" />
           </Tabs>
         </Box>
         <Box padding={2}>
-          <Box display={state.activeTab === 0 ? "block" : "none"}>
+          <Box display={tabValue === 0 ? "block" : "none"}>
             <InformationPanel
               information={state.information}
               dispatch={dispatch}
             />
           </Box>
-          <Box display={state.activeTab === 1 ? "block" : "none"}>
+          <Box display={tabValue === 1 ? "block" : "none"}>
             <OperationsPanel
               operations={state.operations}
               dispatch={dispatch}

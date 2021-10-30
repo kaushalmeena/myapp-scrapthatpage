@@ -9,9 +9,10 @@ import {
   Button
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { initialScriptEditorState } from "../../constants/scriptEditor";
+import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
 import ScriptEditor from "../../shared/ScriptEditor";
-import { convertToLargeOperations } from "../../utils/operations";
+import { Script } from "../../types/script";
+// import { convertToLargeOperations } from "../../utils/operations";
 
 const operations = [
   {
@@ -22,22 +23,26 @@ const operations = [
 
 const Update = (): JSX.Element => {
   const [scriptEditorState, setScriptEditorState] = useState(
-    initialScriptEditorState
+    INITIAL_SCRIPT_EDITOR_STATE
   );
 
-  useEffect(() => {
-    setScriptEditorState((prevState) => ({
-      ...prevState,
-      operations: convertToLargeOperations(operations)
-    }));
-  }, []);
+  const handleSubmit = (script: Script) => {
+    console.log("============ script", script);
+  };
+
+  // useEffect(() => {
+  //   setScriptEditorState((prevState) => ({
+  //     ...prevState,
+  //     operations: convertToLargeOperations(operations)
+  //   }));
+  // }, []);
 
   return (
     <>
       <Typography fontSize={28} fontWeight="400">
         Update
       </Typography>
-      <ScriptEditor initialState={scriptEditorState} />
+      <ScriptEditor onSubmit={handleSubmit} />
     </>
   );
 };
