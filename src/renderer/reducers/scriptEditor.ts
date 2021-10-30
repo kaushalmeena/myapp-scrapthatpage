@@ -1,58 +1,44 @@
 import produce from "immer";
 import { del, get, push, set } from "object-path";
-import { ACTION_TYPES, ScriptEditorAction } from "../actions/scriptEditor";
-import { IScriptEditorState } from "../interfaces/scriptEditor";
-import { validateInput } from "../utils/operations";
+import { ACTION_TYPES } from "../actions/scriptEditor";
+import { ScriptEditorAction, ScriptEditorState } from "../types/scriptEditor";
+import { validateInput } from "../utils/scriptEditor";
 
 export const scriptEditorReducer = (
-  state: IScriptEditorState,
+  state: ScriptEditorState,
   action: ScriptEditorAction
-): IScriptEditorState => {
+): ScriptEditorState => {
   console.log("========= action", action);
   switch (action.type) {
-    case ACTION_TYPES.CHANGE_TAB:
+    case ACTION_TYPES.INFORMATION_UPDATE:
       return produce(state, (draft) => {
-        draft.activeTab = action.payload.value;
+        const valuePath = `${action.payload.path}.value`;
+        const errorPath = `${action.payload.path}.error`;
+        const rulesPath = `${action.payload.path}.rules`;
+        const value = action.payload.value;
+        const rules = get(draft, rulesPath);
+        const error = validateInput(value, rules);
+        set(draft, valuePath, value);
+        set(draft, errorPath, error);
       });
-    case ACTION_TYPES.SET_NAME:
-      return produce(state, (draft) => {
-        draft.information.name.value = action.payload.value;
-        draft.information.name.error = validateInput(
-          action.payload.value,
-          state.information.name.rules
-        );
-      });
-    case ACTION_TYPES.SET_DESCRIPTION:
-      return produce(state, (draft) => {
-        draft.information.description.value = action.payload.value;
-        draft.information.description.error = validateInput(
-          action.payload.value,
-          draft.information.description.rules
-        );
-      });
-    case ACTION_TYPES.OPEN_SELECTOR:
+    case ACTION_TYPES.SELECTOR_OPEN:
       return produce(state, (draft) => {
         draft.selector.visible = true;
         draft.selector.activePath = action.payload.path;
       });
-    case ACTION_TYPES.CLOSE_SELECTOR:
+    case ACTION_TYPES.SELECTOR_CLOSE:
       return produce(state, (draft) => {
         draft.selector.visible = false;
       });
-    case ACTION_TYPES.TOOGLE_CARD_CONTENT:
-      return produce(state, (draft) => {
-        const path = `${action.payload.path}.expanded`;
-        set(draft, path, !get(draft, path));
-      });
-    case ACTION_TYPES.APPEND_OPERATION:
+    case ACTION_TYPES.OPERATION_APPEND:
       return produce(state, (draft) => {
         push(draft, draft.selector.activePath, action.payload.operation);
       });
-    case ACTION_TYPES.DELETE_OPERATION:
+    case ACTION_TYPES.OPERATION_DELETE:
       return produce(state, (draft) => {
         del(draft, action.payload.path);
       });
-    case ACTION_TYPES.MOVE_UP_OPERATION:
+    case ACTION_TYPES.OPERATION_MOVE_UP:
       return produce(state, (draft) => {
         const tempPath = action.payload.path;
         const lastIndex = tempPath.lastIndexOf(".");
@@ -69,7 +55,7 @@ export const scriptEditorReducer = (
           set(draft, path2, opr1);
         }
       });
-    case ACTION_TYPES.MOVE_DOWN_OPERATION:
+    case ACTION_TYPES.OPERATION_MOVE_DOWN:
       return produce(state, (draft) => {
         const tempPath = action.payload.path;
         const lastIndex = tempPath.lastIndexOf(".");
@@ -87,7 +73,7 @@ export const scriptEditorReducer = (
           set(draft, path2, opr1);
         }
       });
-    case ACTION_TYPES.UPDATE_INPUT:
+    case ACTION_TYPES.OPERATION_UPDATE:
       return produce(state, (draft) => {
         const valuePath = `${action.payload.path}.value`;
         const errorPath = `${action.payload.path}.error`;

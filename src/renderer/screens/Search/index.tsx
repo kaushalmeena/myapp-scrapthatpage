@@ -19,10 +19,19 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useHistory } from "react-router";
+import { getAllScripts } from "../../database/main";
 import ScriptCard from "../../shared/ScriptCard";
 
 const Search = (): JSX.Element => {
+
   const history = useHistory();
+
+  const fetchDocs = () => {
+    getAllScripts().then((res) => {
+      console.log(res);
+    });
+  }
+
   return (
     <>
       <Typography marginBottom={1} fontSize={28} fontWeight="400">
@@ -37,6 +46,7 @@ const Search = (): JSX.Element => {
           </InputAdornment>
         }
       />
+      <Button onClick={fetchDocs}>Fetch</Button>
       <Stack marginY={2} gap={1}>
         <ScriptCard title="myscript" description="helloo aqdwd" />
         <ScriptCard title="myscript" description="helloo aqdwd" />

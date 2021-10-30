@@ -13,7 +13,7 @@ import Update from "./screens/Update";
 
 const App = (): JSX.Element => {
   return (
-    < MemoryRouter>
+    <MemoryRouter>
       <SettingsProvider>
         <CssBaseline />
         <Layout>
@@ -31,8 +31,8 @@ const App = (): JSX.Element => {
           </Switch>
         </Layout>
       </SettingsProvider>
-    </ MemoryRouter>
+    </MemoryRouter>
   );
-}
+};
 
 export default App;

@@ -1,5 +1,5 @@
-import { IOperationLarge } from "../interfaces/operations";
-import { INPUT_TYPES, VALIDATION_TYPES } from "./input";
+import { Operation } from "../types/operation";
+import { VALIDATION_TYPES } from "./validation";
 
 export enum OPERATION_TYPES {
   OPEN,
@@ -14,14 +14,20 @@ export enum OPERATION_TYPES {
   REPEAT_WHILE
 }
 
-export const OPERTAIONS: IOperationLarge[] = [
+export enum INPUT_TYPES {
+  TEXT,
+  TEXTAREA,
+  OPERATION_BOX,
+  VARIABLE_BOX
+}
+
+export const OPERTAIONS: Operation[] = [
   {
     name: "OPEN",
     type: OPERATION_TYPES.OPEN,
     description: "Open url for web scrapping.",
     format: "{0}",
-    expanded: false,
-    data: [
+    inputs: [
       {
         label: "URL",
         type: INPUT_TYPES.TEXT,
@@ -46,8 +52,7 @@ export const OPERTAIONS: IOperationLarge[] = [
     type: OPERATION_TYPES.EXTRACT,
     description: "Scraps specified elements from opened page.",
     format: "{0} [{1}]",
-    expanded: false,
-    data: [
+    inputs: [
       {
         label: "Name",
         type: INPUT_TYPES.TEXT,

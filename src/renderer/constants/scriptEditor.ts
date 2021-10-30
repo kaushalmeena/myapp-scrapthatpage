@@ -1,10 +1,9 @@
-import { IScriptEditorState } from "../interfaces/scriptEditor";
-import { initialInformationState } from "./information";
+import { ScriptEditorState } from "../types/scriptEditor";
+import { INITIAL_INFORMATION } from "./information";
 
-export const initialScriptEditorState: IScriptEditorState = {
-  id: "",
-  activeTab: 0,
-  information: initialInformationState,
+export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
+  scriptId: "",
+  information: INITIAL_INFORMATION,
   operations: [],
   selector: {
     visible: false,

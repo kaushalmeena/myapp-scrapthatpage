@@ -8,17 +8,16 @@ import {
   ListItemText
 } from "@mui/material";
 import React, { Dispatch } from "react";
-import {
-  appendOperation,
-  closeSelector,
-  ScriptEditorAction
-} from "../../../actions/scriptEditor";
+import { appendOperation, closeSelector } from "../../../actions/scriptEditor";
 import { OPERTAIONS } from "../../../constants/operations";
-import { IOperationLarge } from "../../../interfaces/operations";
-import { IOperationSelector } from "../../../interfaces/scriptEditor";
+import { Operation } from "../../../types/operation";
+import {
+  OperationSelector,
+  ScriptEditorAction
+} from "../../../types/scriptEditor";
 
 type OperationSelectorProps = {
-  selector: IOperationSelector;
+  selector: OperationSelector;
   dispatch: Dispatch<ScriptEditorAction>;
 };
 
@@ -27,7 +26,7 @@ const OperationSelector = (props: OperationSelectorProps): JSX.Element => {
     props.dispatch(closeSelector());
   };
 
-  const handleSelect = (item: IOperationLarge) => {
+  const handleSelect = (item: Operation) => {
     props.dispatch(appendOperation(item));
     props.dispatch(closeSelector());
   };

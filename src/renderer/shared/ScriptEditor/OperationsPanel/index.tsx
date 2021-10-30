@@ -1,14 +1,12 @@
 import { Box, Button, Stack } from "@mui/material";
 import React, { Dispatch } from "react";
-import {
-  openSelector,
-  ScriptEditorAction
-} from "../../../actions/scriptEditor";
-import { IOperationLarge } from "../../../interfaces/operations";
+import { openSelector } from "../../../actions/scriptEditor";
+import { Operation } from "../../../types/operation";
+import { ScriptEditorAction } from "../../../types/scriptEditor";
 import OperationCard from "./OperationCard";
 
 type OperationsPanelProps = {
-  operations: IOperationLarge[];
+  operations: Operation[];
   dispatch: Dispatch<ScriptEditorAction>;
 };
 
@@ -25,11 +23,11 @@ const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
         </Button>
       </Stack>
       <Stack gap={1}>
-        {props.operations.map((item, index) => (
+        {props.operations.map((operation, index) => (
           <OperationCard
             key={`operations.${index}`}
             path={`operations.${index}`}
-            operation={item}
+            operation={operation}
             dispatch={props.dispatch}
           />
         ))}

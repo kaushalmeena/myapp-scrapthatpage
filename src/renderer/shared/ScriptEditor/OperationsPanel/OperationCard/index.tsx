@@ -8,27 +8,28 @@ import {
   IconButton,
   Stack
 } from "@mui/material";
-import React, { Dispatch } from "react";
+import React, { Dispatch, useState } from "react";
 import {
   deleteOperation,
   moveDownOperation,
-  moveUpOperation,
-  ScriptEditorAction,
-  toogleCardContent
+  moveUpOperation
 } from "../../../../actions/scriptEditor";
-import { IOperationLarge } from "../../../../interfaces/operations";
-import { formatHeading } from "../../../../utils/operations";
+import { Operation } from "../../../../types/operation";
+import { ScriptEditorAction } from "../../../../types/scriptEditor";
+import { formatHeading } from "../../../../utils/scriptEditor";
 import OperationInput from "./OperationInput";
 
 type OperationCardProps = {
   path: string;
-  operation: IOperationLarge;
+  operation: Operation;
   dispatch: Dispatch<ScriptEditorAction>;
 };
 
 const OperationCard = (props: OperationCardProps): JSX.Element => {
+  const [expanded, setExpanded] = useState(false);
+
   const handleExpandToogle = () => {
-    props.dispatch(toogleCardContent(props.path));
+    setExpanded((value) => !value);
   };
 
   const handleMoveUpClick = () => {
@@ -47,7 +48,10 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
     <Card variant="outlined">
       <CardHeader
         title={props.operation.name}
-        subheader={formatHeading(props.operation.format, props.operation.data)}
+        subheader={formatHeading(
+          props.operation.format,
+          props.operation.inputs
+        )}
         action={
           <Stack direction="row">
             <IconButton title="Move-up operation" onClick={handleMoveUpClick}>
@@ -64,7 +68,7 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
               color="primary"
               onClick={handleExpandToogle}
             >
-              <Icon>{props.operation.expanded ? "edit_off" : "edit"}</Icon>
+              <Icon>{expanded ? "edit_off" : "edit"}</Icon>
             </IconButton>
             <IconButton
               title="Delete operation"
@@ -76,18 +80,18 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
           </Stack>
         }
       />
-      <Collapse in={props.operation.expanded} timeout="auto">
+      <Collapse in={expanded} timeout="auto">
         <CardContent>
           <Stack gap={2} direction="row" flexWrap="wrap">
-            {props.operation.data.map((item, index) => (
+            {props.operation.inputs.map((input, index) => (
               <Box
-                key={`${props.path}.data.${index}`}
+                key={`${props.path}.inputs.${index}`}
                 display="flex"
-                flex={item.width}
+                flex={input.width}
               >
                 <OperationInput
-                  path={`${props.path}.data.${index}`}
-                  input={item}
+                  path={`${props.path}.inputs.${index}`}
+                  input={input}
                   dispatch={props.dispatch}
                 />
               </Box>
