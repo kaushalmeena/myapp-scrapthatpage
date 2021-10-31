@@ -1,7 +1,8 @@
-import { INPUT_TYPES, OPERATION_TYPES } from "../constants/operations";
+import { INPUT_TYPES } from "../constants/input";
+import { OPERATION_TYPES } from "../constants/operation";
 import { ValidationRule } from "./validation";
 
-type TextInput = {
+type LargeTextInput = {
   label: string;
   type: INPUT_TYPES.TEXT;
   width: number;
@@ -10,7 +11,7 @@ type TextInput = {
   rules: ValidationRule[];
 };
 
-type TextAreaInput = {
+type LargeTextAreaInput = {
   label: string;
   type: INPUT_TYPES.TEXTAREA;
   width: number;
@@ -19,19 +20,22 @@ type TextAreaInput = {
   rules: ValidationRule[];
 };
 
-type OperationBoxInput = {
+type LargeOperationBoxInput = {
   label: string;
   type: INPUT_TYPES.OPERATION_BOX;
   width: number;
-  operations: Operation[];
+  operations: LargeOperation[];
 };
 
-export type Input = TextInput | TextAreaInput | OperationBoxInput;
+export type LargeInput =
+  | LargeTextInput
+  | LargeTextAreaInput
+  | LargeOperationBoxInput;
 
-export interface Operation {
+export interface LargeOperation {
   name: string;
   type: OPERATION_TYPES;
   description: string;
   format: string;
-  inputs: Input[];
+  inputs: LargeInput[];
 }

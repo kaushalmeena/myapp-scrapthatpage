@@ -14,14 +14,14 @@ import {
   moveDownOperation,
   moveUpOperation
 } from "../../../../actions/scriptEditor";
-import { Operation } from "../../../../types/operation";
+import { LargeOperation } from "../../../../types/largeOperation";
 import { ScriptEditorAction } from "../../../../types/scriptEditor";
-import { formatHeading } from "../../../../utils/scriptEditor";
+import { formatHeading } from "../../../../utils/operation";
 import OperationInput from "./OperationInput";
 
 type OperationCardProps = {
   path: string;
-  operation: Operation;
+  operation: LargeOperation;
   dispatch: Dispatch<ScriptEditorAction>;
 };
 

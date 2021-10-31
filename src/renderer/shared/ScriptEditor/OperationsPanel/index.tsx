@@ -1,12 +1,12 @@
 import { Box, Button, Stack } from "@mui/material";
 import React, { Dispatch } from "react";
 import { openSelector } from "../../../actions/scriptEditor";
-import { Operation } from "../../../types/operation";
+import { LargeOperation } from "../../../types/largeOperation";
 import { ScriptEditorAction } from "../../../types/scriptEditor";
 import OperationCard from "./OperationCard";
 
 type OperationsPanelProps = {
-  operations: Operation[];
+  operations: LargeOperation[];
   dispatch: Dispatch<ScriptEditorAction>;
 };
 

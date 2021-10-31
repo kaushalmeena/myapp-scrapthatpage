@@ -1,13 +1,13 @@
 import { TextField } from "@mui/material";
 import React, { Dispatch } from "react";
 import { updateOperation } from "../../../../../actions/scriptEditor";
-import { INPUT_TYPES } from "../../../../../constants/operations";
-import { Input } from "../../../../../types/operation";
+import { INPUT_TYPES } from "../../../../../constants/input";
+import { LargeInput } from "../../../../../types/largeOperation";
 import { ScriptEditorAction } from "../../../../../types/scriptEditor";
 
 type OperationInputProps = {
   path: string;
-  input: Input;
+  input: LargeInput;
   dispatch: Dispatch<ScriptEditorAction>;
 };
 
