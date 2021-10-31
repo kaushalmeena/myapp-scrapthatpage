@@ -20,7 +20,7 @@ const Create = (): JSX.Element => {
         history.push("/search");
       })
       .catch((err) => {
-        console.log("============ err", err);
+        console.error(err);
         showSnackbar("Error ocuured while saving script", "error");
       });
   };

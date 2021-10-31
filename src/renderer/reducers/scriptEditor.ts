@@ -12,7 +12,6 @@ export const scriptEditorReducer = (
   state: ScriptEditorState,
   action: ScriptEditorAction
 ): ScriptEditorState => {
-  console.log("========= action", action);
   switch (action.type) {
     case ACTION_TYPES.SCRIPT_EDITOR_STATE_LOAD:
       return action.payload.state;
