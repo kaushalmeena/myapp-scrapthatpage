@@ -37,12 +37,7 @@ const Favorites = (): JSX.Element => {
             />
           ))
         ) : (
-          <Typography
-            margin={1}
-            textAlign="center"
-            color="GrayText"
-            variant="body2"
-          >
+          <Typography margin={1} textAlign="center" color="GrayText">
             &lt; Empty &gt;
           </Typography>
         )}
