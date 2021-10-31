@@ -24,29 +24,29 @@ const Delete = (): JSX.Element => {
   const [script, setScript] = useState<Script>(INITIAL_SCRIPT);
   const [error, setError] = useState("");
 
-  const id = Number(params.scriptId);
+  const scriptId = Number(params.scriptId);
 
   useEffect(() => {
     setStatus("loading");
-    fetchScript(id)
+    fetchScript(scriptId)
       .then((script) => {
         if (script) {
-          setStatus("loaded");
           setScript(script);
+          setStatus("loaded");
         } else {
-          setStatus("error");
           setError("Script not found in database.");
+          setStatus("error");
         }
       })
       .catch((err) => {
         console.error(err);
+        setError("Error occured while fetching.");
         setStatus("error");
-        setError("Error occured while loading script.");
       });
   }, []);
 
   const handleYesClick = () => {
-    deleteScript(id)
+    deleteScript(scriptId)
       .then(() => {
         showSnackbar("Script successfully deleted!", "success");
         history.goBack();
