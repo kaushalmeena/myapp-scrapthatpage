@@ -13,14 +13,10 @@ import {
 import React, { useContext } from "react";
 import { SETTINGS_KEYS } from "../../constants/settings";
 import { THEMES } from "../../constants/themes";
-import { SettingsContext } from "../../context/Settings";
+import { useSettings } from "../../hooks/useSettings";
 
 const Settings = (): JSX.Element => {
-  const { settings, setSettings } = useContext(SettingsContext);
-
-  const updateSettings = (key: string, value: string | number) => {
-    setSettings({ ...settings, [key]: value });
-  };
+  const { settings, setSettings } = useSettings();
 
   return (
     <>
@@ -41,10 +37,7 @@ const Settings = (): JSX.Element => {
               <Select
                 value={settings.theme}
                 onChange={(event) => {
-                  updateSettings(
-                    SETTINGS_KEYS.Theme,
-                    Number(event.target.value)
-                  );
+                  setSettings(SETTINGS_KEYS.Theme, Number(event.target.value));
                 }}
               >
                 {THEMES.map((item) => (
