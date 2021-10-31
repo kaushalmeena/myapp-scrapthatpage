@@ -15,7 +15,7 @@ export const SnackbarProvider = (props: SnackbarProviderProps): JSX.Element => {
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState<AlertColor>("success");
 
-  const handleToastOpen = (
+  const handleSnackbarOpen = (
     snackbarMessage: string,
     snackbarSeverity: AlertColor = "success"
   ) => {
@@ -24,18 +24,18 @@ export const SnackbarProvider = (props: SnackbarProviderProps): JSX.Element => {
     setOpen(true);
   };
 
-  const handleToastClose = () => {
+  const handleSnackbarClose = () => {
     setOpen(false);
   };
 
   return (
-    <SnackbarContext.Provider value={{ showSnackbar: handleToastOpen }}>
+    <SnackbarContext.Provider value={{ showSnackbar: handleSnackbarOpen }}>
       {props.children}
       <Snackbar
         open={open}
         autoHideDuration={4000}
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        onClose={handleToastClose}
+        onClose={handleSnackbarClose}
       >
         <Alert variant="filled" severity={severity}>
           {message}
