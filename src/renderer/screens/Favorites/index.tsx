@@ -17,7 +17,7 @@ const Favorites = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        showSnackbar("Error occured while fetching scripts", "error");
+        showSnackbar("Error occured while fetching.", "error");
       });
   }, []);
 
