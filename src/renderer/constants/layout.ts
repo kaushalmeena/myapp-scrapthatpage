@@ -1,10 +1,3 @@
-export enum STATUS_TYPES {
-  IDLE,
-  LOADING,
-  SUCCESS,
-  ERROR
-}
-
 export const DRAWER_WIDTH = 70;
 
 export const PAGE_LINKS = [

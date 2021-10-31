@@ -6,7 +6,6 @@ import {
   Icon,
   List,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
   ListSubheader,
   Stack,

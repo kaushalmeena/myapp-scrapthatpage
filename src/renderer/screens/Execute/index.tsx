@@ -1,11 +1,4 @@
-import {
-  InputAdornment,
-  Paper,
-  TextField,
-  Typography,
-  Box,
-  Button
-} from "@mui/material";
+import { Typography } from "@mui/material";
 import React from "react";
 
 const Execute = (): JSX.Element => {

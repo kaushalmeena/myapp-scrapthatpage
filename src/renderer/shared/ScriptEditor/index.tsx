@@ -27,13 +27,13 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
 
   const handleSaveClick = () => {
     const { errors, newState } = validateScriptEditorState(state);
-    console.log("======== save click", errors);
-    // if (errors.length > 0) {
-    //   dispatch(loadScriptEditorState(newState));
-    //   showSnackbar(errors[0], "error");
-    // } else {
-    //   props.onSubmit(state);
-    // }
+    if (errors.length > 0) {
+      const message = errors[0];
+      dispatch(loadScriptEditorState(newState));
+      showSnackbar(message, "error");
+    } else {
+      props.onSubmit(state);
+    }
   };
 
   return (

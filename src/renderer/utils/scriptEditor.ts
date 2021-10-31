@@ -59,7 +59,8 @@ export const getScriptFromScriptEditorState = (
   state: ScriptEditorState
 ): Script => {
   return {
-    id: state.scriptId,
+    id: state.id,
+    favourite: state.favourite,
     name: state.information.name.value,
     description: state.information.description.value,
     operations: convertToSmallOperations(state.operations)
@@ -70,7 +71,8 @@ export const getScriptEditorStateFromScript = (
   script: Script
 ): ScriptEditorState => {
   return produce(INITIAL_SCRIPT_EDITOR_STATE, (draft) => {
-    draft.scriptId = script.id;
+    draft.id = script.id;
+    draft.favourite = script.favourite;
     draft.information.name.value = script.name;
     draft.information.description.value = script.description;
     draft.operations = convertToLargeOperations(script.operations);
