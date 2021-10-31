@@ -26,25 +26,25 @@ const Update = (): JSX.Element => {
     INITIAL_SCRIPT_EDITOR_STATE
   );
 
+  const scriptId = Number(params.scriptId);
+
   useEffect(() => {
-    const id = Number(params.scriptId);
     setStatus("loading");
-    fetchScript(id)
+    fetchScript(scriptId)
       .then((script) => {
         if (script) {
           const state = getScriptEditorStateFromScript(script);
-          console.log("=========== stattus", status);
-          setStatus("loaded");
           setScriptEditorState(state);
+          setStatus("loaded");
         } else {
-          setStatus("error");
           setError("Script not found in database.");
+          setStatus("error");
         }
       })
       .catch((err) => {
         console.error(err);
+        setError("Error occured while fetching.");
         setStatus("error");
-        setError("Error occured while loading script.");
       });
   }, []);
 
@@ -57,7 +57,7 @@ const Update = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        showSnackbar("Error ocuured while updating.", "error");
+        showSnackbar("Error occured while updating.", "error");
       });
   };
 
