@@ -8,9 +8,9 @@ import { Script } from "../../types/script";
 const Search = (): JSX.Element => {
   const { showSnackbar } = useSnackbar();
 
-  const [query, setQuery] = useState("");
   const [allScripts, setAllScripts] = useState<Script[]>([]);
   const [filteredScripts, setFilteredScripts] = useState<Script[]>([]);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     fetchAllScripts()
@@ -61,12 +61,7 @@ const Search = (): JSX.Element => {
             />
           ))
         ) : (
-          <Typography
-            margin={1}
-            textAlign="center"
-            color="GrayText"
-            variant="body2"
-          >
+          <Typography margin={1} textAlign="center" color="GrayText">
             &lt; Empty &gt;
           </Typography>
         )}
