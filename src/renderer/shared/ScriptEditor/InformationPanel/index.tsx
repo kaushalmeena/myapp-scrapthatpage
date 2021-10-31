@@ -11,9 +11,7 @@ type InformationPanelProps = {
 
 const InformationPanel = (props: InformationPanelProps): JSX.Element => {
   const handleInformationChange = (event: ChangeEvent<HTMLInputElement>) => {
-    props.dispatch(
-      updateInformation(event.target.value, `information.${event.target.name}`)
-    );
+    props.dispatch(updateInformation(event.target.value, event.target.name));
   };
 
   return (

@@ -1,14 +1,19 @@
 import { CircularProgress, Typography, Box } from "@mui/material";
 import React, { useState } from "react";
 import { STATUS_TYPES } from "../../constants/layout";
+import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
 import { createScript } from "../../database/main";
+import { useSnackbar } from "../../hooks/useSnackbar";
 import ScriptEditor from "../../shared/ScriptEditor";
 import { Script } from "../../types/script";
+import { ScriptEditorState } from "../../types/scriptEditor";
+import { getScriptFromScriptEditorState } from "../../utils/scriptEditor";
 
 const Create = (): JSX.Element => {
   const [status, setStatus] = useState(STATUS_TYPES.SUCCESS);
 
-  const handleSubmit = (script: Script) => {
+  const handleSubmit = (state: ScriptEditorState) => {
+    const script = getScriptFromScriptEditorState(state);
     createScript(script).then((res) => {
       console.log("============ res", res);
     });
@@ -33,7 +38,10 @@ const Create = (): JSX.Element => {
           <Typography fontSize={28} fontWeight="400">
             Create
           </Typography>
-          <ScriptEditor onSubmit={handleSubmit} />
+          <ScriptEditor
+            initialState={INITIAL_SCRIPT_EDITOR_STATE}
+            onSubmit={handleSubmit}
+          />
         </>
       )}
     </>

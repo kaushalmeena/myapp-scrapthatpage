@@ -1,8 +1,12 @@
 import produce from "immer";
-import { del, get, push, set } from "object-path";
+import { del, get, push } from "object-path";
 import { ACTION_TYPES } from "../actions/scriptEditor";
 import { ScriptEditorAction, ScriptEditorState } from "../types/scriptEditor";
-import { validateInput } from "../utils/scriptEditor";
+import {
+  getOperationPathAndIndex,
+  swapScriptEditorOperations,
+  updateScriptEditorField
+} from "../utils/scriptEditor";
 
 export const scriptEditorReducer = (
   state: ScriptEditorState,
@@ -10,16 +14,12 @@ export const scriptEditorReducer = (
 ): ScriptEditorState => {
   console.log("========= action", action);
   switch (action.type) {
+    case ACTION_TYPES.SCRIPT_EDITOR_STATE_LOAD:
+      return action.payload.state;
     case ACTION_TYPES.INFORMATION_UPDATE:
       return produce(state, (draft) => {
-        const valuePath = `${action.payload.path}.value`;
-        const errorPath = `${action.payload.path}.error`;
-        const rulesPath = `${action.payload.path}.rules`;
-        const value = action.payload.value;
-        const rules = get(draft, rulesPath);
-        const error = validateInput(value, rules);
-        set(draft, valuePath, value);
-        set(draft, errorPath, error);
+        const path = `information.${action.payload.key}`;
+        updateScriptEditorField(draft, action.payload.value, path);
       });
     case ACTION_TYPES.SELECTOR_OPEN:
       return produce(state, (draft) => {
@@ -40,49 +40,34 @@ export const scriptEditorReducer = (
       });
     case ACTION_TYPES.OPERATION_MOVE_UP:
       return produce(state, (draft) => {
-        const tempPath = action.payload.path;
-        const lastIndex = tempPath.lastIndexOf(".");
-        const operationPath = tempPath.substr(0, lastIndex);
-        const operationIndex = Number.parseInt(
-          tempPath.substr(lastIndex + 1, 1)
+        const { operationPath, operationIndex } = getOperationPathAndIndex(
+          action.payload.path
         );
         if (operationIndex > 0) {
           const path1 = `${operationPath}.${operationIndex}`;
           const path2 = `${operationPath}.${operationIndex - 1}`;
-          const opr1 = get(draft, path1);
-          const opr2 = get(draft, path2);
-          set(draft, path1, opr2);
-          set(draft, path2, opr1);
+          swapScriptEditorOperations(draft, path1, path2);
         }
       });
     case ACTION_TYPES.OPERATION_MOVE_DOWN:
       return produce(state, (draft) => {
-        const tempPath = action.payload.path;
-        const lastIndex = tempPath.lastIndexOf(".");
-        const operationPath = tempPath.substr(0, lastIndex);
-        const operationIndex = Number.parseInt(
-          tempPath.substr(lastIndex + 1, 1)
+        const { operationPath, operationIndex } = getOperationPathAndIndex(
+          action.payload.path
         );
         const operations = get(draft, operationPath);
         if (operationIndex < operations.length - 1) {
           const path1 = `${operationPath}.${operationIndex}`;
           const path2 = `${operationPath}.${operationIndex + 1}`;
-          const opr1 = get(draft, path1);
-          const opr2 = get(draft, path2);
-          set(draft, path1, opr2);
-          set(draft, path2, opr1);
+          swapScriptEditorOperations(draft, path1, path2);
         }
       });
     case ACTION_TYPES.OPERATION_UPDATE:
       return produce(state, (draft) => {
-        const valuePath = `${action.payload.path}.value`;
-        const errorPath = `${action.payload.path}.error`;
-        const rulesPath = `${action.payload.path}.rules`;
-        const value = action.payload.value;
-        const rules = get(draft, rulesPath);
-        const error = validateInput(value, rules);
-        set(draft, valuePath, value);
-        set(draft, errorPath, error);
+        updateScriptEditorField(
+          draft,
+          action.payload.value,
+          action.payload.path
+        );
       });
     default:
   }

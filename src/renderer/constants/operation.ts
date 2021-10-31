@@ -1,0 +1,12 @@
+export enum OPERATION_TYPES {
+  OPEN,
+  EXTRACT,
+  CLICK,
+  TYPE,
+  SET,
+  IF,
+  IF_ELSE,
+  REPEAT,
+  REPEAT_UNTIL,
+  REPEAT_WHILE
+}

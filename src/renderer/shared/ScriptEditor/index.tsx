@@ -1,23 +1,24 @@
 import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
 import React, { SyntheticEvent, useReducer, useState } from "react";
-import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
+import { loadScriptEditorState } from "../../actions/scriptEditor";
+import { useSnackbar } from "../../hooks/useSnackbar";
 import { scriptEditorReducer } from "../../reducers/scriptEditor";
-import { Script } from "../../types/script";
-import { convertToScript } from "../../utils/scriptEditor";
+import { ScriptEditorState } from "../../types/scriptEditor";
+import { validateScriptEditorState } from "../../utils/scriptEditor";
 import InformationPanel from "./InformationPanel";
 import OperationSelector from "./OperationSelector";
 import OperationsPanel from "./OperationsPanel";
 
 type ScriptEditorProps = {
-  script?: Script;
-  onSubmit: (script: Script) => void;
+  initialState: ScriptEditorState;
+  onSubmit: (state: ScriptEditorState) => void;
 };
 
 const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
-  const [state, dispatch] = useReducer(
-    scriptEditorReducer,
-    INITIAL_SCRIPT_EDITOR_STATE
-  );
+  const { showSnackbar } = useSnackbar();
+
+  const [state, dispatch] = useReducer(scriptEditorReducer, props.initialState);
+
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event: SyntheticEvent, value: number) => {
@@ -25,8 +26,14 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
   };
 
   const handleSaveClick = () => {
-    const convertedScript = convertToScript(state);
-    props.onSubmit(convertedScript);
+    const { errors, newState } = validateScriptEditorState(state);
+    console.log("======== save click", errors);
+    // if (errors.length > 0) {
+    //   dispatch(loadScriptEditorState(newState));
+    //   showSnackbar(errors[0], "error");
+    // } else {
+    //   props.onSubmit(state);
+    // }
   };
 
   return (

@@ -1,11 +1,18 @@
 import { ACTION_TYPES } from "../actions/scriptEditor";
 import { Information } from "./information";
-import { Operation } from "./operation";
+import { LargeOperation } from "./largeOperation";
+
+export type ScriptEditorStateLoadAction = {
+  type: ACTION_TYPES.SCRIPT_EDITOR_STATE_LOAD;
+  payload: {
+    state: ScriptEditorState;
+  };
+};
 
 export type InformationUpdateAction = {
   type: ACTION_TYPES.INFORMATION_UPDATE;
   payload: {
-    path: string;
+    key: string;
     value: string;
   };
 };
@@ -24,7 +31,7 @@ export type SelectorCloseAction = {
 export type OperationAppendAction = {
   type: ACTION_TYPES.OPERATION_APPEND;
   payload: {
-    operation: Operation;
+    operation: LargeOperation;
   };
 };
 
@@ -58,6 +65,7 @@ export type OperationMoveDownAction = {
 };
 
 export type ScriptEditorAction =
+  | ScriptEditorStateLoadAction
   | InformationUpdateAction
   | OperationAppendAction
   | OperationDeleteAction
@@ -75,6 +83,6 @@ export type OperationSelector = {
 export type ScriptEditorState = {
   scriptId: string;
   information: Information;
-  operations: Operation[];
+  operations: LargeOperation[];
   selector: OperationSelector;
 };

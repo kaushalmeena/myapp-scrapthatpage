@@ -1,27 +1,9 @@
-import { Operation } from "../types/operation";
+import { LargeOperation } from "../types/largeOperation";
+import { INPUT_TYPES } from "./input";
+import { OPERATION_TYPES } from "./operation";
 import { VALIDATION_TYPES } from "./validation";
 
-export enum OPERATION_TYPES {
-  OPEN,
-  EXTRACT,
-  CLICK,
-  TYPE,
-  SET,
-  IF,
-  IF_ELSE,
-  REPEAT,
-  REPEAT_UNTIL,
-  REPEAT_WHILE
-}
-
-export enum INPUT_TYPES {
-  TEXT,
-  TEXTAREA,
-  OPERATION_BOX,
-  VARIABLE_BOX
-}
-
-export const OPERTAIONS: Operation[] = [
+export const LARGE_OPERTAIONS: LargeOperation[] = [
   {
     name: "OPEN",
     type: OPERATION_TYPES.OPEN,

@@ -1,16 +1,19 @@
-import { Operation } from "../types/operation";
+import { LargeOperation } from "../types/largeOperation";
 import {
   InformationUpdateAction,
-  OperationMoveUpAction,
-  OperationMoveDownAction,
-  OperationDeleteAction,
-  OperationUpdateAction,
   OperationAppendAction,
-  SelectorOpenAction,
-  SelectorCloseAction
+  OperationDeleteAction,
+  OperationMoveDownAction,
+  OperationMoveUpAction,
+  OperationUpdateAction,
+  ScriptEditorState,
+  ScriptEditorStateLoadAction,
+  SelectorCloseAction,
+  SelectorOpenAction
 } from "../types/scriptEditor";
 
 export enum ACTION_TYPES {
+  SCRIPT_EDITOR_STATE_LOAD,
   INFORMATION_UPDATE,
   OPERATION_APPEND,
   OPERATION_UPDATE,
@@ -21,19 +24,28 @@ export enum ACTION_TYPES {
   SELECTOR_CLOSE
 }
 
+export const loadScriptEditorState = (
+  state: ScriptEditorState
+): ScriptEditorStateLoadAction => ({
+  type: ACTION_TYPES.SCRIPT_EDITOR_STATE_LOAD,
+  payload: {
+    state
+  }
+});
+
 export const updateInformation = (
   value: string,
-  path: string
+  key: string
 ): InformationUpdateAction => ({
   type: ACTION_TYPES.INFORMATION_UPDATE,
   payload: {
     value,
-    path
+    key
   }
 });
 
 export const appendOperation = (
-  operation: Operation
+  operation: LargeOperation
 ): OperationAppendAction => ({
   type: ACTION_TYPES.OPERATION_APPEND,
   payload: {

@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import React, { Dispatch } from "react";
 import { appendOperation, closeSelector } from "../../../actions/scriptEditor";
-import { OPERTAIONS } from "../../../constants/operations";
-import { Operation } from "../../../types/operation";
+import { LARGE_OPERTAIONS } from "../../../constants/largeOperations";
+import { LargeOperation } from "../../../types/largeOperation";
 import {
   OperationSelector,
   ScriptEditorAction
@@ -26,7 +26,7 @@ const OperationSelector = (props: OperationSelectorProps): JSX.Element => {
     props.dispatch(closeSelector());
   };
 
-  const handleSelect = (item: Operation) => {
+  const handleSelect = (item: LargeOperation) => {
     props.dispatch(appendOperation(item));
     props.dispatch(closeSelector());
   };
@@ -41,7 +41,7 @@ const OperationSelector = (props: OperationSelectorProps): JSX.Element => {
       <DialogTitle>Select Operation</DialogTitle>
       <Box overflow="scroll">
         <List disablePadding>
-          {OPERTAIONS.map((item) => (
+          {LARGE_OPERTAIONS.map((item) => (
             <ListItemButton
               key={`list-item-${item.type}`}
               onClick={() => {

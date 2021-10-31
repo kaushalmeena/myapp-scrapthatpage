@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
 import ScriptEditor from "../../shared/ScriptEditor";
 import { Script } from "../../types/script";
+import { ScriptEditorState } from "../../types/scriptEditor";
 // import { convertToLargeOperations } from "../../utils/operations";
 
 const operations = [
@@ -26,8 +27,8 @@ const Update = (): JSX.Element => {
     INITIAL_SCRIPT_EDITOR_STATE
   );
 
-  const handleSubmit = (script: Script) => {
-    console.log("============ script", script);
+  const handleSubmit = (state: ScriptEditorState) => {
+    console.log("============ script", state);
   };
 
   // useEffect(() => {
@@ -42,7 +43,10 @@ const Update = (): JSX.Element => {
       <Typography fontSize={28} fontWeight="400">
         Update
       </Typography>
-      <ScriptEditor onSubmit={handleSubmit} />
+      <ScriptEditor
+        initialState={INITIAL_SCRIPT_EDITOR_STATE}
+        onSubmit={handleSubmit}
+      />
     </>
   );
 };

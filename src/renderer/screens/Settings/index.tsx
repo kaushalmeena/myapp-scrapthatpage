@@ -10,7 +10,7 @@ import {
   Select,
   Typography
 } from "@mui/material";
-import React, { useContext } from "react";
+import React from "react";
 import { SETTINGS_KEYS } from "../../constants/settings";
 import { THEMES } from "../../constants/themes";
 import { useSettings } from "../../hooks/useSettings";
