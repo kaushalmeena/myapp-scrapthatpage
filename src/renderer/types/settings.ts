@@ -4,7 +4,7 @@ export type Settings = {
   theme: THEME_TYPES;
 };
 
-export type SettingsContext = {
+export type SettingsInterface = {
   settings: Settings;
-  setSettings: (settings: Settings) => void;
+  setSettings: (key: string, value: string | number) => void;
 };
