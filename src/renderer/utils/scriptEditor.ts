@@ -104,7 +104,7 @@ const validateScriptEditorOperationsDraft = (
     });
     if (inputErrors.length > 0) {
       const operationNumber = getOperationNumber(operationPath);
-      errors.push(`Please fix error(s) in operation no. ${operationNumber}`);
+      errors.push(`Please fix error in operation ${operationNumber}`);
     }
   });
 };
