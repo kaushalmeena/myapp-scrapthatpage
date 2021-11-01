@@ -3,6 +3,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Chip,
   Collapse,
   Icon,
   IconButton,
@@ -16,7 +17,8 @@ import {
 } from "../../../../actions/scriptEditor";
 import { LargeOperation } from "../../../../types/largeOperation";
 import { ScriptEditorAction } from "../../../../types/scriptEditor";
-import { formatHeading } from "../../../../utils/operation";
+import { getOperationSubheader } from "../../../../utils/operation";
+import { getOperationNumber } from "../../../../utils/scriptEditor";
 import OperationInput from "./OperationInput";
 
 type OperationCardProps = {
@@ -44,38 +46,49 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
     props.dispatch(deleteOperation(props.path));
   };
 
+  const operationNumber = getOperationNumber(props.path);
+  const operationSubheader = getOperationSubheader(
+    props.operation.format,
+    props.operation.inputs
+  );
+
   return (
     <Card variant="outlined">
       <CardHeader
+        avatar={<Chip variant="outlined" label={operationNumber} />}
         title={props.operation.name}
-        subheader={formatHeading(
-          props.operation.format,
-          props.operation.inputs
-        )}
+        subheader={operationSubheader}
         action={
           <Stack direction="row">
-            <IconButton title="Move-up operation" onClick={handleMoveUpClick}>
-              <Icon>arrow_upward</Icon>
+            <IconButton
+              size="small"
+              title="Move-up operation"
+              onClick={handleMoveUpClick}
+            >
+              <Icon fontSize="small">arrow_upward</Icon>
             </IconButton>
             <IconButton
+              size="small"
               title="Move-down operation"
               onClick={handleMoveDownClick}
             >
-              <Icon>arrow_downward</Icon>
+              <Icon fontSize="small">arrow_downward</Icon>
             </IconButton>
             <IconButton
+              size="small"
               title="Edit operation"
               color="primary"
               onClick={handleExpandToogle}
             >
-              <Icon>{expanded ? "edit_off" : "edit"}</Icon>
+              <Icon fontSize="small">{expanded ? "edit_off" : "edit"}</Icon>
             </IconButton>
             <IconButton
+              size="small"
               title="Delete operation"
               color="secondary"
               onClick={handleDeleteClick}
             >
-              <Icon>clear</Icon>
+              <Icon fontSize="small">clear</Icon>
             </IconButton>
           </Stack>
         }

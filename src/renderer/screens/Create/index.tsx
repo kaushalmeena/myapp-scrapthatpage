@@ -1,9 +1,9 @@
-import { Typography } from "@mui/material";
 import React from "react";
 import { useHistory } from "react-router";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
 import { createScript } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
+import PageName from "../../shared/PageName";
 import ScriptEditor from "../../shared/ScriptEditor";
 import { ScriptEditorState } from "../../types/scriptEditor";
 import { getScriptFromScriptEditorState } from "../../utils/scriptEditor";
@@ -27,9 +27,7 @@ const Create = (): JSX.Element => {
 
   return (
     <>
-      <Typography fontSize={28} fontWeight="400">
-        Create
-      </Typography>
+      <PageName name="Create" />
       <ScriptEditor
         initialState={INITIAL_SCRIPT_EDITOR_STATE}
         onSubmit={handleSubmit}

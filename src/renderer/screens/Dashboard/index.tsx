@@ -14,41 +14,38 @@ import {
 import React from "react";
 import { useHistory } from "react-router";
 import { PAGE_LINKS } from "../../constants/layout";
+import PageName from "../../shared/PageName";
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
   return (
     <>
-      <Typography fontSize={28} fontWeight="400">
-        Dashboard
-      </Typography>
-      <Stack marginTop={2} direction="row">
-        <Box flex={1}>
-          <Stack gap={1}>
-            {PAGE_LINKS.map((link) => (
-              <Card key={`link-${link.title}`} variant="outlined">
-                <CardActionArea onClick={() => history.push(link.route)}>
-                  <CardHeader
-                    avatar={<Icon fontSize="large">{link.icon}</Icon>}
-                    title={link.title}
-                    titleTypographyProps={{ fontSize: 18, fontWeight: "400" }}
-                    subheader={link.subtitle}
-                  />
-                </CardActionArea>
-              </Card>
-            ))}
-          </Stack>
-        </Box>
+      <PageName name="Dashboard" />
+      <Box display="flex" flexDirection="row">
+        <Stack gap={1} flex={1}>
+          {PAGE_LINKS.map((link) => (
+            <Card key={`link-${link.title}`} variant="outlined">
+              <CardActionArea onClick={() => history.push(link.route)}>
+                <CardHeader
+                  avatar={<Icon fontSize="large">{link.icon}</Icon>}
+                  title={link.title}
+                  titleTypographyProps={{ fontSize: 18, fontWeight: "400" }}
+                  subheader={link.subtitle}
+                />
+              </CardActionArea>
+            </Card>
+          ))}
+        </Stack>
         <Box marginX={2} display="flex" flexDirection="row" flex={1}>
           <Icon sx={{ color: "primary.main", fontSize: 84 }}>find_in_page</Icon>
-          <Box>
+          <Stack>
             <Typography variant="h5">ScrapThatPage!</Typography>
             <Typography variant="subtitle1">
               v{process.env.npm_package_version}
             </Typography>
-          </Box>
+          </Stack>
         </Box>
-      </Stack>
+      </Box>
       <Box marginTop={2} display="flex" flexDirection="row">
         <Box flex={1}>
           <List

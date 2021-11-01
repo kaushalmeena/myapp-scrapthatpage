@@ -5,7 +5,7 @@ import { ScriptEditorAction, ScriptEditorState } from "../types/scriptEditor";
 import {
   getOperationPathAndIndex,
   swapScriptEditorOperations,
-  updateScriptEditorField
+  updateScriptEditorFieldDraft
 } from "../utils/scriptEditor";
 
 export const scriptEditorReducer = (
@@ -18,7 +18,7 @@ export const scriptEditorReducer = (
     case ACTION_TYPES.INFORMATION_UPDATE:
       return produce(state, (draft) => {
         const path = `information.${action.payload.key}`;
-        updateScriptEditorField(draft, action.payload.value, path);
+        updateScriptEditorFieldDraft(draft, action.payload.value, path);
       });
     case ACTION_TYPES.SELECTOR_OPEN:
       return produce(state, (draft) => {
@@ -62,7 +62,7 @@ export const scriptEditorReducer = (
       });
     case ACTION_TYPES.OPERATION_UPDATE:
       return produce(state, (draft) => {
-        updateScriptEditorField(
+        updateScriptEditorFieldDraft(
           draft,
           action.payload.value,
           action.payload.path

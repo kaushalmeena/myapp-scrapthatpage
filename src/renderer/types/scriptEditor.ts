@@ -82,7 +82,7 @@ export type OperationSelector = {
 
 export type ScriptEditorState = {
   id?: number;
-  favourite: number;
+  favorite: number;
   information: Information;
   operations: LargeOperation[];
   selector: OperationSelector;
