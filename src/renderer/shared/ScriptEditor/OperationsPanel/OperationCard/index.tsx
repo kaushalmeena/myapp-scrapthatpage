@@ -58,10 +58,10 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
   return (
     <Card
       variant="outlined"
-      style={{
+      sx={{
         backgroundColor: isOperationValid(props.operation)
-          ? "rgba(250, 0, 0, 0.1)"
-          : "auto"
+          ? "auto"
+          : "rgba(250, 0, 0, 0.1)"
       }}
     >
       <CardHeader

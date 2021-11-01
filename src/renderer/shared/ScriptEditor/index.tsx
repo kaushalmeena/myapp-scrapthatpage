@@ -38,7 +38,7 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
 
   return (
     <>
-      <Stack marginBottom={2} direction="row">
+      <Stack direction="row" marginBottom={2} justifyContent="flex-end">
         <Button variant="contained" onClick={handleSubmitClick}>
           Submit
         </Button>
