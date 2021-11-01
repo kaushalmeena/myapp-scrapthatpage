@@ -3,23 +3,23 @@ import { Script } from "../types/script";
 
 const DATABASE_NAME = "main_database";
 
-class Database extends Dexie {
+class MainDatabase extends Dexie {
   public scripts: Dexie.Table<Script, number>;
 
   public constructor(name: string) {
     super(name);
-    this.version(1).stores({ scripts: "++id, name, favourite" });
+    this.version(1).stores({ scripts: "++id, name, favorite" });
     this.scripts = this.table("scripts");
   }
 }
 
-export const db = new Database(DATABASE_NAME);
+export const db = new MainDatabase(DATABASE_NAME);
 
 export const fetchAllScripts = (): PromiseExtended<Script[]> =>
-  db.scripts.toArray();
+  db.scripts.reverse().toArray();
 
 export const fetchAllFavoriteScripts = (): PromiseExtended<Script[]> =>
-  db.scripts.where("favourite").equals(1).toArray();
+  db.scripts.where("favorite").equals(1).reverse().toArray();
 
 export const fetchScript = (id: number): PromiseExtended<Script | undefined> =>
   db.scripts.get(id);
@@ -32,3 +32,8 @@ export const updateScript = (script: Script): PromiseExtended<number> =>
 
 export const deleteScript = (id: number): PromiseExtended<void> =>
   db.scripts.delete(id);
+
+export const updateFavoriteScriptField = (
+  id: number,
+  value: number
+): PromiseExtended<number> => db.scripts.update(id, { favorite: value });
