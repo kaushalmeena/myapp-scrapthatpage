@@ -17,7 +17,10 @@ import {
 } from "../../../../actions/scriptEditor";
 import { LargeOperation } from "../../../../types/largeOperation";
 import { ScriptEditorAction } from "../../../../types/scriptEditor";
-import { getOperationSubheader } from "../../../../utils/operation";
+import {
+  getOperationSubheader,
+  isOperationValid
+} from "../../../../utils/operation";
 import { getOperationNumber } from "../../../../utils/scriptEditor";
 import OperationInput from "./OperationInput";
 
@@ -53,7 +56,14 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
   );
 
   return (
-    <Card variant="outlined">
+    <Card
+      variant="outlined"
+      style={{
+        backgroundColor: isOperationValid(props.operation)
+          ? "rgba(250, 0, 0, 0.1)"
+          : "auto"
+      }}
+    >
       <CardHeader
         avatar={<Chip variant="outlined" label={operationNumber} />}
         title={props.operation.name}
