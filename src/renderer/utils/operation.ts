@@ -68,7 +68,7 @@ export const getOperationSubheader = (
   });
 
 export const isOperationValid = (operation: LargeOperation): boolean =>
-  operation.inputs.some((input) => "error" in input && !!input.error);
+  operation.inputs.some((input) => "error" in input && !input.error);
 
 export const validateInput = (
   value: string,
