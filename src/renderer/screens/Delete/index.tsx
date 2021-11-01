@@ -10,6 +10,7 @@ import { useHistory, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import { deleteScript, fetchScript } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
+import PageName from "../../shared/PageName";
 import { PAGE_STATUS } from "../../types/layout";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";
@@ -49,7 +50,7 @@ const Delete = (): JSX.Element => {
     deleteScript(scriptId)
       .then(() => {
         showSnackbar("Script successfully deleted!", "success");
-        history.goBack();
+        history.push("/search");
       })
       .catch((err) => {
         console.error(err);
@@ -63,20 +64,13 @@ const Delete = (): JSX.Element => {
 
   return (
     <>
-      <Typography fontSize={28} fontWeight="400">
-        Delete
-      </Typography>
-      <Box
-        marginY={2}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-      >
+      <PageName name="Delete" />
+      <Box display="flex" flexDirection="column" alignItems="center">
         {status === "loading" ? <CircularProgress /> : null}
         {status === "loaded" ? (
           <>
             <Typography variant="h6">
-              Do you want to delete script <strong>{script.name}</strong> ?
+              Do you want to delete {script.name} ?
             </Typography>
             <Stack direction="row" gap={2} marginTop={2}>
               <Button variant="outlined" onClick={handleYesClick}>

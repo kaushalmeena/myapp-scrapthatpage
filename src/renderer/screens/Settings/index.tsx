@@ -7,22 +7,20 @@ import {
   ListItemIcon,
   ListItemText,
   MenuItem,
-  Select,
-  Typography
+  Select
 } from "@mui/material";
 import React from "react";
 import { SETTINGS_KEYS } from "../../constants/settings";
 import { THEMES } from "../../constants/themes";
 import { useSettings } from "../../hooks/useSettings";
+import PageName from "../../shared/PageName";
 
 const Settings = (): JSX.Element => {
   const { settings, setSettings } = useSettings();
 
   return (
     <>
-      <Typography fontSize={28} fontWeight="400">
-        Settings
-      </Typography>
+      <PageName name="Settings" />
       <Box maxWidth={500}>
         <List>
           <ListItem>

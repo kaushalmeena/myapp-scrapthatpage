@@ -33,8 +33,8 @@ export const SnackbarProvider = (props: SnackbarProviderProps): JSX.Element => {
       {props.children}
       <Snackbar
         open={open}
-        autoHideDuration={4000}
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         onClose={handleSnackbarClose}
       >
         <Alert variant="filled" severity={severity}>

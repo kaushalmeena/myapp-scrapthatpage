@@ -2,6 +2,7 @@ import { Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { fetchAllFavoriteScripts } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
+import PageName from "../../shared/PageName";
 import ScriptCard from "../../shared/ScriptCard";
 import { Script } from "../../types/script";
 
@@ -23,10 +24,8 @@ const Favorites = (): JSX.Element => {
 
   return (
     <>
-      <Typography marginBottom={1} fontSize={28} fontWeight="400">
-        Favorites
-      </Typography>
-      <Stack marginY={2} gap={1}>
+      <PageName name="Favorites" />
+      <Stack gap={1}>
         {scripts.length > 0 ? (
           scripts.map((item) => (
             <ScriptCard

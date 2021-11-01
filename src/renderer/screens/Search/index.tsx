@@ -2,6 +2,7 @@ import { Stack, TextField, Typography } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { fetchAllScripts } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
+import PageName from "../../shared/PageName";
 import ScriptCard from "../../shared/ScriptCard";
 import { Script } from "../../types/script";
 
@@ -40,9 +41,7 @@ const Search = (): JSX.Element => {
 
   return (
     <>
-      <Typography marginBottom={1} fontSize={28} fontWeight="400">
-        Search
-      </Typography>
+      <PageName name="Search" />
       <TextField
         fullWidth
         variant="outlined"
@@ -50,7 +49,7 @@ const Search = (): JSX.Element => {
         value={query}
         onChange={handleQueryChange}
       />
-      <Stack marginY={2} gap={1}>
+      <Stack marginTop={2} gap={1}>
         {filteredScripts.length > 0 ? (
           filteredScripts.map((item) => (
             <ScriptCard

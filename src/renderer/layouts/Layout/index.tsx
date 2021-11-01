@@ -18,6 +18,7 @@ type LayoutProps = {
 
 const Layout = (props: LayoutProps): JSX.Element => {
   const history = useHistory();
+
   return (
     <Box display="flex">
       <Drawer

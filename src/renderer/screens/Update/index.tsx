@@ -4,6 +4,7 @@ import { useHistory, useParams } from "react-router";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
 import { fetchScript, updateScript } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
+import PageName from "../../shared/PageName";
 import ScriptEditor from "../../shared/ScriptEditor";
 import { PAGE_STATUS } from "../../types/layout";
 import { Params } from "../../types/router";
@@ -63,9 +64,7 @@ const Update = (): JSX.Element => {
 
   return (
     <>
-      <Typography fontSize={28} fontWeight="400">
-        Update
-      </Typography>
+      <PageName name="Update" />
       {status === "loaded" ? (
         <ScriptEditor
           initialState={scriptEditorState}
@@ -74,7 +73,7 @@ const Update = (): JSX.Element => {
       ) : null}
       {status === "loading" || status === "error" ? (
         <Box
-          marginY={2}
+          marginTop={2}
           display="flex"
           flexDirection="column"
           alignItems="center"

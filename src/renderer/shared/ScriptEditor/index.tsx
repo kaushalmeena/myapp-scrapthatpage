@@ -25,7 +25,7 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
     setTabValue(value);
   };
 
-  const handleSaveClick = () => {
+  const handleSubmitClick = () => {
     const { errors, newState } = validateScriptEditorState(state);
     if (errors.length > 0) {
       const message = errors[0];
@@ -38,9 +38,9 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
 
   return (
     <>
-      <Stack marginBottom={2} direction="row" justifyContent="flex-end">
-        <Button variant="contained" onClick={handleSaveClick}>
-          Save
+      <Stack marginBottom={2} direction="row">
+        <Button variant="contained" onClick={handleSubmitClick}>
+          Submit
         </Button>
       </Stack>
       <Box

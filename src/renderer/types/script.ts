@@ -2,7 +2,7 @@ import { SmallOperation } from "./smallOperation";
 
 export type Script = {
   id?: number;
-  favourite: number;
+  favorite: number;
   name: string;
   description: string;
   operations: SmallOperation[];
