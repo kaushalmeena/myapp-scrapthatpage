@@ -3,7 +3,7 @@ import React, { createContext, ReactNode, useState } from "react";
 import { SnackbarInterface } from "../../types/snackbar";
 
 export const SnackbarContext = createContext<SnackbarInterface>({
-  showSnackbar: () => null
+  show: () => null
 });
 
 type SnackbarProviderProps = {
@@ -28,8 +28,12 @@ export const SnackbarProvider = (props: SnackbarProviderProps): JSX.Element => {
     setOpen(false);
   };
 
+  const contextValue = {
+    show: handleSnackbarOpen
+  };
+
   return (
-    <SnackbarContext.Provider value={{ showSnackbar: handleSnackbarOpen }}>
+    <SnackbarContext.Provider value={contextValue}>
       {props.children}
       <Snackbar
         open={open}

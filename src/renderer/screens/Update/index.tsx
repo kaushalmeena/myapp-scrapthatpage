@@ -15,10 +15,9 @@ import {
 } from "../../utils/scriptEditor";
 
 const Update = (): JSX.Element => {
-  const { showSnackbar } = useSnackbar();
-
-  const params = useParams<Params>();
+  const snackbar = useSnackbar();
   const history = useHistory();
+  const params = useParams<Params>();
 
   const [status, setStatus] = useState<PAGE_STATUS>("loading");
   const [error, setError] = useState("");
@@ -53,37 +52,35 @@ const Update = (): JSX.Element => {
     const script = getScriptFromScriptEditorState(state);
     updateScript(script)
       .then(() => {
-        showSnackbar("Script successfully updated!", "success");
+        snackbar.show("Script successfully updated!", "success");
         history.push("/search");
       })
       .catch((err) => {
         console.error(err);
-        showSnackbar("Error occured while updating.", "error");
+        snackbar.show("Error occured while updating.", "error");
       });
   };
 
   return (
     <>
       <PageName name="Update" />
-      {status === "loaded" ? (
+      {status === "loaded" && (
         <ScriptEditor
           initialState={scriptEditorState}
           onSubmit={handleSubmit}
         />
-      ) : null}
-      {status === "loading" || status === "error" ? (
+      )}
+      {(status === "loading" || status === "error") && (
         <Box
           marginTop={2}
           display="flex"
           flexDirection="column"
           alignItems="center"
         >
-          {status === "loading" ? <CircularProgress /> : null}
-          {status === "error" ? (
-            <Typography variant="h6">{error}</Typography>
-          ) : null}
+          {status === "loading" && <CircularProgress />}
+          {status === "error" && <Typography variant="h6">{error}</Typography>}
         </Box>
-      ) : null}
+      )}
     </>
   );
 };

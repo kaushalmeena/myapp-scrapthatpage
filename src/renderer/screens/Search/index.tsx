@@ -1,4 +1,10 @@
-import { Stack, TextField, Typography } from "@mui/material";
+import {
+  Icon,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography
+} from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { fetchAllScripts } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
@@ -7,7 +13,7 @@ import ScriptCard from "../../shared/ScriptCard";
 import { Script } from "../../types/script";
 
 const Search = (): JSX.Element => {
-  const { showSnackbar } = useSnackbar();
+  const snackbar = useSnackbar();
 
   const [allScripts, setAllScripts] = useState<Script[]>([]);
   const [filteredScripts, setFilteredScripts] = useState<Script[]>([]);
@@ -21,7 +27,7 @@ const Search = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        showSnackbar("Error occured while fetching.", "error");
+        snackbar.show("Error occured while fetching.", "error");
       });
   }, []);
 
@@ -47,6 +53,13 @@ const Search = (): JSX.Element => {
         variant="outlined"
         size="small"
         value={query}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Icon>search</Icon>
+            </InputAdornment>
+          )
+        }}
         onChange={handleQueryChange}
       />
       <Stack marginTop={2} gap={1}>
@@ -60,7 +73,7 @@ const Search = (): JSX.Element => {
             />
           ))
         ) : (
-          <Typography margin={1} textAlign="center" color="GrayText">
+          <Typography margin={1} textAlign="center" color="text.secondary">
             &lt; Empty &gt;
           </Typography>
         )}

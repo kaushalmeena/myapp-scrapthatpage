@@ -16,8 +16,7 @@ import { Params } from "../../types/router";
 import { Script } from "../../types/script";
 
 const Delete = (): JSX.Element => {
-  const { showSnackbar } = useSnackbar();
-
+  const snackbar = useSnackbar();
   const history = useHistory();
   const params = useParams<Params>();
 
@@ -49,12 +48,12 @@ const Delete = (): JSX.Element => {
   const handleYesClick = () => {
     deleteScript(scriptId)
       .then(() => {
-        showSnackbar("Script successfully deleted!", "success");
+        snackbar.show("Script successfully deleted!", "success");
         history.push("/search");
       })
       .catch((err) => {
         console.error(err);
-        showSnackbar("Error occured while deleting.", "error");
+        snackbar.show("Error occured while deleting.", "error");
       });
   };
 
@@ -66,8 +65,8 @@ const Delete = (): JSX.Element => {
     <>
       <PageName name="Delete" />
       <Box display="flex" flexDirection="column" alignItems="center">
-        {status === "loading" ? <CircularProgress /> : null}
-        {status === "loaded" ? (
+        {status === "loading" && <CircularProgress />}
+        {status === "loaded" && (
           <>
             <Typography variant="h6">
               Do you want to delete {script.name} ?
@@ -81,10 +80,8 @@ const Delete = (): JSX.Element => {
               </Button>
             </Stack>
           </>
-        ) : null}
-        {status === "error" ? (
-          <Typography variant="h6">{error}</Typography>
-        ) : null}
+        )}
+        {status === "error" && <Typography variant="h6">{error}</Typography>}
       </Box>
     </>
   );
