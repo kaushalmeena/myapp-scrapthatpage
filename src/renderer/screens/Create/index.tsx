@@ -9,19 +9,19 @@ import { ScriptEditorState } from "../../types/scriptEditor";
 import { getScriptFromScriptEditorState } from "../../utils/scriptEditor";
 
 const Create = (): JSX.Element => {
-  const { showSnackbar } = useSnackbar();
+  const snackbar = useSnackbar();
   const history = useHistory();
 
   const handleSubmit = (state: ScriptEditorState) => {
     const script = getScriptFromScriptEditorState(state);
     createScript(script)
       .then(() => {
-        showSnackbar("Script successfully created!", "success");
+        snackbar.show("Script successfully created!", "success");
         history.push("/search");
       })
       .catch((err) => {
         console.error(err);
-        showSnackbar("Error ocuured while saving script", "error");
+        snackbar.show("Error ocuured while saving script", "error");
       });
   };
 

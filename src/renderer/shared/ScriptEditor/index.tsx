@@ -15,7 +15,7 @@ type ScriptEditorProps = {
 };
 
 const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
-  const { showSnackbar } = useSnackbar();
+  const snackbar = useSnackbar();
 
   const [state, dispatch] = useReducer(scriptEditorReducer, props.initialState);
 
@@ -30,7 +30,7 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
     if (errors.length > 0) {
       const message = errors[0];
       dispatch(loadScriptEditorState(newState));
-      showSnackbar(message, "error");
+      snackbar.show(message, "error");
     } else {
       props.onSubmit(state);
     }

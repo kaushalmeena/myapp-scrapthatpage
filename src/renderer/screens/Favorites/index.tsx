@@ -7,7 +7,7 @@ import ScriptCard from "../../shared/ScriptCard";
 import { Script } from "../../types/script";
 
 const Favorites = (): JSX.Element => {
-  const { showSnackbar } = useSnackbar();
+  const snackbar = useSnackbar();
 
   const [scripts, setScripts] = useState<Script[]>([]);
 
@@ -18,7 +18,7 @@ const Favorites = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        showSnackbar("Error occured while fetching.", "error");
+        snackbar.show("Error occured while fetching.", "error");
       });
   }, []);
 
@@ -36,7 +36,7 @@ const Favorites = (): JSX.Element => {
             />
           ))
         ) : (
-          <Typography margin={1} textAlign="center" color="GrayText">
+          <Typography margin={1} textAlign="center" color="text.secondary">
             &lt; Empty &gt;
           </Typography>
         )}

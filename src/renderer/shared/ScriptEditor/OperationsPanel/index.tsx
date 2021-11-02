@@ -36,7 +36,7 @@ const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
           <Typography
             margin={1}
             textAlign="center"
-            color="GrayText"
+            color="text.secondary"
             variant="body2"
           >
             &lt; Empty &gt;

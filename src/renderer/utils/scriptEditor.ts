@@ -14,13 +14,13 @@ import {
 export const getOperationPathAndIndex = (
   path: string
 ): {
-  operationPath: string;
-  operationIndex: number;
+  path: string;
+  index: number;
 } => {
   const lastIndex = path.lastIndexOf(".");
   const operationPath = path.substr(0, lastIndex);
   const operationIndex = Number.parseInt(path.substr(lastIndex + 1, 1));
-  return { operationPath, operationIndex };
+  return { path: operationPath, index: operationIndex };
 };
 
 export const getOperationNumber = (path: string): string =>

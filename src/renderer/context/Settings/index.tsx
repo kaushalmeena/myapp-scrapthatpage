@@ -28,10 +28,13 @@ export const SettingsProvider = (props: SettingsProviderProps): JSX.Element => {
     setSettings({ ...settings, [key]: value });
   };
 
+  const contextValue = {
+    settings,
+    setSettings: handleSettingsChange
+  };
+
   return (
-    <SettingsContext.Provider
-      value={{ settings: settings, setSettings: handleSettingsChange }}
-    >
+    <SettingsContext.Provider value={contextValue}>
       <ThemeProvider theme={muiTheme}>{props.children}</ThemeProvider>
     </SettingsContext.Provider>
   );

@@ -39,24 +39,20 @@ export const scriptEditorReducer = (
       });
     case ACTION_TYPES.OPERATION_MOVE_UP:
       return produce(state, (draft) => {
-        const { operationPath, operationIndex } = getOperationPathAndIndex(
-          action.payload.path
-        );
-        if (operationIndex > 0) {
-          const path1 = `${operationPath}.${operationIndex}`;
-          const path2 = `${operationPath}.${operationIndex - 1}`;
+        const { path, index } = getOperationPathAndIndex(action.payload.path);
+        if (index > 0) {
+          const path1 = `${path}.${index}`;
+          const path2 = `${path}.${index - 1}`;
           swapScriptEditorOperations(draft, path1, path2);
         }
       });
     case ACTION_TYPES.OPERATION_MOVE_DOWN:
       return produce(state, (draft) => {
-        const { operationPath, operationIndex } = getOperationPathAndIndex(
-          action.payload.path
-        );
-        const operations = get(draft, operationPath);
-        if (operationIndex < operations.length - 1) {
-          const path1 = `${operationPath}.${operationIndex}`;
-          const path2 = `${operationPath}.${operationIndex + 1}`;
+        const { path, index } = getOperationPathAndIndex(action.payload.path);
+        const operations = get(draft, path);
+        if (index < operations.length - 1) {
+          const path1 = `${path}.${index}`;
+          const path2 = `${path}.${index + 1}`;
           swapScriptEditorOperations(draft, path1, path2);
         }
       });
