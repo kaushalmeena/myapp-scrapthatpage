@@ -1,4 +1,4 @@
-import { SmallOperation } from "./smallOperation";
+import { SmallOperation } from "../../common/types/smallOperation";
 
 export type Script = {
   id?: number;

@@ -1,7 +1,7 @@
 import produce from "immer";
 import { WritableDraft } from "immer/dist/internal";
 import { get, set } from "object-path";
-import { INPUT_TYPES } from "../constants/input";
+import { INPUT_TYPES } from "../../common/constants/input";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../constants/scriptEditor";
 import { Script } from "../types/script";
 import { ScriptEditorState } from "../types/scriptEditor";
@@ -9,7 +9,7 @@ import {
   getLargeOperations,
   getSmallOperations,
   validateInput
-} from "./operation";
+} from "../../common/utils/operation";
 
 export const getOperationPathAndIndex = (
   path: string
@@ -44,7 +44,7 @@ export const updateScriptEditorFieldDraft = (
   set(draft, errorPath, error);
 };
 
-export const swapScriptEditorOperations = (
+export const swapScriptEditorOperationsDraft = (
   draft: WritableDraft<ScriptEditorState>,
   path1: string,
   path2: string

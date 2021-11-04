@@ -15,7 +15,7 @@ import {
 import {
   ActionButtonColor,
   ScriptRunnerStatus
-} from "../../../types/scriptRunner";
+} from "../../types/scriptRunner";
 import ActionButton from "./ActionButton";
 import ResultTable from "./ResultTable";
 
@@ -28,18 +28,7 @@ const ScriptRunner = (props: ScriptRunnerProps): JSX.Element => {
   const [actionButtonColor, setActionButtonColor] =
     useState<ActionButtonColor>("primary");
 
-  const handleActionButtonClick = () => {
-    switch (status) {
-      case "stopped":
-        setStatus("started");
-        setActionButtonIcon("stop");
-        break;
-      case "started":
-        setStatus("stopped");
-        setActionButtonIcon("play_arrow");
-        break;
-    }
-  };
+  const handleActionButtonClick = () => { };
 
   return (
     <>

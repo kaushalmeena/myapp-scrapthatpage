@@ -15,12 +15,12 @@ import {
   moveDownOperation,
   moveUpOperation
 } from "../../../../actions/scriptEditor";
-import { LargeOperation } from "../../../../types/largeOperation";
+import { LargeOperation } from "../../../../../common/types/largeOperation";
 import { ScriptEditorAction } from "../../../../types/scriptEditor";
 import {
   getOperationSubheader,
   isOperationValid
-} from "../../../../utils/operation";
+} from "../../../../../common/utils/operation";
 import { getOperationNumber } from "../../../../utils/scriptEditor";
 import OperationInput from "./OperationInput";
 

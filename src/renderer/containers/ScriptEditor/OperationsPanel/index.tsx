@@ -1,7 +1,7 @@
 import { Box, Button, Stack, Typography } from "@mui/material";
 import React, { Dispatch } from "react";
 import { openSelector } from "../../../actions/scriptEditor";
-import { LargeOperation } from "../../../types/largeOperation";
+import { LargeOperation } from "../../../../common/types/largeOperation";
 import { ScriptEditorAction } from "../../../types/scriptEditor";
 import OperationCard from "./OperationCard";
 

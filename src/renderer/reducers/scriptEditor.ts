@@ -4,7 +4,7 @@ import { ACTION_TYPES } from "../actions/scriptEditor";
 import { ScriptEditorAction, ScriptEditorState } from "../types/scriptEditor";
 import {
   getOperationPathAndIndex,
-  swapScriptEditorOperations,
+  swapScriptEditorOperationsDraft,
   updateScriptEditorFieldDraft
 } from "../utils/scriptEditor";
 
@@ -43,7 +43,7 @@ export const scriptEditorReducer = (
         if (index > 0) {
           const path1 = `${path}.${index}`;
           const path2 = `${path}.${index - 1}`;
-          swapScriptEditorOperations(draft, path1, path2);
+          swapScriptEditorOperationsDraft(draft, path1, path2);
         }
       });
     case ACTION_TYPES.OPERATION_MOVE_DOWN:
@@ -53,7 +53,7 @@ export const scriptEditorReducer = (
         if (index < operations.length - 1) {
           const path1 = `${path}.${index}`;
           const path2 = `${path}.${index + 1}`;
-          swapScriptEditorOperations(draft, path1, path2);
+          swapScriptEditorOperationsDraft(draft, path1, path2);
         }
       });
     case ACTION_TYPES.OPERATION_UPDATE:

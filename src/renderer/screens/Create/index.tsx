@@ -3,8 +3,8 @@ import { useHistory } from "react-router";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
 import { createScript } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
-import PageName from "../../shared/PageName";
-import ScriptEditor from "../../shared/ScriptEditor";
+import PageName from "../../components/PageName";
+import ScriptEditor from "../../containers/ScriptEditor";
 import { ScriptEditorState } from "../../types/scriptEditor";
 import { getScriptFromScriptEditorState } from "../../utils/scriptEditor";
 

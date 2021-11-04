@@ -10,7 +10,7 @@ import { useHistory, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import { deleteScript, fetchScript } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
-import PageName from "../../shared/PageName";
+import PageName from "../../components/PageName";
 import { PAGE_STATUS } from "../../types/layout";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";

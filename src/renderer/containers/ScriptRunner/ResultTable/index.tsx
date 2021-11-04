@@ -31,7 +31,7 @@ const ResultTable = (props: ResultTableProps): JSX.Element => {
     setPage(0);
   };
 
-  const headers = Object.keys(props.data[0]);
+  const headers = props.data.length > 0 ? Object.keys(props.data[0]) : [];
 
   return (
     <>

@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import React, { Dispatch } from "react";
 import { appendOperation, closeSelector } from "../../../actions/scriptEditor";
-import { LARGE_OPERTAIONS } from "../../../constants/largeOperations";
-import { LargeOperation } from "../../../types/largeOperation";
+import { LARGE_OPERTAIONS } from "../../../../common/constants/largeOperations";
+import { LargeOperation } from "../../../../common/types/largeOperation";
 import {
   OperationSelector,
   ScriptEditorAction

@@ -2,8 +2,8 @@ import { Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { fetchAllFavoriteScripts } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
-import PageName from "../../shared/PageName";
-import ScriptCard from "../../shared/ScriptCard";
+import PageName from "../../components/PageName";
+import ScriptCard from "../../components/ScriptCard";
 import { Script } from "../../types/script";
 
 const Favorites = (): JSX.Element => {
