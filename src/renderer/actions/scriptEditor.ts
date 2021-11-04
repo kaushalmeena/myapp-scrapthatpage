@@ -1,4 +1,4 @@
-import { LargeOperation } from "../types/largeOperation";
+import { LargeOperation } from "../../common/types/largeOperation";
 import {
   InformationUpdateAction,
   OperationAppendAction,

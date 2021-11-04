@@ -13,11 +13,12 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useHistory } from "react-router";
+import PageName from "../../components/PageName";
 import { PAGE_LINKS } from "../../constants/layout";
-import PageName from "../../shared/PageName";
 
 const Dashboard = (): JSX.Element => {
   const history = useHistory();
+
   return (
     <>
       <PageName name="Dashboard" />

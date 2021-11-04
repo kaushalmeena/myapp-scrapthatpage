@@ -13,7 +13,7 @@ import React from "react";
 import { SETTINGS_KEYS } from "../../constants/settings";
 import { THEMES } from "../../constants/themes";
 import { useSettings } from "../../hooks/useSettings";
-import PageName from "../../shared/PageName";
+import PageName from "../../components/PageName";
 
 const Settings = (): JSX.Element => {
   const { settings, setSettings } = useSettings();

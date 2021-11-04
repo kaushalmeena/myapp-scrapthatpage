@@ -1,8 +1,8 @@
 import { TextField } from "@mui/material";
 import React, { Dispatch } from "react";
 import { updateOperation } from "../../../../../actions/scriptEditor";
-import { INPUT_TYPES } from "../../../../../constants/input";
-import { LargeInput } from "../../../../../types/largeOperation";
+import { INPUT_TYPES } from "../../../../../../common/constants/input";
+import { LargeInput } from "../../../../../../common/types/largeOperation";
 import { ScriptEditorAction } from "../../../../../types/scriptEditor";
 
 type OperationInputProps = {

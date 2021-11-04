@@ -15,7 +15,7 @@ import {
 import {
   ActionButtonColor,
   ScriptRunnerStatus
-} from "../../../../types/scriptRunner";
+} from "../../../types/scriptRunner";
 
 type ActionButtonProps = {
   status: ScriptRunnerStatus;

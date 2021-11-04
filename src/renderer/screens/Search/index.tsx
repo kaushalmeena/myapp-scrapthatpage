@@ -8,21 +8,21 @@ import {
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { fetchAllScripts } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
-import PageName from "../../shared/PageName";
-import ScriptCard from "../../shared/ScriptCard";
+import PageName from "../../components/PageName";
+import ScriptCard from "../../components/ScriptCard";
 import { Script } from "../../types/script";
 
 const Search = (): JSX.Element => {
   const snackbar = useSnackbar();
 
-  const [allScripts, setAllScripts] = useState<Script[]>([]);
+  const [scripts, setScripts] = useState<Script[]>([]);
   const [filteredScripts, setFilteredScripts] = useState<Script[]>([]);
   const [query, setQuery] = useState("");
 
   useEffect(() => {
     fetchAllScripts()
       .then((data) => {
-        setAllScripts(data);
+        setScripts(data);
         setFilteredScripts(data);
       })
       .catch((err) => {
@@ -35,12 +35,12 @@ const Search = (): JSX.Element => {
     const searchValue = event.target.value;
     if (searchValue) {
       const searchQuery = query.toLowerCase();
-      const filteredList = allScripts.filter((item) =>
+      const filteredList = scripts.filter((item) =>
         item.name.toLowerCase().includes(searchQuery)
       );
       setFilteredScripts(filteredList);
     } else {
-      setFilteredScripts(allScripts);
+      setFilteredScripts(scripts);
     }
     setQuery(searchValue);
   };

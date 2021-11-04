@@ -1,4 +1,4 @@
-import { ValidationRule } from "./validation";
+import { ValidationRule } from "../../common/types/validation";
 
 type InformationField = {
   value: string;

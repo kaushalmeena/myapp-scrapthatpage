@@ -1,6 +1,6 @@
 import { ACTION_TYPES } from "../actions/scriptEditor";
 import { Information } from "./information";
-import { LargeOperation } from "./largeOperation";
+import { LargeOperation } from "../../common/types/largeOperation";
 
 export type ScriptEditorStateLoadAction = {
   type: ACTION_TYPES.SCRIPT_EDITOR_STATE_LOAD;

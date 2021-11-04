@@ -12,10 +12,9 @@ import React, { useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { updateFavoriteScriptField } from "../../database/main";
 import { useSnackbar } from "../../hooks/useSnackbar";
-import PageName from "../../shared/PageName";
 import { Params } from "../../types/router";
 import { ScriptRunnerStatus } from "../../types/scriptRunner";
-import ScriptRunner from "./ScriptRunner";
+import ScriptRunner from "../../containers/ScriptRunner";
 
 const Execute = (): JSX.Element => {
   const snackbar = useSnackbar();

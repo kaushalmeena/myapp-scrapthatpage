@@ -1,4 +1,4 @@
-import { VALIDATION_TYPES } from "./validation";
+import { VALIDATION_TYPES } from "../../common/constants/validation";
 
 export const INITIAL_INFORMATION = {
   name: {
