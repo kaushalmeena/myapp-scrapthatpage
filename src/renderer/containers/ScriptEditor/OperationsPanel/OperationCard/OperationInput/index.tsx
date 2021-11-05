@@ -17,21 +17,6 @@ const OperationInput = (props: OperationInputProps): JSX.Element | null => {
   };
 
   switch (props.input.type) {
-    case INPUT_TYPES.TEXTAREA:
-      return (
-        <TextField
-          fullWidth
-          multiline
-          variant="standard"
-          size="small"
-          rows={5}
-          label={props.input.label}
-          helperText={props.input.error}
-          value={props.input.value}
-          error={props.input.error ? true : false}
-          onChange={handleChange}
-        />
-      );
     case INPUT_TYPES.TEXT:
       return (
         <TextField

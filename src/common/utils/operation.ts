@@ -1,62 +1,23 @@
-import produce from "immer";
 import { INPUT_TYPES } from "../constants/input";
 import { LARGE_OPERTAIONS } from "../constants/largeOperations";
-import { VALIDATION_REGEXES } from "../constants/validation";
+import { OPERATION_TYPES } from "../constants/operation";
+import { VALIDATION_FUNCTION } from "../constants/validation";
 import { LargeInput, LargeOperation } from "../types/largeOperation";
-import { SmallOperation } from "../types/smallOperation";
+import {
+  SmallInput,
+  SmallOperation,
+  SmallOperationBoxInput,
+  SmallTextInput
+} from "../types/smallOperation";
 import { ValidationRule } from "../types/validation";
+import { get } from "object-path-immutable";
 
-export const getLargeOperations = (
-  operations: SmallOperation[]
-): LargeOperation[] =>
-  operations.map((operation) => {
-    return produce(LARGE_OPERTAIONS[operation.type], (draft) => {
-      draft.inputs = operation.inputs.map((input, index) => {
-        const largeInput = draft.inputs[index];
-        switch (input.type) {
-          case INPUT_TYPES.TEXT:
-          case INPUT_TYPES.TEXTAREA:
-            return {
-              ...largeInput,
-              value: input.value
-            };
-          case INPUT_TYPES.OPERATION_BOX:
-            return {
-              ...largeInput,
-              operations: getLargeOperations(input.operations)
-            };
-        }
-      });
-    });
-  });
-
-export const getSmallOperations = (
-  operations: LargeOperation[]
-): SmallOperation[] =>
-  operations.map((item) => {
-    return {
-      type: item.type,
-      inputs: item.inputs.map((input) => {
-        switch (input.type) {
-          case INPUT_TYPES.TEXT:
-          case INPUT_TYPES.TEXTAREA:
-            return {
-              type: input.type,
-              value: input.value
-            };
-          case INPUT_TYPES.OPERATION_BOX:
-            return {
-              type: input.type,
-              operations: getSmallOperations(input.operations)
-            };
-        }
-      })
-    };
-  });
+export const getLargeOperation = (type: OPERATION_TYPES): LargeOperation =>
+  get(LARGE_OPERTAIONS[type]);
 
 export const getOperationSubheader = (
   format: string,
-  inputs: LargeInput[]
+  inputs: LargeInput[] | SmallInput[]
 ): string =>
   format.replace(/{[\w-]+}/g, (match: string) => {
     const index = Number.parseInt(match.slice(1, -1));
@@ -67,6 +28,89 @@ export const getOperationSubheader = (
     return "";
   });
 
+export const convertToLargeOperation = (
+  operation: SmallOperation
+): LargeOperation => {
+  const largeOperation = getLargeOperation(operation.type);
+  switch (largeOperation.type) {
+    case OPERATION_TYPES.OPEN:
+    case OPERATION_TYPES.CLICK:
+      largeOperation.inputs[0].value = operation.inputs[0].value;
+      break;
+    case OPERATION_TYPES.EXTRACT:
+    case OPERATION_TYPES.TYPE:
+    case OPERATION_TYPES.SET:
+    case OPERATION_TYPES.INCREASE:
+    case OPERATION_TYPES.DECREASE:
+      largeOperation.inputs[0].value = operation.inputs[0].value;
+      largeOperation.inputs[1].value = (
+        operation.inputs[1] as SmallTextInput
+      ).value;
+      break;
+    case OPERATION_TYPES.IF:
+    case OPERATION_TYPES.WHILE:
+      largeOperation.inputs[0].value = operation.inputs[0].value;
+      largeOperation.inputs[1].operations = (
+        operation.inputs[1] as SmallOperationBoxInput
+      ).operations.map(convertToLargeOperation);
+      break;
+  }
+  return largeOperation;
+};
+
+export const convertToSmallOperation = (
+  operation: LargeOperation
+): SmallOperation => {
+  switch (operation.type) {
+    case OPERATION_TYPES.OPEN:
+    case OPERATION_TYPES.CLICK:
+      return {
+        type: operation.type,
+        inputs: [
+          {
+            type: INPUT_TYPES.TEXT,
+            value: operation.inputs[0].value
+          }
+        ]
+      };
+    case OPERATION_TYPES.EXTRACT:
+    case OPERATION_TYPES.TYPE:
+    case OPERATION_TYPES.SET:
+    case OPERATION_TYPES.INCREASE:
+    case OPERATION_TYPES.DECREASE:
+      return {
+        type: operation.type,
+        inputs: [
+          {
+            type: INPUT_TYPES.TEXT,
+            value: operation.inputs[0].value
+          },
+          {
+            type: INPUT_TYPES.TEXT,
+            value: operation.inputs[1].value
+          }
+        ]
+      };
+    case OPERATION_TYPES.IF:
+    case OPERATION_TYPES.WHILE:
+      return {
+        type: operation.type,
+        inputs: [
+          {
+            type: INPUT_TYPES.TEXT,
+            value: operation.inputs[0].value
+          },
+          {
+            type: INPUT_TYPES.OPERATION_BOX,
+            operations: operation.inputs[1].operations.map(
+              convertToSmallOperation
+            )
+          }
+        ]
+      };
+  }
+};
+
 export const isOperationValid = (operation: LargeOperation): boolean =>
   operation.inputs.some((input) => "error" in input && !input.error);
 
@@ -75,8 +119,8 @@ export const validateInput = (
   rules: ValidationRule[]
 ): string => {
   for (let i = 0; i < rules.length; i++) {
-    const regex = VALIDATION_REGEXES[rules[i].type];
-    if (regex && !regex.test(value)) {
+    const validate = VALIDATION_FUNCTION[rules[i].type];
+    if (validate && !validate(value)) {
       return rules[i].message;
     }
   }
