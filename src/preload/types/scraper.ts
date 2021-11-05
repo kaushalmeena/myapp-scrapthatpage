@@ -1,4 +1,4 @@
-import { OperationReturn } from "../../common/types/scraper";
+import { ScraperResult } from "../../common/types/scraper";
 import { SmallOperation } from "../../common/types/smallOperation";
 
 export type ScraperAPI = {
@@ -7,5 +7,5 @@ export type ScraperAPI = {
   closeBrowser: () => void;
   closeWindow: () => void;
   openPage: () => void;
-  runOperation: (operation: SmallOperation) => Promise<OperationReturn>;
+  runOperation: (operation: SmallOperation) => Promise<ScraperResult>;
 };

@@ -1,26 +1,24 @@
-import produce from "immer";
-import { WritableDraft } from "immer/dist/internal";
-import { get, set } from "object-path";
+import { get, set, wrap } from "object-path-immutable";
 import { INPUT_TYPES } from "../../common/constants/input";
+import {
+  convertToLargeOperation,
+  convertToSmallOperation,
+  validateInput
+} from "../../common/utils/operation";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../constants/scriptEditor";
 import { Script } from "../types/script";
 import { ScriptEditorState } from "../types/scriptEditor";
-import {
-  getLargeOperations,
-  getSmallOperations,
-  validateInput
-} from "../../common/utils/operation";
 
-export const getOperationPathAndIndex = (
+export const getOperationsPathAndIndex = (
   path: string
 ): {
-  path: string;
+  operationsPath: string;
   index: number;
 } => {
   const lastIndex = path.lastIndexOf(".");
-  const operationPath = path.substr(0, lastIndex);
-  const operationIndex = Number.parseInt(path.substr(lastIndex + 1, 1));
-  return { path: operationPath, index: operationIndex };
+  const operationsPath = path.substr(0, lastIndex);
+  const index = Number.parseInt(path.substr(lastIndex + 1, 1));
+  return { operationsPath, index };
 };
 
 export const getOperationNumber = (path: string): string =>
@@ -30,29 +28,27 @@ export const getOperationNumber = (path: string): string =>
     .map((num) => Number(num) + 1)
     .join(".");
 
-export const updateScriptEditorFieldDraft = (
-  draft: WritableDraft<ScriptEditorState>,
-  value: string,
-  path: string
-): void => {
+export const updateScriptEditorField = (
+  state: ScriptEditorState,
+  path: string,
+  value: string
+): ScriptEditorState => {
   const valuePath = `${path}.value`;
   const errorPath = `${path}.error`;
   const rulesPath = `${path}.rules`;
-  const rules = get(draft, rulesPath);
+  const rules = get(state, rulesPath);
   const error = validateInput(value, rules);
-  set(draft, valuePath, value);
-  set(draft, errorPath, error);
+  return wrap(state).set(valuePath, value).set(errorPath, error).value();
 };
 
-export const swapScriptEditorOperationsDraft = (
-  draft: WritableDraft<ScriptEditorState>,
+export const swapScriptEditorOperations = (
+  state: ScriptEditorState,
   path1: string,
   path2: string
-): void => {
-  const operation1 = get(draft, path1);
-  const operation2 = get(draft, path2);
-  set(draft, path1, operation2);
-  set(draft, path2, operation1);
+): ScriptEditorState => {
+  const operation1 = get(state, path1);
+  const operation2 = get(state, path2);
+  return wrap(state).set(path1, operation2).set(path2, operation1).value();
 };
 
 export const getScriptFromScriptEditorState = (
@@ -63,40 +59,39 @@ export const getScriptFromScriptEditorState = (
     favorite: state.favorite,
     name: state.information.name.value,
     description: state.information.description.value,
-    operations: getSmallOperations(state.operations)
+    operations: state.operations.map(convertToSmallOperation)
   };
 };
 
 export const getScriptEditorStateFromScript = (
   script: Script
 ): ScriptEditorState => {
-  return produce(INITIAL_SCRIPT_EDITOR_STATE, (draft) => {
-    draft.id = script.id;
-    draft.favorite = script.favorite;
-    draft.information.name.value = script.name;
-    draft.information.description.value = script.description;
-    draft.operations = getLargeOperations(script.operations);
-  });
+  return wrap(INITIAL_SCRIPT_EDITOR_STATE)
+    .set("id", script.id)
+    .set("favorite", script.favorite)
+    .set("information.name.value", script.name)
+    .set("information.description.value", script.description)
+    .set("operations", script.operations.map(convertToLargeOperation))
+    .value();
 };
 
-const validateScriptEditorOperationsDraft = (
-  draft: WritableDraft<ScriptEditorState>,
+const validateScriptEditorOperations = (
+  state: ScriptEditorState,
   path: string,
   errors: string[]
 ) => {
-  draft.operations.forEach((operation, operationIndex) => {
+  state.operations.forEach((operation, operationIndex) => {
     const inputErrors: string[] = [];
     const operationPath = `${path}.${operationIndex}`;
     operation.inputs.forEach((input, inputIndex) => {
       const inputPath = `${operationPath}.inputs.${inputIndex}`;
       switch (input.type) {
         case INPUT_TYPES.TEXT:
-        case INPUT_TYPES.TEXTAREA:
-          validateScriptEditorFieldDraft(draft, inputPath, inputErrors);
+          state = validateScriptEditorField(state, inputPath, inputErrors);
           break;
         case INPUT_TYPES.OPERATION_BOX:
-          validateScriptEditorOperationsDraft(
-            draft,
+          state = validateScriptEditorOperations(
+            state,
             `${inputPath}.operations`,
             errors
           );
@@ -107,33 +102,36 @@ const validateScriptEditorOperationsDraft = (
       errors.push(`Please fix error in operation ${operationNumber}`);
     }
   });
+  return state;
 };
 
-const validateScriptEditorFieldDraft = (
-  draft: WritableDraft<ScriptEditorState>,
+const validateScriptEditorField = (
+  state: ScriptEditorState,
   path: string,
   errors: string[]
 ) => {
   const valuePath = `${path}.value`;
   const errorPath = `${path}.error`;
   const rulesPath = `${path}.rules`;
-  const value = get(draft, valuePath);
-  const rules = get(draft, rulesPath);
+  const value = get(state, valuePath);
+  const rules = get(state, rulesPath);
   const error = validateInput(value, rules);
-  set(draft, errorPath, error);
   if (error) {
+    state = set(state, errorPath, error);
     errors.push(error);
   }
+  return state;
 };
 
 export const validateScriptEditorState = (
   state: ScriptEditorState
 ): { errors: string[]; newState: ScriptEditorState } => {
   const errors: string[] = [];
-  const newState = produce(state, (draft) => {
-    validateScriptEditorFieldDraft(draft, "information.name", errors);
-    validateScriptEditorFieldDraft(draft, "information.description", errors);
-    validateScriptEditorOperationsDraft(draft, "operations", errors);
-  });
+  const nameFieldPath = "information.name";
+  const descFieldPath = "information.description";
+  let newState = state;
+  newState = validateScriptEditorField(newState, nameFieldPath, errors);
+  newState = validateScriptEditorField(newState, descFieldPath, errors);
+  newState = validateScriptEditorOperations(newState, "operations", errors);
   return { errors, newState };
 };

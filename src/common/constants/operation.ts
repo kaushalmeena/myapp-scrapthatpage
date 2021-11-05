@@ -4,9 +4,8 @@ export enum OPERATION_TYPES {
   CLICK,
   TYPE,
   SET,
+  INCREASE,
+  DECREASE,
   IF,
-  IF_ELSE,
-  REPEAT,
-  REPEAT_UNTIL,
-  REPEAT_WHILE
+  WHILE
 }

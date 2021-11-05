@@ -1,11 +1,10 @@
-import produce from "immer";
-import { del, get, push } from "object-path";
+import { get, wrap } from "object-path-immutable";
 import { ACTION_TYPES } from "../actions/scriptEditor";
 import { ScriptEditorAction, ScriptEditorState } from "../types/scriptEditor";
 import {
-  getOperationPathAndIndex,
-  swapScriptEditorOperationsDraft,
-  updateScriptEditorFieldDraft
+  getOperationsPathAndIndex,
+  swapScriptEditorOperations,
+  updateScriptEditorField
 } from "../utils/scriptEditor";
 
 export const scriptEditorReducer = (
@@ -14,56 +13,82 @@ export const scriptEditorReducer = (
 ): ScriptEditorState => {
   switch (action.type) {
     case ACTION_TYPES.SCRIPT_EDITOR_STATE_LOAD:
-      return action.payload.state;
+      {
+        state = action.payload.state;
+      }
+      break;
     case ACTION_TYPES.INFORMATION_UPDATE:
-      return produce(state, (draft) => {
+      {
         const path = `information.${action.payload.key}`;
-        updateScriptEditorFieldDraft(draft, action.payload.value, path);
-      });
+        const value = action.payload.value;
+        state = updateScriptEditorField(state, path, value);
+      }
+      break;
     case ACTION_TYPES.SELECTOR_OPEN:
-      return produce(state, (draft) => {
-        draft.selector.visible = true;
-        draft.selector.activePath = action.payload.path;
-      });
+      {
+        const path = action.payload.path;
+        state = wrap(state)
+          .set("selector.visible", true)
+          .set("selector.activePath", path)
+          .value();
+      }
+      break;
     case ACTION_TYPES.SELECTOR_CLOSE:
-      return produce(state, (draft) => {
-        draft.selector.visible = false;
-      });
+      {
+        state = wrap(state).set("selector.visible", false).value();
+      }
+      break;
     case ACTION_TYPES.OPERATION_APPEND:
-      return produce(state, (draft) => {
-        push(draft, draft.selector.activePath, action.payload.operation);
-      });
+      {
+        const operation = action.payload.operation;
+        const activePath = state.selector.activePath;
+        state = wrap(state).push(activePath, operation).value();
+      }
+      break;
     case ACTION_TYPES.OPERATION_DELETE:
-      return produce(state, (draft) => {
-        del(draft, action.payload.path);
-      });
+      {
+        const path = action.payload.path;
+        state = wrap(state).del(path).value();
+      }
+      break;
     case ACTION_TYPES.OPERATION_MOVE_UP:
-      return produce(state, (draft) => {
-        const { path, index } = getOperationPathAndIndex(action.payload.path);
+      {
+        const path = action.payload.path;
+        const { operationsPath, index } = getOperationsPathAndIndex(path);
         if (index > 0) {
-          const path1 = `${path}.${index}`;
-          const path2 = `${path}.${index - 1}`;
-          swapScriptEditorOperationsDraft(draft, path1, path2);
+          const operationPath1 = `${operationsPath}.${index}`;
+          const operationPath2 = `${operationsPath}.${index - 1}`;
+          state = swapScriptEditorOperations(
+            state,
+            operationPath1,
+            operationPath2
+          );
         }
-      });
+      }
+      break;
     case ACTION_TYPES.OPERATION_MOVE_DOWN:
-      return produce(state, (draft) => {
-        const { path, index } = getOperationPathAndIndex(action.payload.path);
-        const operations = get(draft, path);
-        if (index < operations.length - 1) {
-          const path1 = `${path}.${index}`;
-          const path2 = `${path}.${index + 1}`;
-          swapScriptEditorOperationsDraft(draft, path1, path2);
+      {
+        const path = action.payload.path;
+        const { operationsPath, index } = getOperationsPathAndIndex(path);
+        const operationsLength = get(state, `${operationsPath}.length`);
+        if (index < operationsLength - 1) {
+          const operationPath1 = `${operationsPath}.${index}`;
+          const operationPath2 = `${operationsPath}.${index + 1}`;
+          state = swapScriptEditorOperations(
+            state,
+            operationPath1,
+            operationPath2
+          );
         }
-      });
+      }
+      break;
     case ACTION_TYPES.OPERATION_UPDATE:
-      return produce(state, (draft) => {
-        updateScriptEditorFieldDraft(
-          draft,
-          action.payload.value,
-          action.payload.path
-        );
-      });
+      {
+        const path = action.payload.path;
+        const value = action.payload.value;
+        state = updateScriptEditorField(state, path, value);
+      }
+      break;
     default:
   }
   return state;

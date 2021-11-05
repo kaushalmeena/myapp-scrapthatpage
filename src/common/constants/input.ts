@@ -1,6 +1,5 @@
 export enum INPUT_TYPES {
   TEXT,
-  TEXTAREA,
   OPERATION_BOX,
   VARIABLE_BOX
 }

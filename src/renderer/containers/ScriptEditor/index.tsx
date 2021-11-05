@@ -19,16 +19,16 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
 
   const [state, dispatch] = useReducer(scriptEditorReducer, props.initialState);
 
-  const [tabValue, setTabValue] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (event: SyntheticEvent, value: number) => {
-    setTabValue(value);
+    setActiveTab(value);
   };
 
   const handleSubmitClick = () => {
     const { errors, newState } = validateScriptEditorState(state);
     if (errors.length > 0) {
-      const message = errors[0];
+      const [message] = errors;
       dispatch(loadScriptEditorState(newState));
       snackbar.show(message, "error");
     } else {
@@ -59,19 +59,19 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
             borderBottomColor: "action.disabledBackground"
           }}
         >
-          <Tabs centered value={tabValue} onChange={handleTabChange}>
+          <Tabs centered value={activeTab} onChange={handleTabChange}>
             <Tab label="Information" />
             <Tab label="Operations" />
           </Tabs>
         </Box>
         <Box padding={2}>
-          <Box display={tabValue === 0 ? "block" : "none"}>
+          <Box display={activeTab === 0 ? "block" : "none"}>
             <InformationPanel
               information={state.information}
               dispatch={dispatch}
             />
           </Box>
-          <Box display={tabValue === 1 ? "block" : "none"}>
+          <Box display={activeTab === 1 ? "block" : "none"}>
             <OperationsPanel
               operations={state.operations}
               dispatch={dispatch}
