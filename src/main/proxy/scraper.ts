@@ -4,9 +4,9 @@ import { OPERATION_TYPES } from "../../common/constants/operation";
 import { SCRAPER_ACTIONS } from "../../common/constants/scraper";
 import { ScraperOperation, ScraperResult } from "../../common/types/scraper";
 import { SmallOperation } from "../../common/types/smallOperation";
-import ElectronPuppeteer from "../lib/ElectronPuppeteer";
+import PuppeteerWrapper from "../lib/PuppeteerWrapper";
 
-export const connectScraperProxy = (puppeteer: ElectronPuppeteer): void => {
+export const connectScraperProxy = (puppeteer: PuppeteerWrapper): void => {
   ipcMain.on(SCRAPER_ACTIONS.OPEN_BROWSER, () => {
     puppeteer.openBrowser();
   });

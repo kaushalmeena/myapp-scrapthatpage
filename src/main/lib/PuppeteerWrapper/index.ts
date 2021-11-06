@@ -2,7 +2,7 @@ import { BrowserWindow, app } from "electron";
 import pie from "puppeteer-in-electron";
 import puppeteer, { Browser, Page } from "puppeteer-core";
 
-class ElectronPuppeteer {
+class PuppeteerWrapper {
   private browser?: Browser;
   private window?: BrowserWindow;
   private page?: Page;
@@ -65,4 +65,4 @@ class ElectronPuppeteer {
   }
 }
 
-export default ElectronPuppeteer;
+export default PuppeteerWrapper;

@@ -1,5 +1,6 @@
 import { get, set, wrap } from "object-path-immutable";
 import { INPUT_TYPES } from "../../common/constants/input";
+import { LargeOperation } from "../../common/types/largeOperation";
 import {
   convertToLargeOperation,
   convertToSmallOperation,
@@ -7,14 +8,15 @@ import {
 } from "../../common/utils/operation";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../constants/scriptEditor";
 import { Script } from "../types/script";
-import { ScriptEditorState } from "../types/scriptEditor";
+import {
+  OperationsPathAndIndex,
+  ScriptEditorState,
+  ValidatedData
+} from "../types/scriptEditor";
 
 export const getOperationsPathAndIndex = (
   path: string
-): {
-  operationsPath: string;
-  index: number;
-} => {
+): OperationsPathAndIndex => {
   const lastIndex = path.lastIndexOf(".");
   const operationsPath = path.substr(0, lastIndex);
   const index = Number.parseInt(path.substr(lastIndex + 1, 1));
@@ -25,6 +27,7 @@ export const getOperationNumber = (path: string): string =>
   path
     .split(/\D+/g)
     .filter(Boolean)
+    .filter((_, index) => index % 2 === 0)
     .map((num) => Number(num) + 1)
     .join(".");
 
@@ -77,61 +80,108 @@ export const getScriptEditorStateFromScript = (
 
 const validateScriptEditorOperations = (
   state: ScriptEditorState,
-  path: string,
-  errors: string[]
-) => {
-  state.operations.forEach((operation, operationIndex) => {
+  path: string
+): ValidatedData => {
+  let newState = state;
+  const errors: string[] = [];
+
+  const operations = get(state, path) as LargeOperation[];
+
+  operations.forEach((operation, operationIndex) => {
     const inputErrors: string[] = [];
     const operationPath = `${path}.${operationIndex}`;
+
     operation.inputs.forEach((input, inputIndex) => {
-      const inputPath = `${operationPath}.inputs.${inputIndex}`;
       switch (input.type) {
         case INPUT_TYPES.TEXT:
-          state = validateScriptEditorField(state, inputPath, inputErrors);
-          break;
-        case INPUT_TYPES.OPERATION_BOX:
-          state = validateScriptEditorOperations(
-            state,
-            `${inputPath}.operations`,
-            errors
+          const inputPath = `${operationPath}.inputs.${inputIndex}`;
+          const validatedFieldData = validateScriptEditorField(
+            newState,
+            inputPath
           );
+          if (validatedFieldData.errors.length > 0) {
+            inputErrors.push(...validatedFieldData.errors);
+            newState = validatedFieldData.newState;
+          }
+          break;
+
+        case INPUT_TYPES.OPERATION_BOX:
+          const operationsPath = `${operationPath}.inputs.${inputIndex}.operations`;
+          const validatedOperationsData = validateScriptEditorOperations(
+            newState,
+            operationsPath
+          );
+          if (validatedOperationsData.errors.length > 0) {
+            errors.push(...validatedOperationsData.errors);
+            newState = validatedOperationsData.newState;
+          }
+          break;
       }
     });
+
     if (inputErrors.length > 0) {
       const operationNumber = getOperationNumber(operationPath);
       errors.push(`Please fix error in operation ${operationNumber}`);
     }
   });
-  return state;
+
+  return { newState, errors };
 };
 
 const validateScriptEditorField = (
   state: ScriptEditorState,
-  path: string,
-  errors: string[]
-) => {
+  path: string
+): ValidatedData => {
+  let newState = state;
+  const errors: string[] = [];
+
   const valuePath = `${path}.value`;
   const errorPath = `${path}.error`;
   const rulesPath = `${path}.rules`;
   const value = get(state, valuePath);
   const rules = get(state, rulesPath);
   const error = validateInput(value, rules);
+
   if (error) {
-    state = set(state, errorPath, error);
     errors.push(error);
+    newState = set(state, errorPath, error);
   }
-  return state;
+
+  return { errors, newState };
 };
 
 export const validateScriptEditorState = (
   state: ScriptEditorState
-): { errors: string[]; newState: ScriptEditorState } => {
-  const errors: string[] = [];
-  const nameFieldPath = "information.name";
-  const descFieldPath = "information.description";
+): ValidatedData => {
   let newState = state;
-  newState = validateScriptEditorField(newState, nameFieldPath, errors);
-  newState = validateScriptEditorField(newState, descFieldPath, errors);
-  newState = validateScriptEditorOperations(newState, "operations", errors);
+  const errors: string[] = [];
+
+  const validatedNameData = validateScriptEditorField(
+    newState,
+    "information.name"
+  );
+  if (validatedNameData.errors.length > 0) {
+    errors.push(...validatedNameData.errors);
+    newState = validatedNameData.newState;
+  }
+
+  const validatedDescriptionData = validateScriptEditorField(
+    newState,
+    "information.description"
+  );
+  if (validatedDescriptionData.errors.length > 0) {
+    errors.push(...validatedDescriptionData.errors);
+    newState = validatedDescriptionData.newState;
+  }
+
+  const validatedOperationsData = validateScriptEditorOperations(
+    newState,
+    "operations"
+  );
+  if (validatedOperationsData.errors) {
+    errors.push(...validatedOperationsData.errors);
+    newState = validatedOperationsData.newState;
+  }
+
   return { errors, newState };
 };

@@ -7,12 +7,13 @@ import OperationCard from "./OperationCard";
 
 type OperationsPanelProps = {
   operations: LargeOperation[];
+  path: string;
   dispatch: Dispatch<ScriptEditorAction>;
 };
 
 const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
   const handleSelectorOpen = () => {
-    props.dispatch(openSelector("operations"));
+    props.dispatch(openSelector(props.path));
   };
 
   return (
@@ -26,8 +27,8 @@ const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
         {props.operations.length > 0 ? (
           props.operations.map((operation, index) => (
             <OperationCard
-              key={`operations.${index}`}
-              path={`operations.${index}`}
+              key={`${props.path}.${index}`}
+              path={`${props.path}.${index}`}
               operation={operation}
               dispatch={props.dispatch}
             />
