@@ -74,6 +74,7 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
           <Box display={activeTab === 1 ? "block" : "none"}>
             <OperationsPanel
               operations={state.operations}
+              path="operations"
               dispatch={dispatch}
             />
           </Box>

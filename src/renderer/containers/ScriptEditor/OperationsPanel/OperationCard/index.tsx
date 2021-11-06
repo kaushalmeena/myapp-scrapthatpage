@@ -105,13 +105,9 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
       />
       <Collapse in={expanded} timeout="auto">
         <CardContent>
-          <Stack gap={2} direction="row" flexWrap="wrap">
+          <Stack gap={2} direction="column">
             {props.operation.inputs.map((input, index) => (
-              <Box
-                key={`${props.path}.inputs.${index}`}
-                display="flex"
-                flex={input.width}
-              >
+              <Box key={`${props.path}.inputs.${index}`} flex={input.width}>
                 <OperationInput
                   path={`${props.path}.inputs.${index}`}
                   input={input}

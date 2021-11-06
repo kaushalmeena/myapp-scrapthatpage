@@ -1,8 +1,9 @@
 import { TextField } from "@mui/material";
 import React, { Dispatch } from "react";
-import { updateOperation } from "../../../../../actions/scriptEditor";
+import OperationsPanel from "../..";
 import { INPUT_TYPES } from "../../../../../../common/constants/input";
 import { LargeInput } from "../../../../../../common/types/largeOperation";
+import { updateOperation } from "../../../../../actions/scriptEditor";
 import { ScriptEditorAction } from "../../../../../types/scriptEditor";
 
 type OperationInputProps = {
@@ -28,6 +29,14 @@ const OperationInput = (props: OperationInputProps): JSX.Element | null => {
           value={props.input.value}
           error={props.input.error ? true : false}
           onChange={handleChange}
+        />
+      );
+    case INPUT_TYPES.OPERATION_BOX:
+      return (
+        <OperationsPanel
+          operations={props.input.operations}
+          path={`${props.path}.operations`}
+          dispatch={props.dispatch}
         />
       );
     default:

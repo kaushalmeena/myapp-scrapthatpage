@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from "electron";
-import ElectronPuppeteer from "./lib/ElectronPuppeteer";
+import PuppeteerWrapper from "./lib/PuppeteerWrapper";
 import { connectScraperProxy } from "./proxy/scraper";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -9,7 +9,7 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-const puppeteer = new ElectronPuppeteer();
+const puppeteer = new PuppeteerWrapper();
 
 const createWindow = (): void => {
   const mainWindow = new BrowserWindow({

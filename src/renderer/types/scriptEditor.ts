@@ -87,3 +87,18 @@ export type ScriptEditorState = {
   operations: LargeOperation[];
   selector: OperationSelector;
 };
+
+export type OperationsPathAndIndex = {
+  operationsPath: string;
+  index: number;
+};
+
+export type ValidatedFieldData = {
+  error: string;
+  newState: ScriptEditorState;
+};
+
+export type ValidatedData = {
+  errors: string[];
+  newState: ScriptEditorState;
+};
