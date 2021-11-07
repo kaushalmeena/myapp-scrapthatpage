@@ -1,5 +1,5 @@
-import { contextBridge, ipcRenderer } from "electron";
-import { ScraperProxy } from "./api/scraper";
+import { contextBridge } from "electron";
+import { ScraperProxy } from "./proxy/scraper";
 import { ScraperAPI } from "./types/scraper";
 
 declare global {

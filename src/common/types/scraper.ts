@@ -10,9 +10,16 @@ type OperationSuccess = {
   status: "success";
 };
 
+export type ExtractOperationResult = {
+  url: string;
+  name: string;
+  selector: string;
+  data: string[];
+};
+
 type OperationSuccessWithData = {
   status: "success";
-  data: string[];
+  data: ExtractOperationResult;
 };
 
 type ScraperInput = SmallTextInput;
@@ -26,3 +33,5 @@ export type ScraperOperation = {
   type: OPERATION_TYPES;
   inputs: ScraperInput[];
 };
+
+export type ExecuteResult = ExtractOperationResult | undefined;

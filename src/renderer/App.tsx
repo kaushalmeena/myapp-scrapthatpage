@@ -30,7 +30,7 @@ const App = (): JSX.Element => {
               <Route path="/delete/:scriptId" component={Delete} />
               <Route path="/execute/:scriptId" component={Execute} />
               <Route exact path="/">
-                <Redirect to="/execute/12" />
+                <Redirect to="/dashboard" />
               </Route>
             </Switch>
           </Layout>
