@@ -1,33 +1,38 @@
 import { LargeOperation } from "../../common/types/largeOperation";
 import {
   InformationUpdateAction,
+  InputUpdateAction,
+  InputUpdateWithVariableAction,
   OperationAppendAction,
   OperationDeleteAction,
   OperationMoveDownAction,
   OperationMoveUpAction,
-  OperationUpdateAction,
+  OperationSelectorCloseAction,
+  OperationSelectorOpenAction,
   ScriptEditorState,
-  ScriptEditorStateLoadAction,
-  SelectorCloseAction,
-  SelectorOpenAction
+  StateLoadAction,
+  Variable,
+  VariableSelectorCloseAction,
+  VariableSelectorOpenAction
 } from "../types/scriptEditor";
 
 export enum ACTION_TYPES {
-  SCRIPT_EDITOR_STATE_LOAD,
+  STATE_LOAD,
   INFORMATION_UPDATE,
   OPERATION_APPEND,
-  OPERATION_UPDATE,
   OPERATION_DELETE,
   OPERATION_MOVE_UP,
   OPERATION_MOVE_DOWN,
-  SELECTOR_OPEN,
-  SELECTOR_CLOSE
+  INPUT_UPDATE,
+  INPUT_UPDATE_WITH_VARIABLE,
+  OPERATION_SELECTOR_OPEN,
+  OPERATION_SELECTOR_CLOSE,
+  VARIABLE_SELECTOR_OPEN,
+  VARIABLE_SELECTOR_CLOSE
 }
 
-export const loadScriptEditorState = (
-  state: ScriptEditorState
-): ScriptEditorStateLoadAction => ({
-  type: ACTION_TYPES.SCRIPT_EDITOR_STATE_LOAD,
+export const loadState = (state: ScriptEditorState): StateLoadAction => ({
+  type: ACTION_TYPES.STATE_LOAD,
   payload: {
     state
   }
@@ -53,17 +58,6 @@ export const appendOperation = (
   }
 });
 
-export const updateOperation = (
-  value: string,
-  path: string
-): OperationUpdateAction => ({
-  type: ACTION_TYPES.OPERATION_UPDATE,
-  payload: {
-    value,
-    path
-  }
-});
-
 export const deleteOperation = (path: string): OperationDeleteAction => ({
   type: ACTION_TYPES.OPERATION_DELETE,
   payload: {
@@ -85,13 +79,48 @@ export const moveDownOperation = (path: string): OperationMoveDownAction => ({
   }
 });
 
-export const openSelector = (path: string): SelectorOpenAction => ({
-  type: ACTION_TYPES.SELECTOR_OPEN,
+export const updateInput = (
+  value: string,
+  path: string
+): InputUpdateAction => ({
+  type: ACTION_TYPES.INPUT_UPDATE,
+  payload: {
+    value,
+    path
+  }
+});
+
+export const updateInputWithVariable = (
+  variable: Variable
+): InputUpdateWithVariableAction => ({
+  type: ACTION_TYPES.INPUT_UPDATE_WITH_VARIABLE,
+  payload: {
+    variable
+  }
+});
+
+export const openOperationSelector = (
+  path: string
+): OperationSelectorOpenAction => ({
+  type: ACTION_TYPES.OPERATION_SELECTOR_OPEN,
   payload: {
     path
   }
 });
 
-export const closeSelector = (): SelectorCloseAction => ({
-  type: ACTION_TYPES.SELECTOR_CLOSE
+export const closeOperationSelector = (): OperationSelectorCloseAction => ({
+  type: ACTION_TYPES.OPERATION_SELECTOR_CLOSE
+});
+
+export const openVariableSelector = (
+  path: string
+): VariableSelectorOpenAction => ({
+  type: ACTION_TYPES.VARIABLE_SELECTOR_OPEN,
+  payload: {
+    path
+  }
+});
+
+export const closeVariableSelector = (): VariableSelectorCloseAction => ({
+  type: ACTION_TYPES.VARIABLE_SELECTOR_CLOSE
 });

@@ -46,7 +46,8 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
             type: VALIDATION_TYPES.REQUIRED,
             message: "Please enter name."
           }
-        ]
+        ],
+        variableInputAllowed: true
       },
       {
         label: "CSS selector",
@@ -242,8 +243,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "If Block",
         type: INPUT_TYPES.OPERATION_BOX,
-        operations: [],
-        width: 12
+        operations: []
       }
     ]
   },
@@ -269,8 +269,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "While Block",
         type: INPUT_TYPES.OPERATION_BOX,
-        operations: [],
-        width: 12
+        operations: []
       }
     ]
   }

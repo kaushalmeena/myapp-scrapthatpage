@@ -11,14 +11,9 @@ export const connectScraperProxy = (puppeteer: PuppeteerWrapper): void => {
       try {
         const page = await puppeteer.getPage();
         const result = await executeOperation(page, operation);
-        if (result) {
-          return {
-            status: "success",
-            data: result
-          };
-        }
         return {
-          status: "success"
+          status: "success",
+          data: result
         };
       } catch (err) {
         console.log(err);

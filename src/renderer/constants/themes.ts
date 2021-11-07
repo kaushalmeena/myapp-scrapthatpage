@@ -5,18 +5,6 @@ export enum THEME_TYPES {
   DARK
 }
 
-const commonThemeData = {
-  components: {
-    MuiChip: {
-      styleOverrides: {
-        root: {
-          height: "auto"
-        }
-      }
-    }
-  }
-};
-
 export const THEMES: Theme[] = [
   {
     name: "Light",
@@ -42,7 +30,6 @@ export const THEMES: Theme[] = [
         }
       },
       components: {
-        ...commonThemeData.components,
         MuiListSubheader: {
           styleOverrides: {
             root: {
@@ -77,7 +64,6 @@ export const THEMES: Theme[] = [
         }
       },
       components: {
-        ...commonThemeData.components,
         MuiListSubheader: {
           styleOverrides: {
             root: {

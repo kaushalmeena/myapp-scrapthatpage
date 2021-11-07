@@ -1,15 +1,6 @@
 import { OPERATION_TYPES } from "../constants/operation";
 import { SmallTextInput } from "./smallOperation";
 
-type OperationError = {
-  status: "error";
-  message: string;
-};
-
-type OperationSuccess = {
-  status: "success";
-};
-
 export type ExtractOperationResult = {
   url: string;
   name: string;
@@ -17,21 +8,23 @@ export type ExtractOperationResult = {
   data: string[];
 };
 
-type OperationSuccessWithData = {
+type OperationError = {
+  status: "error";
+  message: string;
+};
+
+type OperationSuccess = {
   status: "success";
-  data: ExtractOperationResult;
+  data: ExecuteResult;
 };
 
 type ScraperInput = SmallTextInput;
 
-export type ScraperResult =
-  | OperationError
-  | OperationSuccess
-  | OperationSuccessWithData;
+export type ScraperResult = OperationError | OperationSuccess;
 
 export type ScraperOperation = {
   type: OPERATION_TYPES;
   inputs: ScraperInput[];
 };
 
-export type ExecuteResult = ExtractOperationResult | undefined;
+export type ExecuteResult = ExtractOperationResult | null;

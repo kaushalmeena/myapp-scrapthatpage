@@ -6,7 +6,14 @@ export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
   information: INITIAL_INFORMATION,
   operations: [],
   selector: {
-    visible: false,
-    activePath: ""
+    operation: {
+      visible: false,
+      activePath: ""
+    },
+    variable: {
+      visible: false,
+      activePath: "",
+      appendMode: true
+    }
   }
 };

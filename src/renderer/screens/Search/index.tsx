@@ -1,15 +1,10 @@
-import {
-  Icon,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography
-} from "@mui/material";
+import { Icon, InputAdornment, Stack, TextField } from "@mui/material";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { fetchAllScripts } from "../../database/main";
-import { useSnackbar } from "../../hooks/useSnackbar";
+import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
+import { fetchAllScripts } from "../../database/main";
+import { useSnackbar } from "../../hooks/useSnackbar";
 import { Script } from "../../types/script";
 
 const Search = (): JSX.Element => {
@@ -73,9 +68,7 @@ const Search = (): JSX.Element => {
             />
           ))
         ) : (
-          <Typography margin={1} textAlign="center" color="text.secondary">
-            &lt; Empty &gt;
-          </Typography>
+          <EmptyText />
         )}
       </Stack>
     </>

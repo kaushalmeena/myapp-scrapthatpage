@@ -111,7 +111,7 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
                 item
                 key={`${props.path}.inputs.${index}`}
                 xs={12}
-                md={input.width}
+                md={"width" in input && input.width}
               >
                 <OperationInput
                   path={`${props.path}.inputs.${index}`}
