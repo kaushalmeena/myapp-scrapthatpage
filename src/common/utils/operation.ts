@@ -1,3 +1,4 @@
+import { get } from "object-path-immutable";
 import { INPUT_TYPES } from "../constants/input";
 import { LARGE_OPERTAIONS } from "../constants/largeOperations";
 import { OPERATION_TYPES } from "../constants/operation";
@@ -10,7 +11,6 @@ import {
   SmallTextInput
 } from "../types/smallOperation";
 import { ValidationRule } from "../types/validation";
-import { get } from "object-path-immutable";
 
 export const getLargeOperation = (type: OPERATION_TYPES): LargeOperation =>
   get(LARGE_OPERTAIONS[type]);

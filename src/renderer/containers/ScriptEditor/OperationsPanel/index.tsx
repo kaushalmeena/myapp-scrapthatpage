@@ -1,7 +1,8 @@
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import React, { Dispatch } from "react";
-import { openSelector } from "../../../actions/scriptEditor";
 import { LargeOperation } from "../../../../common/types/largeOperation";
+import { openOperationSelector } from "../../../actions/scriptEditor";
+import EmptyText from "../../../components/EmptyText";
 import { ScriptEditorAction } from "../../../types/scriptEditor";
 import OperationCard from "./OperationCard";
 
@@ -12,14 +13,19 @@ type OperationsPanelProps = {
 };
 
 const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
-  const handleSelectorOpen = () => {
-    props.dispatch(openSelector(props.path));
+  const handleOperationSelectorOpen = () => {
+    props.dispatch(openOperationSelector(props.path));
   };
 
   return (
     <Box display="flex" flexDirection="column">
       <Stack direction="row" marginBottom={1} justifyContent="flex-end">
-        <Button size="small" variant="outlined" onClick={handleSelectorOpen}>
+        <Button
+          title="Add operation"
+          size="small"
+          variant="outlined"
+          onClick={handleOperationSelectorOpen}
+        >
           Add
         </Button>
       </Stack>
@@ -34,14 +40,7 @@ const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
             />
           ))
         ) : (
-          <Typography
-            margin={1}
-            textAlign="center"
-            color="text.secondary"
-            variant="body2"
-          >
-            &lt; Empty &gt;
-          </Typography>
+          <EmptyText />
         )}
       </Stack>
     </Box>

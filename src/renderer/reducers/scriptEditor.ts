@@ -12,7 +12,7 @@ export const scriptEditorReducer = (
   action: ScriptEditorAction
 ): ScriptEditorState => {
   switch (action.type) {
-    case ACTION_TYPES.SCRIPT_EDITOR_STATE_LOAD:
+    case ACTION_TYPES.STATE_LOAD:
       {
         state = action.payload.state;
       }
@@ -24,24 +24,10 @@ export const scriptEditorReducer = (
         state = updateScriptEditorField(state, path, value);
       }
       break;
-    case ACTION_TYPES.SELECTOR_OPEN:
-      {
-        const path = action.payload.path;
-        state = wrap(state)
-          .set("selector.visible", true)
-          .set("selector.activePath", path)
-          .value();
-      }
-      break;
-    case ACTION_TYPES.SELECTOR_CLOSE:
-      {
-        state = wrap(state).set("selector.visible", false).value();
-      }
-      break;
     case ACTION_TYPES.OPERATION_APPEND:
       {
         const operation = action.payload.operation;
-        const activePath = state.selector.activePath;
+        const activePath = state.selector.operation.activePath;
         state = wrap(state).push(activePath, operation).value();
       }
       break;
@@ -82,13 +68,52 @@ export const scriptEditorReducer = (
         }
       }
       break;
-    case ACTION_TYPES.OPERATION_UPDATE:
+    case ACTION_TYPES.INPUT_UPDATE:
       {
         const path = action.payload.path;
         const value = action.payload.value;
         state = updateScriptEditorField(state, path, value);
       }
       break;
+    case ACTION_TYPES.INPUT_UPDATE_WITH_VARIABLE:
+      {
+        const variable = action.payload.variable;
+        const activePath = state.selector.variable.activePath;
+        const appendMode = state.selector.variable.appendMode;
+        const valuePath = `${activePath}.value`;
+        const value = get(state, valuePath);
+        const newValue = appendMode
+          ? `${value}{{${variable.name}}}`
+          : `{{${variable.name}}}`;
+        state = wrap(state).set(valuePath, newValue).value();
+      }
+      break;
+    case ACTION_TYPES.OPERATION_SELECTOR_OPEN:
+      {
+        const path = action.payload.path;
+        state = wrap(state)
+          .set("selector.operation.visible", true)
+          .set("selector.operation.activePath", path)
+          .value();
+      }
+      break;
+    case ACTION_TYPES.OPERATION_SELECTOR_CLOSE:
+      {
+        state = wrap(state).set("selector.operation.visible", false).value();
+      }
+      break;
+    case ACTION_TYPES.VARIABLE_SELECTOR_OPEN:
+      {
+        const path = action.payload.path;
+        state = wrap(state)
+          .set("selector.variable.visible", true)
+          .set("selector.variable.activePath", path)
+          .value();
+      }
+      break;
+    case ACTION_TYPES.VARIABLE_SELECTOR_CLOSE: {
+      state = wrap(state).set("selector.variable.visible", false).value();
+    }
     default:
   }
   return state;

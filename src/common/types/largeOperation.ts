@@ -10,69 +10,90 @@ type LargeTextInput = {
   value: string;
   error: string;
   rules: ValidationRule[];
+  variableInputAllowed?: boolean;
 };
 
 type LargeOperationBoxInput = {
   label: string;
   type: INPUT_TYPES.OPERATION_BOX;
-  width: GridSize;
   operations: LargeOperation[];
 };
 
 type LargeOpenOperation = {
+  name: string;
+  description: string;
+  format: string;
   type: OPERATION_TYPES.OPEN;
   inputs: [LargeTextInput];
 };
 
 type LargeExtractOperation = {
+  name: string;
+  description: string;
+  format: string;
   type: OPERATION_TYPES.EXTRACT;
   inputs: [LargeTextInput, LargeTextInput];
 };
 
 type LargeClickOperation = {
+  name: string;
+  description: string;
+  format: string;
   type: OPERATION_TYPES.CLICK;
   inputs: [LargeTextInput];
 };
 
 type LargeTypeOperation = {
+  name: string;
+  description: string;
+  format: string;
   type: OPERATION_TYPES.TYPE;
   inputs: [LargeTextInput, LargeTextInput];
 };
 
 type LargeSetOperation = {
+  name: string;
+  description: string;
+  format: string;
   type: OPERATION_TYPES.SET;
   inputs: [LargeTextInput, LargeTextInput];
 };
 
 type LargeIncreaseOperation = {
+  name: string;
+  description: string;
+  format: string;
   type: OPERATION_TYPES.INCREASE;
   inputs: [LargeTextInput, LargeTextInput];
 };
 
 type LargeDecreaseOperation = {
+  name: string;
+  description: string;
+  format: string;
   type: OPERATION_TYPES.DECREASE;
   inputs: [LargeTextInput, LargeTextInput];
 };
 
 type LargeIfOperation = {
+  name: string;
+  description: string;
+  format: string;
   type: OPERATION_TYPES.IF;
   inputs: [LargeTextInput, LargeOperationBoxInput];
 };
 
 type LargeWhileOperation = {
+  name: string;
+  description: string;
+  format: string;
   type: OPERATION_TYPES.WHILE;
   inputs: [LargeTextInput, LargeOperationBoxInput];
 };
 
-type LargeOperationCommon = {
-  name: string;
-  description: string;
-  format: string;
-};
-
 export type LargeInput = LargeTextInput | LargeOperationBoxInput;
 
-export type LargeOperation = (
+export type LargeOperation =
   | LargeOpenOperation
   | LargeExtractOperation
   | LargeClickOperation
@@ -81,6 +102,4 @@ export type LargeOperation = (
   | LargeIncreaseOperation
   | LargeDecreaseOperation
   | LargeIfOperation
-  | LargeWhileOperation
-) &
-  LargeOperationCommon;
+  | LargeWhileOperation;

@@ -8,7 +8,10 @@ import {
   ListItemText
 } from "@mui/material";
 import React, { Dispatch } from "react";
-import { appendOperation, closeSelector } from "../../../actions/scriptEditor";
+import {
+  appendOperation,
+  closeOperationSelector
+} from "../../../actions/scriptEditor";
 import { LARGE_OPERTAIONS } from "../../../../common/constants/largeOperations";
 import { LargeOperation } from "../../../../common/types/largeOperation";
 import {
@@ -23,12 +26,12 @@ type OperationSelectorProps = {
 
 const OperationSelector = (props: OperationSelectorProps): JSX.Element => {
   const handleSelectorClose = () => {
-    props.dispatch(closeSelector());
+    props.dispatch(closeOperationSelector());
   };
 
   const handleSelect = (item: LargeOperation) => {
     props.dispatch(appendOperation(item));
-    props.dispatch(closeSelector());
+    props.dispatch(closeOperationSelector());
   };
 
   return (

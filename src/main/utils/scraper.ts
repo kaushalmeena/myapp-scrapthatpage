@@ -6,7 +6,7 @@ export const executeOperation = async (
   page: Page,
   operation: ScraperOperation
 ): Promise<ExecuteResult> => {
-  let operationResult;
+  let result = null;
 
   switch (operation.type) {
     case OPERATION_TYPES.OPEN:
@@ -24,7 +24,7 @@ export const executeOperation = async (
             (query) => query.textContent
           );
         }, selector);
-        operationResult = {
+        result = {
           url: page.url(),
           name,
           selector,
@@ -47,5 +47,5 @@ export const executeOperation = async (
       break;
   }
 
-  return operationResult;
+  return result;
 };

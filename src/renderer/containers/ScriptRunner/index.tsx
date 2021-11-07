@@ -101,7 +101,7 @@ const ScriptRunner = (props: ScriptRunnerProps): JSX.Element => {
       .then((scraperData) => {
         console.log("=======data", scraperData);
         if (scraperData.status === "success") {
-          if ("data" in scraperData) {
+          if ("data" in scraperData && scraperData.data) {
             const newTableData = appendExtractResultInTableData(
               scraperData.data,
               tableData

@@ -1,5 +1,6 @@
 import { get, set, wrap } from "object-path-immutable";
 import { INPUT_TYPES } from "../../common/constants/input";
+import { OPERATION_TYPES } from "../../common/constants/operation";
 import { LargeOperation } from "../../common/types/largeOperation";
 import {
   convertToLargeOperation,
@@ -11,7 +12,8 @@ import { Script } from "../types/script";
 import {
   OperationsPathAndIndex,
   ScriptEditorState,
-  ValidatedData
+  ValidatedData,
+  Variable
 } from "../types/scriptEditor";
 
 export const getOperationsPathAndIndex = (
@@ -30,6 +32,32 @@ export const getOperationNumber = (path: string): string =>
     .filter((_, index) => index % 2 === 0)
     .map((num) => Number(num) + 1)
     .join(".");
+
+export const getVariables = (operations: LargeOperation[]): Variable[] => {
+  const variables: Variable[] = [];
+  operations.forEach((operation) => {
+    switch (operation.type) {
+      case OPERATION_TYPES.SET:
+        const name = operation.inputs[0].value;
+        const type = operation.inputs[1].value;
+        if (name && type) {
+          variables.push({
+            name,
+            type
+          });
+        }
+        break;
+      case OPERATION_TYPES.IF:
+      case OPERATION_TYPES.WHILE:
+        const operationVariables = getVariables(operation.inputs[1].operations);
+        if (operationVariables.length > 0) {
+          variables.push(...operationVariables);
+        }
+        break;
+    }
+  });
+  return variables;
+};
 
 export const updateScriptEditorField = (
   state: ScriptEditorState,

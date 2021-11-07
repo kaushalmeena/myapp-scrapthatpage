@@ -1,13 +1,17 @@
 import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
 import React, { SyntheticEvent, useReducer, useState } from "react";
-import { loadScriptEditorState } from "../../actions/scriptEditor";
+import { loadState } from "../../actions/scriptEditor";
 import { useSnackbar } from "../../hooks/useSnackbar";
 import { scriptEditorReducer } from "../../reducers/scriptEditor";
 import { ScriptEditorState } from "../../types/scriptEditor";
-import { validateScriptEditorState } from "../../utils/scriptEditor";
+import {
+  getVariables,
+  validateScriptEditorState
+} from "../../utils/scriptEditor";
 import InformationPanel from "./InformationPanel";
 import OperationSelector from "./OperationSelector";
 import OperationsPanel from "./OperationsPanel";
+import VariableSelector from "./VariableSelector";
 
 type ScriptEditorProps = {
   initialState: ScriptEditorState;
@@ -29,12 +33,14 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
     const { errors, newState } = validateScriptEditorState(state);
     if (errors.length > 0) {
       const [message] = errors;
-      dispatch(loadScriptEditorState(newState));
+      dispatch(loadState(newState));
       snackbar.show(message, "error");
     } else {
       props.onSubmit(state);
     }
   };
+
+  const variables = getVariables(state.operations);
 
   return (
     <>
@@ -80,7 +86,15 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
           </Box>
         </Box>
       </Box>
-      <OperationSelector selector={state.selector} dispatch={dispatch} />
+      <OperationSelector
+        selector={state.selector.operation}
+        dispatch={dispatch}
+      />
+      <VariableSelector
+        selector={state.selector.variable}
+        variables={variables}
+        dispatch={dispatch}
+      />
     </>
   );
 };
