@@ -1,26 +1,26 @@
 import {
-  Box,
   Card,
   CardContent,
   CardHeader,
   Chip,
   Collapse,
+  Grid,
   Icon,
   IconButton,
   Stack
 } from "@mui/material";
 import React, { Dispatch, useState } from "react";
+import { LargeOperation } from "../../../../../common/types/largeOperation";
+import {
+  getOperationSubheader,
+  isOperationValid
+} from "../../../../../common/utils/operation";
 import {
   deleteOperation,
   moveDownOperation,
   moveUpOperation
 } from "../../../../actions/scriptEditor";
-import { LargeOperation } from "../../../../../common/types/largeOperation";
 import { ScriptEditorAction } from "../../../../types/scriptEditor";
-import {
-  getOperationSubheader,
-  isOperationValid
-} from "../../../../../common/utils/operation";
 import { getOperationNumber } from "../../../../utils/scriptEditor";
 import OperationInput from "./OperationInput";
 
@@ -61,7 +61,7 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
       sx={{
         backgroundColor: isOperationValid(props.operation)
           ? "auto"
-          : "rgba(250, 0, 0, 0.1)"
+          : "rgba(211, 47, 47, 0.1)"
       }}
     >
       <CardHeader
@@ -105,17 +105,22 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
       />
       <Collapse in={expanded} timeout="auto">
         <CardContent>
-          <Stack gap={2} direction="column">
+          <Grid container spacing={2}>
             {props.operation.inputs.map((input, index) => (
-              <Box key={`${props.path}.inputs.${index}`} flex={input.width}>
+              <Grid
+                item
+                key={`${props.path}.inputs.${index}`}
+                xs={12}
+                md={input.width}
+              >
                 <OperationInput
                   path={`${props.path}.inputs.${index}`}
                   input={input}
                   dispatch={props.dispatch}
                 />
-              </Box>
+              </Grid>
             ))}
-          </Stack>
+          </Grid>
         </CardContent>
       </Collapse>
     </Card>

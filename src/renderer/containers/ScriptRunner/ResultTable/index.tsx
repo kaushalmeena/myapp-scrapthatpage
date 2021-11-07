@@ -11,9 +11,11 @@ import {
   TableRow
 } from "@mui/material";
 import React from "react";
+import { TableData } from "../../../types/scriptRunner";
+import { downloadAsCSV } from "../../../utils/scriptRunner";
 
 type ResultTableProps = {
-  data: any[];
+  data: TableData;
 };
 
 const ResultTable = (props: ResultTableProps): JSX.Element => {
@@ -29,6 +31,10 @@ const ResultTable = (props: ResultTableProps): JSX.Element => {
   ) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+  };
+
+  const handleDownloadClick = () => {
+    downloadAsCSV(props.data);
   };
 
   const headers = props.data.length > 0 ? Object.keys(props.data[0]) : [];
@@ -51,7 +57,7 @@ const ResultTable = (props: ResultTableProps): JSX.Element => {
           paddingX={1}
           justifyContent="flex-end"
         >
-          <IconButton>
+          <IconButton onClick={handleDownloadClick}>
             <Icon>file_download</Icon>
           </IconButton>
         </Stack>

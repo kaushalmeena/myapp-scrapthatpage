@@ -1,3 +1,4 @@
+import { GridSize } from "@mui/material";
 import { INPUT_TYPES } from "../constants/input";
 import { OPERATION_TYPES } from "../constants/operation";
 import { ValidationRule } from "./validation";
@@ -5,7 +6,7 @@ import { ValidationRule } from "./validation";
 type LargeTextInput = {
   label: string;
   type: INPUT_TYPES.TEXT;
-  width: number | string;
+  width: GridSize;
   value: string;
   error: string;
   rules: ValidationRule[];
@@ -14,7 +15,7 @@ type LargeTextInput = {
 type LargeOperationBoxInput = {
   label: string;
   type: INPUT_TYPES.OPERATION_BOX;
-  width: number | string;
+  width: GridSize;
   operations: LargeOperation[];
 };
 

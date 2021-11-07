@@ -13,7 +13,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "URL",
         type: INPUT_TYPES.TEXT,
-        width: 1,
+        width: 12,
         value: "",
         error: "",
         rules: [
@@ -38,7 +38,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Name",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -51,7 +51,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "CSS selector",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -72,7 +72,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "CSS selector",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -93,7 +93,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "CSS selector",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -106,7 +106,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Text",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -127,7 +127,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Variable",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -140,7 +140,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Value",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -161,7 +161,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Variable",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -174,7 +174,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Amount",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -195,7 +195,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Variable",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -208,7 +208,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Amount",
         type: INPUT_TYPES.TEXT,
-        width: 0.5,
+        width: 6,
         value: "",
         error: "",
         rules: [
@@ -229,7 +229,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Condition",
         type: INPUT_TYPES.TEXT,
-        width: 1,
+        width: 12,
         value: "",
         error: "",
         rules: [
@@ -243,7 +243,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         label: "If Block",
         type: INPUT_TYPES.OPERATION_BOX,
         operations: [],
-        width: 1
+        width: 12
       }
     ]
   },
@@ -256,7 +256,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Condition",
         type: INPUT_TYPES.TEXT,
-        width: 1,
+        width: 12,
         value: "",
         error: "",
         rules: [
@@ -270,7 +270,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         label: "While Block",
         type: INPUT_TYPES.OPERATION_BOX,
         operations: [],
-        width: 1
+        width: 12
       }
     ]
   }
