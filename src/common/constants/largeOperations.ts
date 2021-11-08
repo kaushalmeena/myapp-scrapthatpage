@@ -16,6 +16,10 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         width: 12,
         value: "",
         error: "",
+        variablePicker: {
+          type: "*",
+          mode: "APPEND"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
@@ -46,15 +50,18 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
             type: VALIDATION_TYPES.REQUIRED,
             message: "Please enter name."
           }
-        ],
-        variableInputAllowed: true
+        ]
       },
       {
-        label: "CSS selector",
+        label: "Selector",
         type: INPUT_TYPES.TEXT,
         width: 6,
         value: "",
         error: "",
+        variablePicker: {
+          type: "*",
+          mode: "APPEND"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
@@ -71,11 +78,15 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
     format: "[{0}]",
     inputs: [
       {
-        label: "CSS selector",
+        label: "Selector",
         type: INPUT_TYPES.TEXT,
         width: 6,
         value: "",
         error: "",
+        variablePicker: {
+          type: "*",
+          mode: "APPEND"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
@@ -92,11 +103,15 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
     format: "[{0}] {1}",
     inputs: [
       {
-        label: "CSS selector",
+        label: "Selector",
         type: INPUT_TYPES.TEXT,
         width: 6,
         value: "",
         error: "",
+        variablePicker: {
+          type: "*",
+          mode: "APPEND"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
@@ -128,20 +143,47 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Variable",
         type: INPUT_TYPES.TEXT,
-        width: 6,
+        width: 4,
         value: "",
         error: "",
+        variablePicker: {
+          type: "*",
+          mode: "SET"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
-            message: "Please enter Variable."
+            message: "Please enter variable."
+          }
+        ]
+      },
+      {
+        label: "Type",
+        type: INPUT_TYPES.SELECT,
+        width: 4,
+        value: "",
+        error: "",
+        options: [
+          {
+            label: "Number",
+            value: "number"
+          },
+          {
+            label: "String",
+            value: "string"
+          }
+        ],
+        rules: [
+          {
+            type: VALIDATION_TYPES.REQUIRED,
+            message: "Please select type."
           }
         ]
       },
       {
         label: "Value",
         type: INPUT_TYPES.TEXT,
-        width: 6,
+        width: 4,
         value: "",
         error: "",
         rules: [
@@ -160,15 +202,23 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
     format: "{0} [+{1}]",
     inputs: [
       {
-        label: "Variable",
+        label: "Number Variable",
         type: INPUT_TYPES.TEXT,
         width: 6,
         value: "",
         error: "",
+        variablePicker: {
+          type: "number",
+          mode: "SET"
+        },
+        inputProps: {
+          readOnly: true,
+          placeholder: "Select number variable from picker"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
-            message: "Please enter Variable."
+            message: "Please enter number variable."
           }
         ]
       },
@@ -176,8 +226,11 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         label: "Amount",
         type: INPUT_TYPES.TEXT,
         width: 6,
-        value: "",
+        value: "1",
         error: "",
+        inputProps: {
+          type: "number"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
@@ -194,15 +247,23 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
     format: "{0} [-{1}]",
     inputs: [
       {
-        label: "Variable",
+        label: "Number Variable",
         type: INPUT_TYPES.TEXT,
         width: 6,
-        value: "",
+        value: "1",
         error: "",
+        variablePicker: {
+          type: "number",
+          mode: "SET"
+        },
+        inputProps: {
+          readOnly: true,
+          placeholder: "Select number variable from picker"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
-            message: "Please enter Variable."
+            message: "Please enter number variable."
           }
         ]
       },
@@ -212,6 +273,9 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         width: 6,
         value: "",
         error: "",
+        inputProps: {
+          type: "number"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
@@ -233,10 +297,14 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         width: 12,
         value: "",
         error: "",
+        variablePicker: {
+          type: "*",
+          mode: "APPEND"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
-            message: "Please enter Variable."
+            message: "Please enter condition."
           }
         ]
       },
@@ -259,10 +327,14 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         width: 12,
         value: "",
         error: "",
+        variablePicker: {
+          type: "*",
+          mode: "APPEND"
+        },
         rules: [
           {
             type: VALIDATION_TYPES.REQUIRED,
-            message: "Please enter Variable."
+            message: "Please enter condition."
           }
         ]
       },

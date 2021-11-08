@@ -79,13 +79,22 @@ export const scriptEditorReducer = (
       {
         const variable = action.payload.variable;
         const activePath = state.selector.variable.activePath;
-        const appendMode = state.selector.variable.appendMode;
+        const updateMode = state.selector.variable.updateMode;
+
         const valuePath = `${activePath}.value`;
         const value = get(state, valuePath);
-        const newValue = appendMode
-          ? `${value}{{${variable.name}}}`
-          : `{{${variable.name}}}`;
-        state = wrap(state).set(valuePath, newValue).value();
+
+        let newValue = "";
+        switch (updateMode) {
+          case "SET":
+            newValue = variable.name;
+            break;
+          case "APPEND":
+            newValue = `${value}{{${variable.name}}}`;
+            break;
+        }
+
+        state = updateScriptEditorField(state, activePath, newValue);
       }
       break;
     case ACTION_TYPES.OPERATION_SELECTOR_OPEN:
@@ -105,9 +114,12 @@ export const scriptEditorReducer = (
     case ACTION_TYPES.VARIABLE_SELECTOR_OPEN:
       {
         const path = action.payload.path;
+        const picker = action.payload.picker;
         state = wrap(state)
           .set("selector.variable.visible", true)
           .set("selector.variable.activePath", path)
+          .set("selector.variable.filterType", picker.type)
+          .set("selector.variable.updateMode", picker.mode)
           .value();
       }
       break;

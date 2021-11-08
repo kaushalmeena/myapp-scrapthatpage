@@ -6,6 +6,11 @@ export type SmallTextInput = {
   value: string;
 };
 
+export type SmallSelectInput = {
+  type: INPUT_TYPES.SELECT;
+  value: string;
+};
+
 export type SmallOperationBoxInput = {
   type: INPUT_TYPES.OPERATION_BOX;
   operations: SmallOperation[];
@@ -33,7 +38,7 @@ type SmallTypeOperation = {
 
 type SmallSetOperation = {
   type: OPERATION_TYPES.SET;
-  inputs: [SmallTextInput, SmallTextInput];
+  inputs: [SmallTextInput, SmallSelectInput, SmallTextInput];
 };
 
 type SmallIncreaseOperation = {
@@ -56,7 +61,10 @@ type SmallWhileOperation = {
   inputs: [SmallTextInput, SmallOperationBoxInput];
 };
 
-export type SmallInput = SmallTextInput | SmallOperationBoxInput;
+export type SmallInput =
+  | SmallTextInput
+  | SmallSelectInput
+  | SmallOperationBoxInput;
 
 export type SmallOperation =
   | SmallOpenOperation

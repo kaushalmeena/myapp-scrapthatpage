@@ -1,8 +1,17 @@
-import { Icon, IconButton, InputAdornment, TextField } from "@mui/material";
+import {
+  Icon,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  TextField
+} from "@mui/material";
 import React, { Dispatch } from "react";
 import OperationsPanel from "../..";
 import { INPUT_TYPES } from "../../../../../../common/constants/input";
-import { LargeInput } from "../../../../../../common/types/largeOperation";
+import {
+  LargeInput,
+  LargeTextInput
+} from "../../../../../../common/types/largeOperation";
 import {
   openVariableSelector,
   updateInput
@@ -20,8 +29,24 @@ const OperationInput = (props: OperationInputProps): JSX.Element | null => {
     props.dispatch(updateInput(event.target.value, props.path));
   };
 
-  const handleVariableSelectorOpen = () => {
-    props.dispatch(openVariableSelector(props.path));
+  const renderTextInputAdornment = (input: LargeTextInput) => {
+    if ("variablePicker" in input && input.variablePicker) {
+      const variablePicker = input.variablePicker;
+      return (
+        <InputAdornment position="end">
+          <IconButton
+            title="Show variable picker"
+            size="small"
+            onClick={() => {
+              props.dispatch(openVariableSelector(props.path, variablePicker));
+            }}
+          >
+            <Icon fontSize="small">control_point_duplicate</Icon>
+          </IconButton>
+        </InputAdornment>
+      );
+    }
+    return null;
   };
 
   switch (props.input.type) {
@@ -36,20 +61,34 @@ const OperationInput = (props: OperationInputProps): JSX.Element | null => {
           value={props.input.value}
           error={props.input.error ? true : false}
           InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  title="Show variable picker"
-                  size="small"
-                  onClick={handleVariableSelectorOpen}
-                >
-                  <Icon fontSize="small">add_box</Icon>
-                </IconButton>
-              </InputAdornment>
-            )
+            ...props.input.inputProps,
+            endAdornment: renderTextInputAdornment(props.input)
           }}
           onChange={handleInputChange}
         />
+      );
+    case INPUT_TYPES.SELECT:
+      return (
+        <TextField
+          select
+          fullWidth
+          variant="standard"
+          size="small"
+          label={props.input.label}
+          helperText={props.input.error}
+          value={props.input.value}
+          error={props.input.error ? true : false}
+          onChange={handleInputChange}
+        >
+          {props.input.options.map((item) => (
+            <MenuItem
+              key={`${props.path}-option-${item.value}`}
+              value={item.value}
+            >
+              {item.label}
+            </MenuItem>
+          ))}
+        </TextField>
       );
     case INPUT_TYPES.OPERATION_BOX:
       return (

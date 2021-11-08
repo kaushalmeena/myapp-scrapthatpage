@@ -8,6 +8,7 @@ import {
   SmallInput,
   SmallOperation,
   SmallOperationBoxInput,
+  SmallSelectInput,
   SmallTextInput
 } from "../types/smallOperation";
 import { ValidationRule } from "../types/validation";
@@ -39,12 +40,20 @@ export const convertToLargeOperation = (
       break;
     case OPERATION_TYPES.EXTRACT:
     case OPERATION_TYPES.TYPE:
-    case OPERATION_TYPES.SET:
     case OPERATION_TYPES.INCREASE:
     case OPERATION_TYPES.DECREASE:
       largeOperation.inputs[0].value = operation.inputs[0].value;
       largeOperation.inputs[1].value = (
         operation.inputs[1] as SmallTextInput
+      ).value;
+      break;
+    case OPERATION_TYPES.SET:
+      largeOperation.inputs[0].value = operation.inputs[0].value;
+      largeOperation.inputs[1].value = (
+        operation.inputs[1] as SmallSelectInput
+      ).value;
+      largeOperation.inputs[2].value = (
+        operation.inputs[2] as SmallTextInput
       ).value;
       break;
     case OPERATION_TYPES.IF:
@@ -75,7 +84,6 @@ export const convertToSmallOperation = (
       };
     case OPERATION_TYPES.EXTRACT:
     case OPERATION_TYPES.TYPE:
-    case OPERATION_TYPES.SET:
     case OPERATION_TYPES.INCREASE:
     case OPERATION_TYPES.DECREASE:
       return {
@@ -84,6 +92,24 @@ export const convertToSmallOperation = (
           {
             type: INPUT_TYPES.TEXT,
             value: operation.inputs[0].value
+          },
+          {
+            type: INPUT_TYPES.TEXT,
+            value: operation.inputs[1].value
+          }
+        ]
+      };
+    case OPERATION_TYPES.SET:
+      return {
+        type: operation.type,
+        inputs: [
+          {
+            type: INPUT_TYPES.TEXT,
+            value: operation.inputs[0].value
+          },
+          {
+            type: INPUT_TYPES.SELECT,
+            value: operation.inputs[1].value
           },
           {
             type: INPUT_TYPES.TEXT,

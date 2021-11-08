@@ -1,4 +1,5 @@
 import { LargeOperation } from "../../common/types/largeOperation";
+import { Variable, VariablePicker } from "../../common/types/variable";
 import {
   InformationUpdateAction,
   InputUpdateAction,
@@ -11,7 +12,6 @@ import {
   OperationSelectorOpenAction,
   ScriptEditorState,
   StateLoadAction,
-  Variable,
   VariableSelectorCloseAction,
   VariableSelectorOpenAction
 } from "../types/scriptEditor";
@@ -113,11 +113,13 @@ export const closeOperationSelector = (): OperationSelectorCloseAction => ({
 });
 
 export const openVariableSelector = (
-  path: string
+  path: string,
+  picker: VariablePicker
 ): VariableSelectorOpenAction => ({
   type: ACTION_TYPES.VARIABLE_SELECTOR_OPEN,
   payload: {
-    path
+    path,
+    picker
   }
 });
 

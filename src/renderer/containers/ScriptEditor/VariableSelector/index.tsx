@@ -8,6 +8,7 @@ import {
   ListItemText
 } from "@mui/material";
 import React, { Dispatch } from "react";
+import { Variable } from "../../../../common/types/variable";
 import {
   closeVariableSelector,
   updateInputWithVariable
@@ -15,7 +16,6 @@ import {
 import EmptyText from "../../../components/EmptyText";
 import {
   ScriptEditorAction,
-  Variable,
   VariableSelector
 } from "../../../types/scriptEditor";
 
@@ -36,7 +36,7 @@ const VariableSelector = (props: VariableSelectorProps): JSX.Element => {
   };
 
   let filteredVariables = props.variables;
-  if (props.selector.filterType) {
+  if (props.selector.filterType !== "*") {
     filteredVariables = filteredVariables.filter(
       (item) => item.type === props.selector.filterType
     );

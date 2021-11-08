@@ -13,7 +13,8 @@ export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
     variable: {
       visible: false,
       activePath: "",
-      appendMode: true
+      filterType: "*",
+      updateMode: "SET"
     }
   }
 };
