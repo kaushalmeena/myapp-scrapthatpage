@@ -4,7 +4,7 @@ export enum VALIDATION_TYPES {
 }
 
 export const URL_REGEX = new RegExp(
-  "^(http://www.|https://www.|http://|https://)?[a-z0-9]+([-.]{1}[a-z0-9]+)*.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$"
+  "^((http|https)://)(www.)?[-A-Za-z0-9+&@#/%?=~_|!:,.;{}]+[-A-Za-z0-9+&@#/%=~_|{}]$"
 );
 
 export const VALIDATION_FUNCTION = [

@@ -1,19 +1,36 @@
-import { GridSize } from "@mui/material";
+import { GridSize, InputBaseProps } from "@mui/material";
 import { INPUT_TYPES } from "../constants/input";
 import { OPERATION_TYPES } from "../constants/operation";
 import { ValidationRule } from "./validation";
+import { VariablePicker } from "./variable";
 
-type LargeTextInput = {
+export type SelectOption = {
+  label: string;
+  value: string;
+};
+
+export type LargeTextInput = {
   label: string;
   type: INPUT_TYPES.TEXT;
   width: GridSize;
   value: string;
   error: string;
+  variablePicker?: VariablePicker;
+  inputProps?: InputBaseProps;
   rules: ValidationRule[];
-  variableInputAllowed?: boolean;
 };
 
-type LargeOperationBoxInput = {
+export type LargeSelectInput = {
+  label: string;
+  type: INPUT_TYPES.SELECT;
+  width: GridSize;
+  options: SelectOption[];
+  value: string;
+  error: string;
+  rules: ValidationRule[];
+};
+
+export type LargeOperationBoxInput = {
   label: string;
   type: INPUT_TYPES.OPERATION_BOX;
   operations: LargeOperation[];
@@ -56,7 +73,7 @@ type LargeSetOperation = {
   description: string;
   format: string;
   type: OPERATION_TYPES.SET;
-  inputs: [LargeTextInput, LargeTextInput];
+  inputs: [LargeTextInput, LargeSelectInput, LargeTextInput];
 };
 
 type LargeIncreaseOperation = {
@@ -91,7 +108,10 @@ type LargeWhileOperation = {
   inputs: [LargeTextInput, LargeOperationBoxInput];
 };
 
-export type LargeInput = LargeTextInput | LargeOperationBoxInput;
+export type LargeInput =
+  | LargeTextInput
+  | LargeSelectInput
+  | LargeOperationBoxInput;
 
 export type LargeOperation =
   | LargeOpenOperation

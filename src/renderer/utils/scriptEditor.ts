@@ -2,6 +2,7 @@ import { get, set, wrap } from "object-path-immutable";
 import { INPUT_TYPES } from "../../common/constants/input";
 import { OPERATION_TYPES } from "../../common/constants/operation";
 import { LargeOperation } from "../../common/types/largeOperation";
+import { Variable } from "../../common/types/variable";
 import {
   convertToLargeOperation,
   convertToSmallOperation,
@@ -12,8 +13,7 @@ import { Script } from "../types/script";
 import {
   OperationsPathAndIndex,
   ScriptEditorState,
-  ValidatedData,
-  Variable
+  ValidatedData
 } from "../types/scriptEditor";
 
 export const getOperationsPathAndIndex = (
@@ -41,10 +41,7 @@ export const getVariables = (operations: LargeOperation[]): Variable[] => {
         const name = operation.inputs[0].value;
         const type = operation.inputs[1].value;
         if (name && type) {
-          variables.push({
-            name,
-            type
-          });
+          variables.push({ name, type });
         }
         break;
       case OPERATION_TYPES.IF:
@@ -56,7 +53,11 @@ export const getVariables = (operations: LargeOperation[]): Variable[] => {
         break;
     }
   });
-  return variables;
+  return variables.filter((varItem, index, array) => {
+    return (
+      index === array.findIndex((arrItem) => arrItem.name === varItem.name)
+    );
+  });
 };
 
 export const updateScriptEditorField = (
@@ -112,16 +113,14 @@ const validateScriptEditorOperations = (
 ): ValidatedData => {
   let newState = state;
   const errors: string[] = [];
-
   const operations = get(state, path) as LargeOperation[];
-
   operations.forEach((operation, operationIndex) => {
     const inputErrors: string[] = [];
     const operationPath = `${path}.${operationIndex}`;
-
     operation.inputs.forEach((input, inputIndex) => {
       switch (input.type) {
         case INPUT_TYPES.TEXT:
+        case INPUT_TYPES.SELECT:
           const inputPath = `${operationPath}.inputs.${inputIndex}`;
           const validatedFieldData = validateScriptEditorField(
             newState,
@@ -132,7 +131,6 @@ const validateScriptEditorOperations = (
             newState = validatedFieldData.newState;
           }
           break;
-
         case INPUT_TYPES.OPERATION_BOX:
           const operationsPath = `${operationPath}.inputs.${inputIndex}.operations`;
           const validatedOperationsData = validateScriptEditorOperations(
@@ -146,13 +144,11 @@ const validateScriptEditorOperations = (
           break;
       }
     });
-
     if (inputErrors.length > 0) {
       const operationNumber = getOperationNumber(operationPath);
       errors.push(`Please fix error in operation ${operationNumber}`);
     }
   });
-
   return { newState, errors };
 };
 

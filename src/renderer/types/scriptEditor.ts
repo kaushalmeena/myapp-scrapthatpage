@@ -1,11 +1,12 @@
+import { LargeOperation } from "../../common/types/largeOperation";
+import {
+  Variable,
+  VariableFilterType,
+  VariablePicker,
+  VariableUpdateMode
+} from "../../common/types/variable";
 import { ACTION_TYPES } from "../actions/scriptEditor";
 import { Information } from "./information";
-import { LargeOperation } from "../../common/types/largeOperation";
-
-export type Variable = {
-  name: string;
-  type: string;
-};
 
 export type StateLoadAction = {
   type: ACTION_TYPES.STATE_LOAD;
@@ -80,6 +81,7 @@ export type VariableSelectorOpenAction = {
   type: ACTION_TYPES.VARIABLE_SELECTOR_OPEN;
   payload: {
     path: string;
+    picker: VariablePicker;
   };
 };
 
@@ -109,8 +111,8 @@ export type OperationSelector = {
 export type VariableSelector = {
   visible: boolean;
   activePath: string;
-  filterType?: string;
-  appendMode: boolean;
+  filterType: VariableFilterType;
+  updateMode: VariableUpdateMode;
 };
 
 export type ModalSelector = {
