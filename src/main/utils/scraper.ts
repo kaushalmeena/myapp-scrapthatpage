@@ -1,48 +1,43 @@
 import { Page } from "puppeteer-core";
 import { OPERATION_TYPES } from "../../common/constants/operation";
-import { ExecuteResult, ScraperOperation } from "../../common/types/scraper";
+import { ScraperResult, ScraperOperation } from "../../common/types/scraper";
 
 export const executeOperation = async (
   page: Page,
   operation: ScraperOperation
-): Promise<ExecuteResult> => {
+): Promise<ScraperResult> => {
   let result = null;
 
   switch (operation.type) {
     case OPERATION_TYPES.OPEN:
       {
-        const url = operation.inputs[0].value;
-        await page.goto(url);
+        await page.goto(operation.url);
       }
       break;
     case OPERATION_TYPES.EXTRACT:
       {
-        const name = operation.inputs[0].value;
-        const selector = operation.inputs[1].value;
         const data = await page.evaluate((selector) => {
           return Array.from(document.querySelectorAll(selector)).map(
             (query) => query.textContent
           );
-        }, selector);
+        }, operation.selector);
         result = {
+          type: operation.type,
           url: page.url(),
-          name,
-          selector,
-          data: data
+          name: operation.name,
+          selector: operation.selector,
+          result: data
         };
       }
       break;
     case OPERATION_TYPES.CLICK:
       {
-        const selector = operation.inputs[1].value;
-        await page.click(selector);
+        await page.click(operation.selector);
       }
       break;
     case OPERATION_TYPES.TYPE:
       {
-        const selector = operation.inputs[0].value;
-        const text = operation.inputs[1].value;
-        await page.type(selector, text);
+        await page.type(operation.selector, operation.text);
       }
       break;
   }
