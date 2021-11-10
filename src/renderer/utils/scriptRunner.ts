@@ -43,10 +43,12 @@ export function* operationGenerator(
         {
           const name = operation.inputs[0].value;
           const selector = operation.inputs[1].value;
+          const attribute = operation.inputs[2].value;
           yield {
             type: operation.type,
             name: name,
-            selector: replaceWithVariables(selector, variables)
+            selector: replaceWithVariables(selector, variables),
+            attribute: attribute
           };
         }
         break;

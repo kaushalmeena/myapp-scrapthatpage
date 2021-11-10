@@ -36,18 +36,18 @@ export const convertToLargeOperation = (
       );
       break;
     case OPERATION_TYPES.EXTRACT:
+    case OPERATION_TYPES.SET:
+      wrappedOperation = wrappedOperation
+        .set("inputs.0.value", operation.inputs[0].value)
+        .set("inputs.1.value", operation.inputs[1].value)
+        .set("inputs.2.value", operation.inputs[2].value);
+      break;
     case OPERATION_TYPES.TYPE:
     case OPERATION_TYPES.INCREASE:
     case OPERATION_TYPES.DECREASE:
       wrappedOperation = wrappedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set("inputs.1.value", operation.inputs[1].value);
-      break;
-    case OPERATION_TYPES.SET:
-      wrappedOperation = wrappedOperation
-        .set("inputs.0.value", operation.inputs[0].value)
-        .set("inputs.1.value", operation.inputs[1].value)
-        .set("inputs.2.value", operation.inputs[2].value);
       break;
     case OPERATION_TYPES.IF:
     case OPERATION_TYPES.WHILE:
@@ -78,6 +78,23 @@ export const convertToSmallOperation = (
         ]
       };
     case OPERATION_TYPES.EXTRACT:
+      return {
+        type: operation.type,
+        inputs: [
+          {
+            type: INPUT_TYPES.TEXT,
+            value: operation.inputs[0].value
+          },
+          {
+            type: INPUT_TYPES.TEXT,
+            value: operation.inputs[1].value
+          },
+          {
+            type: INPUT_TYPES.SELECT,
+            value: operation.inputs[2].value
+          }
+        ]
+      };
     case OPERATION_TYPES.TYPE:
     case OPERATION_TYPES.INCREASE:
     case OPERATION_TYPES.DECREASE:

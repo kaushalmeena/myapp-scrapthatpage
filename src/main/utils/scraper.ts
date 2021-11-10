@@ -16,16 +16,21 @@ export const executeOperation = async (
       break;
     case OPERATION_TYPES.EXTRACT:
       {
-        const data = await page.evaluate((selector) => {
-          return Array.from(document.querySelectorAll(selector)).map(
-            (query) => query.textContent
-          );
-        }, operation.selector);
+        const data = await page.evaluate(
+          (selector, attribute) => {
+            return Array.from(document.querySelectorAll(selector)).map(
+              (query) => query[attribute]
+            );
+          },
+          operation.selector,
+          operation.attribute
+        );
         result = {
           type: operation.type,
           url: page.url(),
           name: operation.name,
           selector: operation.selector,
+          attribute: operation.attribute,
           result: data
         };
       }
