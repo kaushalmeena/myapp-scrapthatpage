@@ -1,19 +1,17 @@
 import Dexie, { PromiseExtended } from "dexie";
 import { Script } from "../types/script";
 
-const DATABASE_NAME = "main_database";
-
 class MainDatabase extends Dexie {
   public scripts: Dexie.Table<Script, number>;
 
-  public constructor(name: string) {
-    super(name);
+  public constructor() {
+    super("main_database");
     this.version(1).stores({ scripts: "++id, name, favorite" });
     this.scripts = this.table("scripts");
   }
 }
 
-export const db = new MainDatabase(DATABASE_NAME);
+export const db = new MainDatabase();
 
 export const fetchAllScripts = (): PromiseExtended<Script[]> =>
   db.scripts.reverse().toArray();

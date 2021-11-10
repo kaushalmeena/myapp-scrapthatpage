@@ -14,14 +14,17 @@ import OperationsPanel from "./OperationsPanel";
 import VariableSelector from "./VariableSelector";
 
 type ScriptEditorProps = {
-  initialState: ScriptEditorState;
+  scriptEditorState: ScriptEditorState;
   onSubmit: (state: ScriptEditorState) => void;
 };
 
 const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
   const snackbar = useSnackbar();
 
-  const [state, dispatch] = useReducer(scriptEditorReducer, props.initialState);
+  const [state, dispatch] = useReducer(
+    scriptEditorReducer,
+    props.scriptEditorState
+  );
 
   const [activeTab, setActiveTab] = useState(0);
 

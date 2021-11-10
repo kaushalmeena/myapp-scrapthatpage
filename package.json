@@ -103,6 +103,7 @@
     "dexie": "^3.0.3",
     "electron-squirrel-startup": "^1.0.0",
     "material-icons": "^1.6.1",
+    "mathjs": "^10.0.0",
     "object-path-immutable": "^4.1.2",
     "puppeteer-core": "^10.4.0",
     "puppeteer-in-electron": "^3.0.5",

@@ -29,7 +29,7 @@ const Create = (): JSX.Element => {
     <>
       <PageName name="Create" />
       <ScriptEditor
-        initialState={INITIAL_SCRIPT_EDITOR_STATE}
+        scriptEditorState={INITIAL_SCRIPT_EDITOR_STATE}
         onSubmit={handleSubmit}
       />
     </>

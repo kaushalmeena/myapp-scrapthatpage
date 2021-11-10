@@ -1,6 +1,7 @@
 import { Box, Card, CardHeader } from "@mui/material";
 import React, { useRef, useState } from "react";
-import { SmallOperation } from "../../../common/types/smallOperation";
+import { OPERATION_TYPES } from "../../../common/constants/operation";
+import { ScraperOperation } from "../../../common/types/scraper";
 import { Script } from "../../types/script";
 import {
   ActionButtonColor,
@@ -31,7 +32,8 @@ const ScriptRunner = (props: ScriptRunnerProps): JSX.Element => {
     useState<ActionButtonColor>("primary");
 
   const runnerStatus = useRef<ScriptRunnerStatus>("stopped");
-  const operationExecutor = useRef<Generator<SmallOperation, void, unknown>>();
+  const operationExecutor =
+    useRef<Generator<ScraperOperation, void, ScraperOperation>>();
 
   const handleRunnerStart = () => {
     runnerStatus.current = "started";
@@ -76,12 +78,10 @@ const ScriptRunner = (props: ScriptRunnerProps): JSX.Element => {
     }
 
     const executorData = operationExecutor.current?.next();
-
     if (!executorData) {
       handleRunnerError("Didn't found any operation to execute");
       return;
     }
-
     if (executorData.done) {
       handleRunnerFinish();
     }
@@ -98,19 +98,23 @@ const ScriptRunner = (props: ScriptRunnerProps): JSX.Element => {
 
     window.scraper
       .runOperation(operation)
-      .then((scraperData) => {
-        console.log("=======data", scraperData);
-        if (scraperData.status === "success") {
-          if ("data" in scraperData && scraperData.data) {
-            const newTableData = appendExtractResultInTableData(
-              scraperData.data,
-              tableData
-            );
-            setTableData(newTableData);
+      .then((response) => {
+        console.log("=======response", response);
+        if (response.status === "success") {
+          if ("data" in response && response.data) {
+            switch (response.data.type) {
+              case OPERATION_TYPES.EXTRACT:
+                const newTableData = appendExtractResultInTableData(
+                  response.data,
+                  tableData
+                );
+                setTableData(newTableData);
+                break;
+            }
           }
           executeOperation();
         } else {
-          handleRunnerError(scraperData.message);
+          handleRunnerError(response.message);
         }
       })
       .catch((err) => {

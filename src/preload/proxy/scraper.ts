@@ -1,9 +1,9 @@
 import { ipcRenderer } from "electron";
 import { SCRAPER_ACTIONS } from "../../common/constants/scraper";
-import { SmallOperation } from "../../common/types/smallOperation";
+import { ScraperOperation } from "../../common/types/scraper";
 import { ScraperAPI } from "../types/scraper";
 
 export const ScraperProxy: ScraperAPI = {
-  runOperation: (operation: SmallOperation) =>
+  runOperation: (operation: ScraperOperation) =>
     ipcRenderer.invoke(SCRAPER_ACTIONS.RUN_OPERATION, operation)
 };

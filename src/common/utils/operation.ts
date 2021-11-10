@@ -1,16 +1,10 @@
-import { get } from "object-path-immutable";
+import { get, wrap } from "object-path-immutable";
 import { INPUT_TYPES } from "../constants/input";
 import { LARGE_OPERTAIONS } from "../constants/largeOperations";
 import { OPERATION_TYPES } from "../constants/operation";
 import { VALIDATION_FUNCTION } from "../constants/validation";
 import { LargeInput, LargeOperation } from "../types/largeOperation";
-import {
-  SmallInput,
-  SmallOperation,
-  SmallOperationBoxInput,
-  SmallSelectInput,
-  SmallTextInput
-} from "../types/smallOperation";
+import { SmallInput, SmallOperation } from "../types/smallOperation";
 import { ValidationRule } from "../types/validation";
 
 export const getLargeOperation = (type: OPERATION_TYPES): LargeOperation =>
@@ -32,39 +26,40 @@ export const getOperationSubheader = (
 export const convertToLargeOperation = (
   operation: SmallOperation
 ): LargeOperation => {
-  const largeOperation = getLargeOperation(operation.type);
-  switch (largeOperation.type) {
+  let wrappedOperation = wrap(LARGE_OPERTAIONS[operation.type]);
+  switch (operation.type) {
     case OPERATION_TYPES.OPEN:
     case OPERATION_TYPES.CLICK:
-      largeOperation.inputs[0].value = operation.inputs[0].value;
+      wrappedOperation = wrappedOperation.set(
+        "inputs.0.value",
+        operation.inputs[0].value
+      );
       break;
     case OPERATION_TYPES.EXTRACT:
     case OPERATION_TYPES.TYPE:
     case OPERATION_TYPES.INCREASE:
     case OPERATION_TYPES.DECREASE:
-      largeOperation.inputs[0].value = operation.inputs[0].value;
-      largeOperation.inputs[1].value = (
-        operation.inputs[1] as SmallTextInput
-      ).value;
+      wrappedOperation = wrappedOperation
+        .set("inputs.0.value", operation.inputs[0].value)
+        .set("inputs.1.value", operation.inputs[1].value);
       break;
     case OPERATION_TYPES.SET:
-      largeOperation.inputs[0].value = operation.inputs[0].value;
-      largeOperation.inputs[1].value = (
-        operation.inputs[1] as SmallSelectInput
-      ).value;
-      largeOperation.inputs[2].value = (
-        operation.inputs[2] as SmallTextInput
-      ).value;
+      wrappedOperation = wrappedOperation
+        .set("inputs.0.value", operation.inputs[0].value)
+        .set("inputs.1.value", operation.inputs[1].value)
+        .set("inputs.2.value", operation.inputs[2].value);
       break;
     case OPERATION_TYPES.IF:
     case OPERATION_TYPES.WHILE:
-      largeOperation.inputs[0].value = operation.inputs[0].value;
-      largeOperation.inputs[1].operations = (
-        operation.inputs[1] as SmallOperationBoxInput
-      ).operations.map(convertToLargeOperation);
+      wrappedOperation = wrappedOperation
+        .set("inputs.0.value", operation.inputs[0].value)
+        .set(
+          "inputs.1.operations",
+          operation.inputs[1].operations.map(convertToLargeOperation)
+        );
       break;
   }
-  return largeOperation;
+  return wrappedOperation.value();
 };
 
 export const convertToSmallOperation = (
@@ -113,7 +108,7 @@ export const convertToSmallOperation = (
           },
           {
             type: INPUT_TYPES.TEXT,
-            value: operation.inputs[1].value
+            value: operation.inputs[2].value
           }
         ]
       };

@@ -66,7 +66,7 @@ const Update = (): JSX.Element => {
       <PageName name="Update" />
       {status === "loaded" && (
         <ScriptEditor
-          initialState={scriptEditorState}
+          scriptEditorState={scriptEditorState}
           onSubmit={handleSubmit}
         />
       )}
