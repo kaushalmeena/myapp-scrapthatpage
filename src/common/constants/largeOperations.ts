@@ -42,7 +42,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Name",
         type: INPUT_TYPES.TEXT,
-        width: 6,
+        width: 4,
         value: "",
         error: "",
         rules: [
@@ -55,7 +55,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
       {
         label: "Selector",
         type: INPUT_TYPES.TEXT,
-        width: 6,
+        width: 4,
         value: "",
         error: "",
         variablePicker: {
@@ -66,6 +66,29 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
           {
             type: VALIDATION_TYPES.REQUIRED,
             message: "Please enter selector."
+          }
+        ]
+      },
+      {
+        label: "Attribute",
+        type: INPUT_TYPES.SELECT,
+        width: 4,
+        value: "text",
+        error: "",
+        options: [
+          {
+            label: "Text",
+            value: "text"
+          },
+          {
+            label: "Href",
+            value: "href"
+          }
+        ],
+        rules: [
+          {
+            type: VALIDATION_TYPES.REQUIRED,
+            message: "Please select type."
           }
         ]
       }

@@ -49,7 +49,7 @@ type LargeExtractOperation = {
   description: string;
   format: string;
   type: OPERATION_TYPES.EXTRACT;
-  inputs: [LargeTextInput, LargeTextInput];
+  inputs: [LargeTextInput, LargeTextInput, LargeSelectInput];
 };
 
 type LargeClickOperation = {

@@ -9,6 +9,7 @@ type ScraperExtractOperation = {
   type: OPERATION_TYPES.EXTRACT;
   name: string;
   selector: string;
+  attribute: string;
 };
 
 type ScraperClickOperation = {
@@ -33,6 +34,7 @@ export type ExtractOperationResult = {
   url: string;
   name: string;
   selector: string;
+  attribute: string;
   result: string[];
 };
 

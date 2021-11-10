@@ -23,7 +23,7 @@ type SmallOpenOperation = {
 
 type SmallExtractOperation = {
   type: OPERATION_TYPES.EXTRACT;
-  inputs: [SmallTextInput, SmallTextInput];
+  inputs: [SmallTextInput, SmallTextInput, SmallSelectInput];
 };
 
 type SmallClickOperation = {
