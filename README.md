@@ -1,17 +1,21 @@
 # ScrapThatPage
 
-A Electron app that automates web scraper with easy to use script actions.
+A desktop app that automates web scraper with easy to use script actions.
 
 <img src="./assets/Dashboard.png">
 
-## Requirements
+## Local Development
+
+These instructions will get you a copy of the project up and running on your local machine for development purposes.
+
+### Requirements
 
 To install and run this project you need:
 
 - [NodeJS](https://nodejs.org/ "NodeJS")
 - [git](https://git-scm.com/downloads "git") (only to clone this repository)
 
-## Installation
+### Installation
 
 To set up everything in your local machine, you need to follow these steps:
 
@@ -28,7 +32,7 @@ $ cd myapp-scrapthatpage
 $ npm install
 ```
 
-## Usage
+### Running
 
 To run the project simply run:
 
@@ -38,9 +42,9 @@ $ npm run start
 
 ## Built With
 
-- Electron
-- React
-- Material UI
+- [Electron](https://www.electronjs.org/)
+- [React](https://reactjs.org/)
+- [Material UI](https://mui.com/)
 
 ## License
 
