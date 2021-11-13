@@ -2,9 +2,7 @@
 
 A Electron app that automates web scraper with easy to use script actions.
 
-<div style="text-align:center;">
-  <img src="./assets/Dashboard.png" width="600"> 
-</div>
+<img src="./assets/Dashboard.png">
 
 ## Requirements
 
