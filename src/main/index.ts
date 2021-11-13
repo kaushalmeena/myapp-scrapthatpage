@@ -1,5 +1,5 @@
 import { app, BrowserWindow } from "electron";
-import PuppeteerWrapper from "./lib/PuppeteerWrapper";
+import Scraper from "./lib/Scraper";
 import { connectScraperProxy, disconnectScraperProxy } from "./proxy/scraper";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -8,8 +8,6 @@ declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 if (require("electron-squirrel-startup")) {
   app.quit();
 }
-
-const puppeteer = new PuppeteerWrapper();
 
 const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
@@ -25,7 +23,9 @@ const createWindow = (): void => {
 
   // mainWindow.webContents.openDevTools();
 
-  connectScraperProxy(puppeteer);
+  const scraper = new Scraper(mainWindow);
+
+  connectScraperProxy(scraper);
 };
 
 app.on("ready", createWindow);

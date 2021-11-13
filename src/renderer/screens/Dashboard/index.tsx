@@ -4,10 +4,6 @@ import {
   CardActionArea,
   CardHeader,
   Icon,
-  List,
-  ListItemButton,
-  ListItemText,
-  ListSubheader,
   Stack,
   Typography
 } from "@mui/material";
@@ -43,25 +39,6 @@ const Dashboard = (): JSX.Element => {
             <Typography variant="h5">ScrapThatPage!</Typography>
             <Typography variant="subtitle1">v1.0.0</Typography>
           </Stack>
-        </Box>
-      </Box>
-      <Box marginTop={2} display="flex" flexDirection="row">
-        <Box flex={1}>
-          <List
-            dense
-            subheader={<ListSubheader>Unsaved Scripts</ListSubheader>}
-          >
-            <ListItemButton>
-              <ListItemText primary="My script 1" />
-            </ListItemButton>
-          </List>
-        </Box>
-        <Box flex={1}>
-          <List dense subheader={<ListSubheader>Recent Scripts</ListSubheader>}>
-            <ListItemButton>
-              <ListItemText primary="My script 1" />
-            </ListItemButton>
-          </List>
         </Box>
       </Box>
     </>
