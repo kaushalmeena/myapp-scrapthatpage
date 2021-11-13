@@ -1,6 +1,18 @@
 # ScrapThatPage
 
-A desktop app that automates web scraper with easy to use script actions.
+A Electron app that automates web scraper with easy to use script actions.
+
+## Screenshots
+
+<img src="./screenshots/Dashboard.png" width="600"> 
+<img src="./screenshots/Create.png" width="600">
+<img src="./screenshots/Favorites.png" width="600">
+<img src="./screenshots/Search.png" width="600">
+<img src="./screenshots/Settings.png" width="600">
+<img src="./screenshots/UpdateInformation.png" width="600">
+<img src="./screenshots/UpdateOperations.png" width="600">
+<img src="./screenshots/Execute.png" width="600">
+<img src="./screenshots/Delete.png" width="600">
 
 ## Requirements
 
@@ -33,6 +45,12 @@ To run the project simply run:
 ```bash
 $ npm run start
 ```
+
+## Built With
+
+- Electron
+- React
+- Material UI
 
 ## License
 
