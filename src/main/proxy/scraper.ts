@@ -1,12 +1,18 @@
 import { ipcMain } from "electron";
-import { SCRAPER_ACTIONS } from "../../common/constants/scraper";
+import { SCRAPER_CHANNELS } from "../../common/constants/scraper";
 import { ScraperOperation, ExecuteResult } from "../../common/types/scraper";
 import PuppeteerWrapper from "../lib/PuppeteerWrapper";
 import { executeOperation } from "../utils/scraper";
 
 export const connectScraperProxy = (puppeteer: PuppeteerWrapper): void => {
+  ipcMain.on(SCRAPER_CHANNELS.OPEN_WINDOW, () => {
+    puppeteer.openWindow();
+  });
+  ipcMain.on(SCRAPER_CHANNELS.CLOSE_WINDOW, () => {
+    puppeteer.closeWindow();
+  });
   ipcMain.handle(
-    SCRAPER_ACTIONS.RUN_OPERATION,
+    SCRAPER_CHANNELS.RUN_OPERATION,
     async (event, operation: ScraperOperation): Promise<ExecuteResult> => {
       try {
         const page = await puppeteer.getPage();
@@ -24,4 +30,10 @@ export const connectScraperProxy = (puppeteer: PuppeteerWrapper): void => {
       }
     }
   );
+};
+
+export const disconnectScraperProxy = (): void => {
+  ipcMain.removeAllListeners(SCRAPER_CHANNELS.OPEN_WINDOW);
+  ipcMain.removeAllListeners(SCRAPER_CHANNELS.CLOSE_WINDOW);
+  ipcMain.removeHandler(SCRAPER_CHANNELS.RUN_OPERATION);
 };
