@@ -41,7 +41,7 @@ const Dashboard = (): JSX.Element => {
           <Icon sx={{ color: "primary.main", fontSize: 84 }}>find_in_page</Icon>
           <Stack>
             <Typography variant="h5">ScrapThatPage!</Typography>
-            <Typography variant="subtitle1">v1.0</Typography>
+            <Typography variant="subtitle1">v1.0.0</Typography>
           </Stack>
         </Box>
       </Box>

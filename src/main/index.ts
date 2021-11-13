@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from "electron";
 import PuppeteerWrapper from "./lib/PuppeteerWrapper";
-import { connectScraperProxy } from "./proxy/scraper";
+import { connectScraperProxy, disconnectScraperProxy } from "./proxy/scraper";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -23,7 +23,7 @@ const createWindow = (): void => {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   connectScraperProxy(puppeteer);
 };
@@ -31,6 +31,7 @@ const createWindow = (): void => {
 app.on("ready", createWindow);
 
 app.on("window-all-closed", () => {
+  disconnectScraperProxy();
   if (process.platform !== "darwin") {
     app.quit();
   }

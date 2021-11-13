@@ -84,6 +84,7 @@ const ScriptRunner = (props: ScriptRunnerProps): JSX.Element => {
     }
     if (executorData.done) {
       handleRunnerFinish();
+      window.scraper.closeWindow();
     }
 
     const operation = executorData.value;
@@ -99,7 +100,6 @@ const ScriptRunner = (props: ScriptRunnerProps): JSX.Element => {
     window.scraper
       .runOperation(operation)
       .then((response) => {
-        console.log("=======response", response);
         if (response.status === "success") {
           if ("data" in response && response.data) {
             switch (response.data.type) {

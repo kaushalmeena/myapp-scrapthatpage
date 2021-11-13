@@ -129,7 +129,7 @@ const Execute = (): JSX.Element => {
         marginBottom={4}
         textAlign="center"
       >
-        This is script name
+        {script.name}
       </Typography>
       <ScriptRunner script={script} />
     </>
