@@ -2,7 +2,19 @@
 
 A desktop app that automates web scraper with easy to use script actions.
 
-<img src="./assets/Dashboard.png">
+## Screenshots
+
+<img src="./screenshots/Dashboard.png" width="30%"> 
+<img src="./screenshots/Create.png" width="30%">
+<img src="./screenshots/Favorites.png" width="30%">
+
+<img src="./screenshots/Search.png" width="30%">
+<img src="./screenshots/Settings.png" width="30%">
+<img src="./screenshots/UpdateInformation.png" width="30%">
+
+<img src="./screenshots/UpdateOperations.png" width="30%">
+<img src="./screenshots/Execute.png" width="30%">
+<img src="./screenshots/Delete.png" width="30%">
 
 ## Local Development
 
