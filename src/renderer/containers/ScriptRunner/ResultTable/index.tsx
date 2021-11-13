@@ -39,6 +39,11 @@ const ResultTable = (props: ResultTableProps): JSX.Element => {
 
   const headers = props.data.length > 0 ? Object.keys(props.data[0]) : [];
 
+  const paginatedData = props.data.slice(
+    page * rowsPerPage,
+    (page + 1) * rowsPerPage
+  );
+
   return (
     <>
       <TableContainer
@@ -70,7 +75,7 @@ const ResultTable = (props: ResultTableProps): JSX.Element => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.data.map((row, rowIndex) => (
+            {paginatedData.map((row, rowIndex) => (
               <TableRow key={`table-row-${rowIndex}`}>
                 {headers.map((key) => (
                   <TableCell key={`table-cell-${rowIndex}-${key}`}>

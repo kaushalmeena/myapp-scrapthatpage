@@ -60,11 +60,11 @@ const OperationInput = (props: OperationInputProps): JSX.Element | null => {
           helperText={props.input.error}
           value={props.input.value}
           error={props.input.error ? true : false}
+          onChange={handleInputChange}
           InputProps={{
             ...props.input.inputProps,
             endAdornment: renderTextInputAdornment(props.input)
           }}
-          onChange={handleInputChange}
         />
       );
     case INPUT_TYPES.SELECT:

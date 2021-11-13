@@ -48,6 +48,7 @@ const Search = (): JSX.Element => {
         variant="outlined"
         size="small"
         value={query}
+        onChange={handleQueryChange}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -55,7 +56,6 @@ const Search = (): JSX.Element => {
             </InputAdornment>
           )
         }}
-        onChange={handleQueryChange}
       />
       <Stack marginTop={2} gap={1}>
         {filteredScripts.length > 0 ? (

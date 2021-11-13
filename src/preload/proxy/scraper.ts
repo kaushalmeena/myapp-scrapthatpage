@@ -6,6 +6,9 @@ import { ScraperAPI } from "../types/scraper";
 export const ScraperProxy: ScraperAPI = {
   openWindow: () => ipcRenderer.send(SCRAPER_CHANNELS.OPEN_WINDOW),
   closeWindow: () => ipcRenderer.send(SCRAPER_CHANNELS.CLOSE_WINDOW),
+  loadURL: (url: string) => ipcRenderer.invoke(SCRAPER_CHANNELS.LOAD_URL, url),
   runOperation: (operation: ScraperOperation) =>
-    ipcRenderer.invoke(SCRAPER_CHANNELS.RUN_OPERATION, operation)
+    ipcRenderer.invoke(SCRAPER_CHANNELS.RUN_OPERATION, operation),
+  runJavascript: (code: string) =>
+    ipcRenderer.invoke(SCRAPER_CHANNELS.RUN_JAVASCRIPT, code)
 };
