@@ -2,7 +2,7 @@
 
 A desktop app that automates web scraper with easy to use script actions.
 
-## Local Development
+## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development purposes.
 
