@@ -1,6 +1,6 @@
 import { wrap } from "object-path-immutable";
 import { NOTIFICATION_ACTIONS } from "../actions/notification";
-import { INTIAL_NOTIFICATION_STATE } from "../constants/snackbar";
+import { INTIAL_NOTIFICATION_STATE } from "../constants/notification";
 import { NotificationAction, NotificationState } from "../types/notification";
 
 export const notificationReducer = (

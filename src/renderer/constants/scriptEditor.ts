@@ -1,5 +1,9 @@
-import { ScriptEditorState } from "../types/scriptEditor";
 import { VALIDATION_TYPES } from "../../common/constants/validation";
+import {
+  VARIABLE_TYPES,
+  VARIABLE_PICKER_MODES
+} from "../../common/constants/variable";
+import { ScriptEditorState } from "../types/scriptEditor";
 
 export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
   favorite: 0,
@@ -26,6 +30,7 @@ export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
     }
   },
   operations: [],
+  variables: [],
   selector: {
     operation: {
       visible: false,
@@ -34,8 +39,8 @@ export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
     variable: {
       visible: false,
       activePath: "",
-      filterType: "*",
-      updateMode: "SET"
+      filterType: VARIABLE_TYPES.ANY,
+      updateMode: VARIABLE_PICKER_MODES.SET
     }
   }
 };

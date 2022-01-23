@@ -1,12 +1,11 @@
-import { LargeOperation } from "../../common/types/largeOperation";
 import {
-  Variable,
-  VariableFilterType,
-  VariablePicker,
-  VariableUpdateMode
-} from "../../common/types/variable";
+  VARIABLE_TYPES,
+  VARIABLE_PICKER_MODES
+} from "../../common/constants/variable";
+import { LargeOperation } from "../../common/types/largeOperation";
+import { ValidationRule } from "../../common/types/validation";
+import { Variable, VariablePicker } from "../../common/types/variable";
 import { ACTION_TYPES } from "../actions/scriptEditor";
-import { Information } from "./information";
 
 export type StateLoadAction = {
   type: ACTION_TYPES.STATE_LOAD;
@@ -103,19 +102,30 @@ export type ScriptEditorAction =
   | VariableSelectorOpenAction
   | VariableSelectorCloseAction;
 
-export type OperationSelector = {
+type InformationField = {
+  value: string;
+  error: string;
+  rules: ValidationRule[];
+};
+
+type Information = {
+  name: InformationField;
+  description: InformationField;
+};
+
+type OperationSelector = {
   visible: boolean;
   activePath: string;
 };
 
-export type VariableSelector = {
+type VariableSelector = {
   visible: boolean;
   activePath: string;
-  filterType: VariableFilterType;
-  updateMode: VariableUpdateMode;
+  filterType: VARIABLE_TYPES;
+  updateMode: VARIABLE_PICKER_MODES;
 };
 
-export type ModalSelector = {
+type Selector = {
   operation: OperationSelector;
   variable: VariableSelector;
 };
@@ -125,7 +135,8 @@ export type ScriptEditorState = {
   favorite: number;
   information: Information;
   operations: LargeOperation[];
-  selector: ModalSelector;
+  variables: Variable[];
+  selector: Selector;
 };
 
 export type OperationsPathAndIndex = {

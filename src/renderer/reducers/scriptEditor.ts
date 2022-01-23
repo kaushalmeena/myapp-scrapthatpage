@@ -1,5 +1,9 @@
 import { get, wrap } from "object-path-immutable";
+import { OPERATION_TYPES } from "../../common/constants/operation";
+import { VARIABLE_PICKER_MODES } from "../../common/constants/variable";
+import { Variable } from "../../common/types/variable";
 import { ACTION_TYPES } from "../actions/scriptEditor";
+import { INITIAL_SCRIPT_EDITOR_STATE } from "../constants/scriptEditor";
 import { ScriptEditorAction, ScriptEditorState } from "../types/scriptEditor";
 import {
   getOperationsPathAndIndex,
@@ -8,7 +12,7 @@ import {
 } from "../utils/scriptEditor";
 
 export const scriptEditorReducer = (
-  state: ScriptEditorState,
+  state = INITIAL_SCRIPT_EDITOR_STATE,
   action: ScriptEditorAction
 ): ScriptEditorState => {
   switch (action.type) {
@@ -34,7 +38,16 @@ export const scriptEditorReducer = (
     case ACTION_TYPES.OPERATION_DELETE:
       {
         const path = action.payload.path;
-        state = wrap(state).del(path).value();
+        const operation = get(state, path);
+        let wrappedState = wrap(state).del(path);
+        if (operation.type === OPERATION_TYPES.SET) {
+          const oldVariables = get(state, "variables", []) as Variable[];
+          const newVariables = oldVariables.filter(
+            (item) => item.path !== path
+          );
+          wrappedState = wrappedState.set("variables", newVariables);
+        }
+        state = wrappedState.value();
       }
       break;
     case ACTION_TYPES.OPERATION_MOVE_UP:
@@ -86,10 +99,10 @@ export const scriptEditorReducer = (
 
         let newValue = "";
         switch (updateMode) {
-          case "SET":
+          case VARIABLE_PICKER_MODES.SET:
             newValue = variable.name;
             break;
-          case "APPEND":
+          case VARIABLE_PICKER_MODES.APPEND:
             newValue = `${value}{{${variable.name}}}`;
             break;
         }

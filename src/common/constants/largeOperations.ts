@@ -2,6 +2,11 @@ import { LargeOperation } from "../types/largeOperation";
 import { INPUT_TYPES } from "./input";
 import { OPERATION_TYPES } from "./operation";
 import { VALIDATION_TYPES } from "./validation";
+import {
+  VARIABLE_PICKER_MODES,
+  VARIABLE_SETTER_MODES,
+  VARIABLE_TYPES
+} from "./variable";
 
 export const LARGE_OPERTAIONS: LargeOperation[] = [
   {
@@ -17,8 +22,8 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         value: "",
         error: "",
         variablePicker: {
-          type: "*",
-          mode: "APPEND"
+          type: VARIABLE_TYPES.ANY,
+          mode: VARIABLE_PICKER_MODES.APPEND
         },
         rules: [
           {
@@ -59,8 +64,8 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         value: "",
         error: "",
         variablePicker: {
-          type: "*",
-          mode: "APPEND"
+          type: VARIABLE_TYPES.ANY,
+          mode: VARIABLE_PICKER_MODES.APPEND
         },
         rules: [
           {
@@ -107,8 +112,8 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         value: "",
         error: "",
         variablePicker: {
-          type: "*",
-          mode: "APPEND"
+          type: VARIABLE_TYPES.ANY,
+          mode: VARIABLE_PICKER_MODES.APPEND
         },
         rules: [
           {
@@ -132,8 +137,8 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         value: "",
         error: "",
         variablePicker: {
-          type: "*",
-          mode: "APPEND"
+          type: VARIABLE_TYPES.ANY,
+          mode: VARIABLE_PICKER_MODES.APPEND
         },
         rules: [
           {
@@ -170,8 +175,11 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         value: "",
         error: "",
         variablePicker: {
-          type: "*",
-          mode: "SET"
+          type: VARIABLE_TYPES.ANY,
+          mode: VARIABLE_PICKER_MODES.SET
+        },
+        variableSetter: {
+          mode: VARIABLE_SETTER_MODES.NAME
         },
         rules: [
           {
@@ -184,16 +192,19 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         label: "Type",
         type: INPUT_TYPES.SELECT,
         width: 4,
-        value: "",
+        value: VARIABLE_TYPES.NUMBER,
         error: "",
+        variableSetter: {
+          mode: VARIABLE_SETTER_MODES.TYPE
+        },
         options: [
           {
             label: "Number",
-            value: "number"
+            value: VARIABLE_TYPES.NUMBER
           },
           {
             label: "String",
-            value: "string"
+            value: VARIABLE_TYPES.STRING
           }
         ],
         rules: [
@@ -231,8 +242,8 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         value: "",
         error: "",
         variablePicker: {
-          type: "number",
-          mode: "SET"
+          type: VARIABLE_TYPES.NUMBER,
+          mode: VARIABLE_PICKER_MODES.SET
         },
         inputProps: {
           readOnly: true,
@@ -276,8 +287,8 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         value: "1",
         error: "",
         variablePicker: {
-          type: "number",
-          mode: "SET"
+          type: VARIABLE_TYPES.NUMBER,
+          mode: VARIABLE_PICKER_MODES.SET
         },
         inputProps: {
           readOnly: true,
@@ -321,8 +332,8 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         value: "",
         error: "",
         variablePicker: {
-          type: "*",
-          mode: "APPEND"
+          type: VARIABLE_TYPES.ANY,
+          mode: VARIABLE_PICKER_MODES.APPEND
         },
         rules: [
           {
@@ -351,8 +362,8 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         value: "",
         error: "",
         variablePicker: {
-          type: "*",
-          mode: "APPEND"
+          type: VARIABLE_TYPES.ANY,
+          mode: VARIABLE_PICKER_MODES.APPEND
         },
         rules: [
           {

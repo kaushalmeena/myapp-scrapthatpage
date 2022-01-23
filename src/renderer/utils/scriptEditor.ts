@@ -1,6 +1,9 @@
 import { get, set, wrap } from "object-path-immutable";
 import { INPUT_TYPES } from "../../common/constants/input";
-import { OPERATION_TYPES } from "../../common/constants/operation";
+import {
+  VARIABLE_SETTER_MODES,
+  VARIABLE_TYPES
+} from "../../common/constants/variable";
 import { LargeOperation } from "../../common/types/largeOperation";
 import { Variable } from "../../common/types/variable";
 import {
@@ -19,9 +22,9 @@ import {
 export const getOperationsPathAndIndex = (
   path: string
 ): OperationsPathAndIndex => {
-  const lastIndex = path.lastIndexOf(".");
-  const operationsPath = path.substr(0, lastIndex);
-  const index = Number.parseInt(path.substr(lastIndex + 1, 1));
+  const splittedPath = path.split(".");
+  const operationsPath = splittedPath.slice(-1).join(".");
+  const index = Number.parseInt(splittedPath.at(-1) || "NaN");
   return { operationsPath, index };
 };
 
@@ -33,34 +36,37 @@ export const getOperationNumber = (path: string): string =>
     .map((num) => Number(num) + 1)
     .join(".");
 
-export const getVariables = (operations: LargeOperation[]): Variable[] => {
-  const variables: Variable[] = [];
-
-  for (let i = 0; i < operations.length; i++) {
-    const operation = operations[i];
-
-    switch (operation.type) {
-      case OPERATION_TYPES.SET:
-        const name = operation.inputs[0].value;
-        const type = operation.inputs[1].value;
-        if (name && type) {
-          variables.push({ name, type });
+export const updateVariables = (
+  path: string,
+  value: string,
+  mode: VARIABLE_SETTER_MODES,
+  variables: Variable[]
+): Variable[] => {
+  const newVariables = variables;
+  const foundIndex = variables.findIndex((item) => item.path === path);
+  switch (mode) {
+    case VARIABLE_SETTER_MODES.NAME:
+      {
+        if (foundIndex > -1) {
+          newVariables[foundIndex].name = value;
+        } else {
+          newVariables.push({
+            path,
+            name: value,
+            type: VARIABLE_TYPES.NUMBER
+          });
         }
-        break;
-      case OPERATION_TYPES.IF:
-      case OPERATION_TYPES.WHILE:
-        const operationVariables = getVariables(operation.inputs[1].operations);
-        if (operationVariables.length > 0) {
-          variables.push(...operationVariables);
-        }
-        break;
+      }
+      break;
+    case VARIABLE_SETTER_MODES.TYPE: {
+      if (foundIndex > -1) {
+        newVariables[foundIndex].type = value;
+      }
     }
+    default:
+      break;
   }
-
-  return variables.filter(
-    (varItem, varIdx, varArr) =>
-      varIdx === varArr.findIndex((arrItem) => arrItem.name === varItem.name)
-  );
+  return newVariables;
 };
 
 export const updateScriptEditorField = (
@@ -70,10 +76,21 @@ export const updateScriptEditorField = (
 ): ScriptEditorState => {
   const valuePath = `${path}.value`;
   const errorPath = `${path}.error`;
-  const rulesPath = `${path}.rules`;
-  const rules = get(state, rulesPath);
-  const error = validateInput(value, rules);
-  return wrap(state).set(valuePath, value).set(errorPath, error).value();
+  const field = get(state, path);
+  const error = validateInput(value, field.rules);
+  let wrappedState = wrap(state).set(valuePath, value).set(errorPath, error);
+  if ("variableSetter" in field) {
+    const oldVariables = get(state, "variables", []);
+    const operationPath = path.split(".").slice(0, -2).join(".");
+    const newVariables = updateVariables(
+      operationPath,
+      value,
+      field.variableSetter.mode,
+      oldVariables
+    );
+    wrappedState = wrappedState.set("variables", newVariables);
+  }
+  return wrappedState.value();
 };
 
 export const swapScriptEditorOperations = (

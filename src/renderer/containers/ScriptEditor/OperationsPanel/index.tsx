@@ -1,20 +1,26 @@
 import { Box, Button, Stack } from "@mui/material";
-import React, { Dispatch } from "react";
+import { get } from "object-path-immutable";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { LargeOperation } from "../../../../common/types/largeOperation";
 import { openOperationSelector } from "../../../actions/scriptEditor";
 import EmptyText from "../../../components/EmptyText";
-import { ScriptEditorAction } from "../../../types/scriptEditor";
+import { RootState } from "../../../types/store";
 import OperationCard from "./OperationCard";
 
 type OperationsPanelProps = {
-  operations: LargeOperation[];
   path: string;
-  dispatch: Dispatch<ScriptEditorAction>;
 };
 
 const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
+  const dispatch = useDispatch();
+
+  const operations = useSelector<RootState, LargeOperation[]>((state) =>
+    get(state.scriptEditor, props.path)
+  );
+
   const handleOperationSelectorOpen = () => {
-    props.dispatch(openOperationSelector(props.path));
+    dispatch(openOperationSelector(props.path));
   };
 
   return (
@@ -30,13 +36,11 @@ const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
         </Button>
       </Stack>
       <Stack gap={1}>
-        {props.operations.length > 0 ? (
-          props.operations.map((operation, index) => (
+        {operations.length > 0 ? (
+          operations.map((operation, index) => (
             <OperationCard
               key={`${props.path}.${index}`}
               path={`${props.path}.${index}`}
-              operation={operation}
-              dispatch={props.dispatch}
             />
           ))
         ) : (

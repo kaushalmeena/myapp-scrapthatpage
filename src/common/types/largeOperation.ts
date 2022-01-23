@@ -2,7 +2,7 @@ import { GridSize, InputBaseProps } from "@mui/material";
 import { INPUT_TYPES } from "../constants/input";
 import { OPERATION_TYPES } from "../constants/operation";
 import { ValidationRule } from "./validation";
-import { VariablePicker } from "./variable";
+import { VariablePicker, VariableSetter } from "./variable";
 
 export type SelectOption = {
   label: string;
@@ -16,6 +16,7 @@ export type LargeTextInput = {
   value: string;
   error: string;
   variablePicker?: VariablePicker;
+  variableSetter?: VariableSetter;
   inputProps?: InputBaseProps;
   rules: ValidationRule[];
 };
@@ -27,6 +28,7 @@ export type LargeSelectInput = {
   options: SelectOption[];
   value: string;
   error: string;
+  variableSetter?: VariableSetter;
   rules: ValidationRule[];
 };
 
