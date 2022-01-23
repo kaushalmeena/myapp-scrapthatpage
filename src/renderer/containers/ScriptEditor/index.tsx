@@ -1,12 +1,11 @@
 import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
-import React, { SyntheticEvent, useReducer, useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
+import { batch, useDispatch } from "react-redux";
+import { showNotification } from "../../actions/notification";
 import { loadState } from "../../actions/scriptEditor";
-import { scriptEditorReducer } from "../../reducers/scriptEditor";
+import { store } from "../../store/store";
 import { ScriptEditorState } from "../../types/scriptEditor";
-import {
-  getVariables,
-  validateScriptEditorState
-} from "../../utils/scriptEditor";
+import { validateScriptEditorState } from "../../utils/scriptEditor";
 import InformationPanel from "./InformationPanel";
 import OperationSelector from "./OperationSelector";
 import OperationsPanel from "./OperationsPanel";
@@ -18,10 +17,7 @@ type ScriptEditorProps = {
 };
 
 const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
-  const [state, dispatch] = useReducer(
-    scriptEditorReducer,
-    props.scriptEditorState
-  );
+  const dispatch = useDispatch();
 
   const [activeTab, setActiveTab] = useState(0);
 
@@ -30,17 +26,18 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
   };
 
   const handleSubmitClick = () => {
+    const state = store.getState().scriptEditor;
     const { errors, newState } = validateScriptEditorState(state);
     if (errors.length > 0) {
       const [message] = errors;
-      dispatch(loadState(newState));
-      // snackbar.show(message, "error");
+      batch(() => {
+        dispatch(loadState(newState));
+        dispatch(showNotification(message, "error"));
+      });
     } else {
       props.onSubmit(state);
     }
   };
-
-  const variables = getVariables(state.operations);
 
   return (
     <>
@@ -72,29 +69,15 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
         </Box>
         <Box padding={2}>
           <Box display={activeTab === 0 ? "block" : "none"}>
-            <InformationPanel
-              information={state.information}
-              dispatch={dispatch}
-            />
+            <InformationPanel />
           </Box>
           <Box display={activeTab === 1 ? "block" : "none"}>
-            <OperationsPanel
-              operations={state.operations}
-              path="operations"
-              dispatch={dispatch}
-            />
+            <OperationsPanel path="operations" />
           </Box>
         </Box>
       </Box>
-      <OperationSelector
-        selector={state.selector.operation}
-        dispatch={dispatch}
-      />
-      <VariableSelector
-        selector={state.selector.variable}
-        variables={variables}
-        dispatch={dispatch}
-      />
+      <OperationSelector />
+      <VariableSelector />
     </>
   );
 };

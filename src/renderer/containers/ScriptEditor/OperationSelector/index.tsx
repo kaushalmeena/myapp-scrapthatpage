@@ -7,38 +7,37 @@ import {
   ListItemButton,
   ListItemText
 } from "@mui/material";
-import React, { Dispatch } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { LARGE_OPERTAIONS } from "../../../../common/constants/largeOperations";
+import { LargeOperation } from "../../../../common/types/largeOperation";
 import {
   appendOperation,
   closeOperationSelector
 } from "../../../actions/scriptEditor";
-import { LARGE_OPERTAIONS } from "../../../../common/constants/largeOperations";
-import { LargeOperation } from "../../../../common/types/largeOperation";
-import {
-  OperationSelector,
-  ScriptEditorAction
-} from "../../../types/scriptEditor";
+import { RootState } from "../../../types/store";
 
-type OperationSelectorProps = {
-  selector: OperationSelector;
-  dispatch: Dispatch<ScriptEditorAction>;
-};
+const OperationSelector = (): JSX.Element => {
+  const dispatch = useDispatch();
 
-const OperationSelector = (props: OperationSelectorProps): JSX.Element => {
+  const selector = useSelector(
+    (state: RootState) => state.scriptEditor.selector.operation
+  );
+
   const handleSelectorClose = () => {
-    props.dispatch(closeOperationSelector());
+    dispatch(closeOperationSelector());
   };
 
   const handleSelect = (item: LargeOperation) => {
-    props.dispatch(appendOperation(item));
-    props.dispatch(closeOperationSelector());
+    dispatch(appendOperation(item));
+    dispatch(closeOperationSelector());
   };
 
   return (
     <Dialog
       maxWidth="sm"
       scroll="paper"
-      open={props.selector.visible}
+      open={selector.visible}
       onClose={handleSelectorClose}
     >
       <DialogTitle>Select Operation</DialogTitle>

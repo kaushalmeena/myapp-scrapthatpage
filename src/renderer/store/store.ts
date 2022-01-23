@@ -2,11 +2,13 @@ import { createStore, combineReducers } from "redux";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { notificationReducer } from "../reducers/notification";
+import { scriptEditorReducer } from "../reducers/scriptEditor";
 import { settingsReducer } from "../reducers/settings";
 
 const rootReducer = combineReducers({
   notification: notificationReducer,
-  settings: settingsReducer
+  settings: settingsReducer,
+  scriptEditor: scriptEditorReducer
 });
 
 const persistConfig = {

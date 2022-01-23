@@ -1,17 +1,18 @@
 import { Box, TextField } from "@mui/material";
-import React, { ChangeEvent, Dispatch } from "react";
+import React, { ChangeEvent } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { updateInformation } from "../../../actions/scriptEditor";
-import { Information } from "../../../types/information";
-import { ScriptEditorAction } from "../../../types/scriptEditor";
+import { RootState } from "../../../types/store";
 
-type InformationPanelProps = {
-  information: Information;
-  dispatch: Dispatch<ScriptEditorAction>;
-};
+const InformationPanel = (): JSX.Element => {
+  const dispatch = useDispatch();
 
-const InformationPanel = (props: InformationPanelProps): JSX.Element => {
+  const information = useSelector(
+    (state: RootState) => state.scriptEditor.information
+  );
+
   const handleInformationChange = (event: ChangeEvent<HTMLInputElement>) => {
-    props.dispatch(updateInformation(event.target.value, event.target.name));
+    dispatch(updateInformation(event.target.value, event.target.name));
   };
 
   return (
@@ -22,9 +23,9 @@ const InformationPanel = (props: InformationPanelProps): JSX.Element => {
         size="small"
         margin="normal"
         label="Name"
-        helperText={props.information.name.error}
-        value={props.information.name.value}
-        error={props.information.name.error ? true : false}
+        helperText={information.name.error}
+        value={information.name.value}
+        error={information.name.error ? true : false}
         onChange={handleInformationChange}
       />
       <TextField
@@ -35,9 +36,9 @@ const InformationPanel = (props: InformationPanelProps): JSX.Element => {
         size="small"
         margin="normal"
         label="Description"
-        helperText={props.information.description.error}
-        value={props.information.description.value}
-        error={props.information.description.error ? true : false}
+        helperText={information.description.error}
+        value={information.description.value}
+        error={information.description.error ? true : false}
         onChange={handleInformationChange}
       />
     </Box>

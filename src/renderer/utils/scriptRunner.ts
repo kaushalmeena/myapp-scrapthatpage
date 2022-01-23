@@ -1,5 +1,6 @@
 import { evaluate } from "mathjs";
 import { OPERATION_TYPES } from "../../common/constants/operation";
+import { VARIABLE_TYPES } from "../../common/constants/variable";
 import {
   ExtractOperationResult,
   ScraperOperation
@@ -78,10 +79,10 @@ export function* operationGenerator(
           const type = operation.inputs[1].value;
           const value = operation.inputs[2].value;
           switch (type) {
-            case "string":
+            case VARIABLE_TYPES.STRING:
               variables[name] = String(value);
               break;
-            case "number":
+            case VARIABLE_TYPES.NUMBER:
               variables[name] = Number(value);
               break;
           }
@@ -198,12 +199,12 @@ export const getOperationNameAndSubheader = (
       };
     case OPERATION_TYPES.CLICK:
       return {
-        name: "EXTARCT",
+        name: "CLICK",
         subheader: `[${operation.selector}]`
       };
     case OPERATION_TYPES.TYPE:
       return {
-        name: "EXTARCT",
+        name: "TYPE",
         subheader: `[${operation.selector}] ${operation.text}`
       };
   }

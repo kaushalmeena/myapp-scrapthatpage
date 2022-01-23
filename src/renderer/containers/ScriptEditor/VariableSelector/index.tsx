@@ -7,38 +7,40 @@ import {
   ListItemButton,
   ListItemText
 } from "@mui/material";
-import React, { Dispatch } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { VARIABLE_TYPES } from "../../../../common/constants/variable";
 import { Variable } from "../../../../common/types/variable";
 import {
   closeVariableSelector,
   updateInputWithVariable
 } from "../../../actions/scriptEditor";
 import EmptyText from "../../../components/EmptyText";
-import {
-  ScriptEditorAction,
-  VariableSelector
-} from "../../../types/scriptEditor";
+import { RootState } from "../../../types/store";
 
-type VariableSelectorProps = {
-  variables: Variable[];
-  selector: VariableSelector;
-  dispatch: Dispatch<ScriptEditorAction>;
-};
+const VariableSelector = (): JSX.Element => {
+  const dispatch = useDispatch();
 
-const VariableSelector = (props: VariableSelectorProps): JSX.Element => {
+  const selector = useSelector(
+    (state: RootState) => state.scriptEditor.selector.variable
+  );
+  const variables = useSelector(
+    (state: RootState) => state.scriptEditor.variables
+  );
+
   const handleSelectorClose = () => {
-    props.dispatch(closeVariableSelector());
+    dispatch(closeVariableSelector());
   };
 
   const handleSelect = (item: Variable) => {
-    props.dispatch(updateInputWithVariable(item));
-    props.dispatch(closeVariableSelector());
+    dispatch(updateInputWithVariable(item));
+    dispatch(closeVariableSelector());
   };
 
-  let filteredVariables = props.variables;
-  if (props.selector.filterType !== "*") {
+  let filteredVariables = variables;
+  if (selector.filterType !== VARIABLE_TYPES.ANY) {
     filteredVariables = filteredVariables.filter(
-      (item) => item.type === props.selector.filterType
+      (item) => item.type === selector.filterType
     );
   }
 
@@ -46,7 +48,7 @@ const VariableSelector = (props: VariableSelectorProps): JSX.Element => {
     <Dialog
       maxWidth="sm"
       scroll="paper"
-      open={props.selector.visible}
+      open={selector.visible}
       onClose={handleSelectorClose}
     >
       <DialogTitle>Select Variable</DialogTitle>
