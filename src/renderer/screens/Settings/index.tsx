@@ -35,7 +35,7 @@ const Settings = (): JSX.Element => {
               <Select
                 value={settings.theme}
                 onChange={(event) => {
-                  setSettings(SETTINGS_KEYS.Theme, Number(event.target.value));
+                  setSettings(SETTINGS_KEYS.THEME, Number(event.target.value));
                 }}
               >
                 {THEMES.map((item) => (

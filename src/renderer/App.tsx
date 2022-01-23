@@ -15,10 +15,10 @@ import Update from "./screens/Update";
 
 const App = (): JSX.Element => {
   return (
-    <MemoryRouter>
-      <SnackbarProvider>
-        <SettingsProvider>
-          <CssBaseline />
+    <SnackbarProvider>
+      <SettingsProvider>
+        <CssBaseline />
+        <MemoryRouter>
           <Layout>
             <Switch>
               <Route path="/dashboard" component={Dashboard} />
@@ -34,9 +34,9 @@ const App = (): JSX.Element => {
               </Route>
             </Switch>
           </Layout>
-        </SettingsProvider>
-      </SnackbarProvider>
-    </MemoryRouter>
+        </MemoryRouter>
+      </SettingsProvider>
+    </SnackbarProvider>
   );
 };
 

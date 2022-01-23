@@ -1,7 +1,7 @@
 import { createTheme } from "@mui/material";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, { createContext, ReactNode } from "react";
-import { INITIAL_SETTINGS, SETTINGS_KEY } from "../../constants/settings";
+import { INITIAL_SETTINGS } from "../../constants/settings";
 import { THEMES } from "../../constants/themes";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { Settings, SettingsInterface } from "../../types/settings";
@@ -17,7 +17,7 @@ type SettingsProviderProps = {
 
 export const SettingsProvider = (props: SettingsProviderProps): JSX.Element => {
   const [settings, setSettings] = useLocalStorage<Settings>(
-    SETTINGS_KEY,
+    "app_settings",
     INITIAL_SETTINGS
   );
 

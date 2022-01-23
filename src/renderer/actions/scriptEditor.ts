@@ -16,7 +16,7 @@ import {
   VariableSelectorOpenAction
 } from "../types/scriptEditor";
 
-export enum ACTION_TYPES {
+export const enum ACTION_TYPES {
   STATE_LOAD,
   INFORMATION_UPDATE,
   OPERATION_APPEND,
