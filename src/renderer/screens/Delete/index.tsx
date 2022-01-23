@@ -8,15 +8,15 @@ import {
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
-import { deleteScript, fetchScript } from "../../database/main";
-import { useSnackbar } from "../../hooks/useSnackbar";
+import { deleteScript, fetchScript } from "../../database/script";
+import { useNotification } from "../../hooks/useNotification";
 import PageName from "../../components/PageName";
 import { PAGE_STATUS } from "../../types/layout";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";
 
 const Delete = (): JSX.Element => {
-  const snackbar = useSnackbar();
+  const snackbar = useNotification();
   const history = useHistory();
   const params = useParams<Params>();
 

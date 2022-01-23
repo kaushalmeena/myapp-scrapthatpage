@@ -1,8 +1,7 @@
-import CssBaseline from "@mui/material/CssBaseline";
 import React from "react";
+import { Provider } from "react-redux";
 import { MemoryRouter, Redirect, Route, Switch } from "react-router-dom";
-import { SettingsProvider } from "./context/Settings";
-import { SnackbarProvider } from "./context/Snackbar";
+import { PersistGate } from "redux-persist/es/integration/react";
 import Layout from "./layouts/Layout";
 import Create from "./screens/Create";
 import Dashboard from "./screens/Dashboard";
@@ -12,12 +11,12 @@ import Favorites from "./screens/Favorites";
 import Search from "./screens/Search";
 import Settings from "./screens/Settings";
 import Update from "./screens/Update";
+import { persistor, store } from "./store/store";
 
 const App = (): JSX.Element => {
   return (
-    <SnackbarProvider>
-      <SettingsProvider>
-        <CssBaseline />
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
         <MemoryRouter>
           <Layout>
             <Switch>
@@ -35,8 +34,8 @@ const App = (): JSX.Element => {
             </Switch>
           </Layout>
         </MemoryRouter>
-      </SettingsProvider>
-    </SnackbarProvider>
+      </PersistGate>
+    </Provider>
   );
 };
 

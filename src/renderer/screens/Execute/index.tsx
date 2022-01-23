@@ -11,14 +11,14 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import ScriptRunner from "../../containers/ScriptRunner";
-import { fetchScript, updateFavoriteScriptField } from "../../database/main";
-import { useSnackbar } from "../../hooks/useSnackbar";
+import { fetchScript, updateFavoriteScriptField } from "../../database/script";
+import { useNotification } from "../../hooks/useNotification";
 import { PAGE_STATUS } from "../../types/layout";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";
 
 const Execute = (): JSX.Element => {
-  const snackbar = useSnackbar();
+  const snackbar = useNotification();
   const history = useHistory();
   const params = useParams<Params>();
 

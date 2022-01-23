@@ -2,8 +2,8 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
-import { fetchScript, updateScript } from "../../database/main";
-import { useSnackbar } from "../../hooks/useSnackbar";
+import { fetchScript, updateScript } from "../../database/script";
+import { useNotification } from "../../hooks/useNotification";
 import PageName from "../../components/PageName";
 import ScriptEditor from "../../containers/ScriptEditor";
 import { PAGE_STATUS } from "../../types/layout";
@@ -15,7 +15,7 @@ import {
 } from "../../utils/scriptEditor";
 
 const Update = (): JSX.Element => {
-  const snackbar = useSnackbar();
+  const snackbar = useNotification();
   const history = useHistory();
   const params = useParams<Params>();
 

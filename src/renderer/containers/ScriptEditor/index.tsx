@@ -1,7 +1,6 @@
 import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
 import React, { SyntheticEvent, useReducer, useState } from "react";
 import { loadState } from "../../actions/scriptEditor";
-import { useSnackbar } from "../../hooks/useSnackbar";
 import { scriptEditorReducer } from "../../reducers/scriptEditor";
 import { ScriptEditorState } from "../../types/scriptEditor";
 import {
@@ -19,8 +18,6 @@ type ScriptEditorProps = {
 };
 
 const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
-  const snackbar = useSnackbar();
-
   const [state, dispatch] = useReducer(
     scriptEditorReducer,
     props.scriptEditorState
@@ -37,7 +34,7 @@ const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
     if (errors.length > 0) {
       const [message] = errors;
       dispatch(loadState(newState));
-      snackbar.show(message, "error");
+      // snackbar.show(message, "error");
     } else {
       props.onSubmit(state);
     }
