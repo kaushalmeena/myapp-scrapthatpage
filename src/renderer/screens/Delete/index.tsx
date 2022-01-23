@@ -11,12 +11,12 @@ import { INITIAL_SCRIPT } from "../../constants/script";
 import { deleteScript, fetchScript } from "../../database/script";
 import { useNotification } from "../../hooks/useNotification";
 import PageName from "../../components/PageName";
-import { PAGE_STATUS } from "../../types/layout";
+import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";
 
 const Delete = (): JSX.Element => {
-  const snackbar = useNotification();
+  const notification = useNotification();
   const history = useHistory();
   const params = useParams<Params>();
 
@@ -48,12 +48,12 @@ const Delete = (): JSX.Element => {
   const handleYesClick = () => {
     deleteScript(scriptId)
       .then(() => {
-        snackbar.show("Script successfully deleted!", "success");
+        notification.show("Script successfully deleted!", "success");
         history.push("/search");
       })
       .catch((err) => {
         console.error(err);
-        snackbar.show("Error occured while deleting.", "error");
+        notification.show("Error occured while deleting.", "error");
       });
   };
 

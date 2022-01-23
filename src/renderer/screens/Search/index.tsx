@@ -8,7 +8,7 @@ import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 
 const Search = (): JSX.Element => {
-  const snackbar = useNotification();
+  const notification = useNotification();
 
   const [scripts, setScripts] = useState<Script[]>([]);
   const [filteredScripts, setFilteredScripts] = useState<Script[]>([]);
@@ -22,7 +22,7 @@ const Search = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        snackbar.show("Error occured while fetching.", "error");
+        notification.show("Error occured while fetching.", "error");
       });
   }, []);
 

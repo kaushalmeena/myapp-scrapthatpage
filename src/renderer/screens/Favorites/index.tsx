@@ -8,7 +8,7 @@ import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 
 const Favorites = (): JSX.Element => {
-  const snackbar = useNotification();
+  const notification = useNotification();
 
   const [scripts, setScripts] = useState<Script[]>([]);
 
@@ -19,7 +19,7 @@ const Favorites = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        snackbar.show("Error occured while fetching.", "error");
+        notification.show("Error occured while fetching.", "error");
       });
   }, []);
 
