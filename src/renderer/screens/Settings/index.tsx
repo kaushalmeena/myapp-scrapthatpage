@@ -12,11 +12,14 @@ import {
 import React from "react";
 import { SETTINGS_KEYS } from "../../constants/settings";
 import { THEMES } from "../../constants/themes";
-import { useSettings } from "../../hooks/useSettings";
 import PageName from "../../components/PageName";
+import { useDispatch, useSelector } from "react-redux";
+import { setSettings } from "../../actions/settings";
+import { RootState } from "../../types/store";
 
 const Settings = (): JSX.Element => {
-  const { settings, setSettings } = useSettings();
+  const dispatch = useDispatch();
+  const settings = useSelector((state: RootState) => state.settings);
 
   return (
     <>
@@ -35,7 +38,9 @@ const Settings = (): JSX.Element => {
               <Select
                 value={settings.theme}
                 onChange={(event) => {
-                  setSettings(SETTINGS_KEYS.THEME, Number(event.target.value));
+                  dispatch(
+                    setSettings(SETTINGS_KEYS.THEME, Number(event.target.value))
+                  );
                 }}
               >
                 {THEMES.map((item) => (

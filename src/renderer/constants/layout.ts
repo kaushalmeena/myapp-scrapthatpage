@@ -1,3 +1,9 @@
+export const enum PAGE_STATES {
+  LOADING,
+  LOADED,
+  ERROR
+}
+
 export const DRAWER_WIDTH = 70;
 
 export const PAGE_LINKS = [

@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
-import { fetchAllFavoriteScripts } from "../../database/main";
-import { useSnackbar } from "../../hooks/useSnackbar";
+import { fetchAllFavoriteScripts } from "../../database/script";
+import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 
 const Favorites = (): JSX.Element => {
-  const snackbar = useSnackbar();
+  const snackbar = useNotification();
 
   const [scripts, setScripts] = useState<Script[]>([]);
 

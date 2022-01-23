@@ -3,12 +3,12 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
-import { fetchAllScripts } from "../../database/main";
-import { useSnackbar } from "../../hooks/useSnackbar";
+import { fetchAllScripts } from "../../database/script";
+import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 
 const Search = (): JSX.Element => {
-  const snackbar = useSnackbar();
+  const snackbar = useNotification();
 
   const [scripts, setScripts] = useState<Script[]>([]);
   const [filteredScripts, setFilteredScripts] = useState<Script[]>([]);
