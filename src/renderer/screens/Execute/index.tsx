@@ -13,12 +13,12 @@ import { INITIAL_SCRIPT } from "../../constants/script";
 import ScriptRunner from "../../containers/ScriptRunner";
 import { fetchScript, updateFavoriteScriptField } from "../../database/script";
 import { useNotification } from "../../hooks/useNotification";
-import { PAGE_STATUS } from "../../types/layout";
+import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";
 
 const Execute = (): JSX.Element => {
-  const snackbar = useNotification();
+  const notification = useNotification();
   const history = useHistory();
   const params = useParams<Params>();
 
@@ -66,7 +66,7 @@ const Execute = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        snackbar.show("Error occured while updating.", "error");
+        notification.show("Error occured while updating.", "error");
       });
   };
 

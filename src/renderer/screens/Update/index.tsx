@@ -6,7 +6,7 @@ import { fetchScript, updateScript } from "../../database/script";
 import { useNotification } from "../../hooks/useNotification";
 import PageName from "../../components/PageName";
 import ScriptEditor from "../../containers/ScriptEditor";
-import { PAGE_STATUS } from "../../types/layout";
+import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
 import { ScriptEditorState } from "../../types/scriptEditor";
 import {
@@ -15,7 +15,7 @@ import {
 } from "../../utils/scriptEditor";
 
 const Update = (): JSX.Element => {
-  const snackbar = useNotification();
+  const notification = useNotification();
   const history = useHistory();
   const params = useParams<Params>();
 
@@ -52,12 +52,12 @@ const Update = (): JSX.Element => {
     const script = getScriptFromScriptEditorState(state);
     updateScript(script)
       .then(() => {
-        snackbar.show("Script successfully updated!", "success");
+        notification.show("Script successfully updated!", "success");
         history.push("/search");
       })
       .catch((err) => {
         console.error(err);
-        snackbar.show("Error occured while updating.", "error");
+        notification.show("Error occured while updating.", "error");
       });
   };
 

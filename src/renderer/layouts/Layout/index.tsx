@@ -5,6 +5,7 @@ import React, { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { THEMES } from "../../constants/themes";
 import { RootState } from "../../types/store";
+import Notification from "./Notification";
 import Sidebar from "./Sidebar";
 
 type LayoutProps = {
@@ -31,6 +32,7 @@ const Layout = (props: LayoutProps): JSX.Element => {
           {props.children}
         </Box>
       </Box>
+      <Notification />
     </ThemeProvider>
   );
 };
