@@ -1,45 +1,11 @@
 import { Theme } from "../types/theme";
 
-export enum THEME_TYPES {
-  LIGHT,
-  DARK
+export const enum THEME_TYPES {
+  DARK = 0,
+  LIGHT = 1
 }
 
 export const THEMES: Theme[] = [
-  {
-    name: "Light",
-    type: THEME_TYPES.LIGHT,
-    data: {
-      palette: {
-        mode: "light",
-        primary: {
-          main: "#3f51b5",
-          light: "rgb(101, 115, 195)",
-          dark: "rgb(44, 56, 126)",
-          contrastText: "#fff"
-        },
-        secondary: {
-          main: "#ff1744",
-          light: "rgb(255, 69, 105)",
-          dark: "rgb(178, 16, 47)",
-          contrastText: "#fff"
-        },
-        background: {
-          paper: "#fff",
-          default: "#f5f8fa"
-        }
-      },
-      components: {
-        MuiListSubheader: {
-          styleOverrides: {
-            root: {
-              backgroundColor: "#f5f8fa"
-            }
-          }
-        }
-      }
-    }
-  },
   {
     name: "Dark",
     type: THEME_TYPES.DARK,
@@ -68,6 +34,40 @@ export const THEMES: Theme[] = [
           styleOverrides: {
             root: {
               backgroundColor: "#001E3C"
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    name: "Light",
+    type: THEME_TYPES.LIGHT,
+    data: {
+      palette: {
+        mode: "light",
+        primary: {
+          main: "#3f51b5",
+          light: "rgb(101, 115, 195)",
+          dark: "rgb(44, 56, 126)",
+          contrastText: "#fff"
+        },
+        secondary: {
+          main: "#ff1744",
+          light: "rgb(255, 69, 105)",
+          dark: "rgb(178, 16, 47)",
+          contrastText: "#fff"
+        },
+        background: {
+          paper: "#fff",
+          default: "#f5f8fa"
+        }
+      },
+      components: {
+        MuiListSubheader: {
+          styleOverrides: {
+            root: {
+              backgroundColor: "#f5f8fa"
             }
           }
         }

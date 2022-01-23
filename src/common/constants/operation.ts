@@ -1,4 +1,4 @@
-export enum OPERATION_TYPES {
+export const enum OPERATION_TYPES {
   OPEN,
   EXTRACT,
   CLICK,
