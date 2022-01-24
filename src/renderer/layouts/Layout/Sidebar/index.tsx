@@ -12,7 +12,6 @@ import React from "react";
 import { useHistory } from "react-router";
 import { DRAWER_WIDTH, PAGE_LINKS } from "../../../constants/layout";
 
-
 const Sidebar = (): JSX.Element => {
   const history = useHistory();
 
@@ -30,10 +29,7 @@ const Sidebar = (): JSX.Element => {
       }}
     >
       <Box marginY={1} display="flex" justifyContent="center">
-        <IconButton
-          color="primary"
-          onClick={() => history.push("/dashboard")}
-        >
+        <IconButton color="primary" onClick={() => history.push("/dashboard")}>
           <Icon color="primary" fontSize="large">
             find_in_page
           </Icon>

@@ -18,21 +18,21 @@ export const scriptEditorReducer = (
   switch (action.type) {
     case ACTION_TYPES.STATE_LOAD:
       {
-        state = action.payload.state;
+        return action.payload.state;
       }
       break;
     case ACTION_TYPES.INFORMATION_UPDATE:
       {
         const path = `information.${action.payload.key}`;
         const value = action.payload.value;
-        state = updateScriptEditorField(state, path, value);
+        return updateScriptEditorField(state, path, value);
       }
       break;
     case ACTION_TYPES.OPERATION_APPEND:
       {
         const operation = action.payload.operation;
         const activePath = state.selector.operation.activePath;
-        state = wrap(state).push(activePath, operation).value();
+        return wrap(state).push(activePath, operation).value();
       }
       break;
     case ACTION_TYPES.OPERATION_DELETE:
@@ -47,7 +47,7 @@ export const scriptEditorReducer = (
           );
           wrappedState = wrappedState.set("variables", newVariables);
         }
-        state = wrappedState.value();
+        return wrappedState.value();
       }
       break;
     case ACTION_TYPES.OPERATION_MOVE_UP:
@@ -57,7 +57,7 @@ export const scriptEditorReducer = (
         if (index > 0) {
           const operationPath1 = `${operationsPath}.${index}`;
           const operationPath2 = `${operationsPath}.${index - 1}`;
-          state = swapScriptEditorOperations(
+          return swapScriptEditorOperations(
             state,
             operationPath1,
             operationPath2
@@ -73,7 +73,7 @@ export const scriptEditorReducer = (
         if (index < operationsLength - 1) {
           const operationPath1 = `${operationsPath}.${index}`;
           const operationPath2 = `${operationsPath}.${index + 1}`;
-          state = swapScriptEditorOperations(
+          return swapScriptEditorOperations(
             state,
             operationPath1,
             operationPath2
@@ -85,7 +85,7 @@ export const scriptEditorReducer = (
       {
         const path = action.payload.path;
         const value = action.payload.value;
-        state = updateScriptEditorField(state, path, value);
+        return updateScriptEditorField(state, path, value);
       }
       break;
     case ACTION_TYPES.INPUT_UPDATE_WITH_VARIABLE:
@@ -107,13 +107,13 @@ export const scriptEditorReducer = (
             break;
         }
 
-        state = updateScriptEditorField(state, activePath, newValue);
+        return updateScriptEditorField(state, activePath, newValue);
       }
       break;
     case ACTION_TYPES.OPERATION_SELECTOR_OPEN:
       {
         const path = action.payload.path;
-        state = wrap(state)
+        return wrap(state)
           .set("selector.operation.visible", true)
           .set("selector.operation.activePath", path)
           .value();
@@ -121,14 +121,14 @@ export const scriptEditorReducer = (
       break;
     case ACTION_TYPES.OPERATION_SELECTOR_CLOSE:
       {
-        state = wrap(state).set("selector.operation.visible", false).value();
+        return wrap(state).set("selector.operation.visible", false).value();
       }
       break;
     case ACTION_TYPES.VARIABLE_SELECTOR_OPEN:
       {
         const path = action.payload.path;
         const picker = action.payload.picker;
-        state = wrap(state)
+        return wrap(state)
           .set("selector.variable.visible", true)
           .set("selector.variable.activePath", path)
           .set("selector.variable.filterType", picker.type)
@@ -137,7 +137,7 @@ export const scriptEditorReducer = (
       }
       break;
     case ACTION_TYPES.VARIABLE_SELECTOR_CLOSE: {
-      state = wrap(state).set("selector.variable.visible", false).value();
+      return wrap(state).set("selector.variable.visible", false).value();
     }
     default:
   }
