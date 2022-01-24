@@ -20,6 +20,7 @@ export const notificationReducer = (
     case NOTIFICATION_ACTIONS.NOTIFICATION_HIDE: {
       return wrap(state).set("visible", false).value();
     }
+    default:
   }
   return state;
 };

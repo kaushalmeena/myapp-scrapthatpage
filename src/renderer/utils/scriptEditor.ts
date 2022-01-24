@@ -4,7 +4,10 @@ import {
   VARIABLE_SETTER_MODES,
   VARIABLE_TYPES
 } from "../../common/constants/variable";
-import { LargeOperation } from "../../common/types/largeOperation";
+import {
+  LargeOperation,
+  LargeTextInput
+} from "../../common/types/largeOperation";
 import { Variable } from "../../common/types/variable";
 import {
   convertToLargeOperation,
@@ -23,7 +26,7 @@ export const getOperationsPathAndIndex = (
   path: string
 ): OperationsPathAndIndex => {
   const splittedPath = path.split(".");
-  const operationsPath = splittedPath.slice(-1).join(".");
+  const operationsPath = splittedPath.slice(0, -1).join(".");
   const index = Number.parseInt(splittedPath.at(-1) || "NaN");
   return { operationsPath, index };
 };
@@ -76,10 +79,10 @@ export const updateScriptEditorField = (
 ): ScriptEditorState => {
   const valuePath = `${path}.value`;
   const errorPath = `${path}.error`;
-  const field = get(state, path);
+  const field = get(state, path) as LargeTextInput;
   const error = validateInput(value, field.rules);
   let wrappedState = wrap(state).set(valuePath, value).set(errorPath, error);
-  if ("variableSetter" in field) {
+  if (field.variableSetter) {
     const oldVariables = get(state, "variables", []);
     const operationPath = path.split(".").slice(0, -2).join(".");
     const newVariables = updateVariables(

@@ -13,6 +13,7 @@ export const settingsReducer = (
       const value = action.payload.value;
       return wrap(state).set(key, value).value();
     }
+    default:
   }
   return state;
 };
