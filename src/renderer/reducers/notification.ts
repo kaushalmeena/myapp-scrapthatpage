@@ -11,14 +11,14 @@ export const notificationReducer = (
     case NOTIFICATION_ACTIONS.NOTIFICATION_SHOW: {
       const message = action.payload.message;
       const severity = action.payload.severity;
-      state = wrap(state)
+      return wrap(state)
         .set("visible", true)
         .set("message", message)
         .set("severity", severity)
         .value();
     }
     case NOTIFICATION_ACTIONS.NOTIFICATION_HIDE: {
-      state = wrap(state).set("visible", false).value();
+      return wrap(state).set("visible", false).value();
     }
   }
   return state;

@@ -18,7 +18,7 @@ export const Notification = (): JSX.Element => {
   return (
     <Snackbar
       open={notification.visible}
-      autoHideDuration={6000}
+      autoHideDuration={3000}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       onClose={handleNotificationClose}
     >

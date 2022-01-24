@@ -11,7 +11,7 @@ export const settingsReducer = (
     case SETTINGS_ACTIONS.SETTINGS_SET: {
       const key = action.payload.key;
       const value = action.payload.value;
-      state = wrap(state).set(key, value).value();
+      return wrap(state).set(key, value).value();
     }
   }
   return state;
