@@ -18,7 +18,7 @@ import {
   openVariableSelector,
   updateInput
 } from "../../../../../actions/scriptEditor";
-import { RootState } from "../../../../../types/store";
+import { StoreRootState } from "../../../../../types/store";
 
 type OperationInputProps = {
   path: string;
@@ -27,7 +27,7 @@ type OperationInputProps = {
 const OperationInput = (props: OperationInputProps): JSX.Element | null => {
   const dispatch = useDispatch();
 
-  const input = useSelector<RootState, LargeInput>((state: RootState) =>
+  const input = useSelector<StoreRootState, LargeInput>((state: StoreRootState) =>
     get(state.scriptEditor, props.path)
   );
 

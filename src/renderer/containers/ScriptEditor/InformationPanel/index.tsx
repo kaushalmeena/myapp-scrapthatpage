@@ -2,13 +2,13 @@ import { Box, TextField } from "@mui/material";
 import React, { ChangeEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateInformation } from "../../../actions/scriptEditor";
-import { RootState } from "../../../types/store";
+import { StoreRootState } from "../../../types/store";
 
 const InformationPanel = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const information = useSelector(
-    (state: RootState) => state.scriptEditor.information
+    (state: StoreRootState) => state.scriptEditor.information
   );
 
   const handleInformationChange = (event: ChangeEvent<HTMLInputElement>) => {

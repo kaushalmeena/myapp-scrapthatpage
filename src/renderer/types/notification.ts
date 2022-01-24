@@ -5,7 +5,7 @@ export type NotificationInterface = {
   show: (message: string, severity: AlertColor) => void;
 };
 
-export type NotificationOpenAction = {
+export type NotificationShowAction = {
   type: NOTIFICATION_ACTIONS.NOTIFICATION_SHOW;
   payload: {
     message: string;
@@ -13,7 +13,7 @@ export type NotificationOpenAction = {
   };
 };
 
-export type NotificationCloseAction = {
+export type NotificationHideAction = {
   type: NOTIFICATION_ACTIONS.NOTIFICATION_HIDE;
 };
 
@@ -24,5 +24,5 @@ export type NotificationState = {
 };
 
 export type NotificationAction =
-  | NotificationOpenAction
-  | NotificationCloseAction;
+  | NotificationShowAction
+  | NotificationHideAction;

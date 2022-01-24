@@ -1,5 +1,5 @@
 import { Box, Card, CardHeader } from "@mui/material";
-import React, { useRef, useState } from "react";
+import React, { Component } from "react";
 import { OPERATION_TYPES } from "../../../common/constants/operation";
 import { ScraperOperation } from "../../../common/types/scraper";
 import { Script } from "../../types/script";
@@ -11,8 +11,8 @@ import {
 import {
   appendExtractResultInTableData,
   getCardBackgroundColor,
-  getOperationNameAndSubheader,
-  operationGenerator
+  getOperationGenerator,
+  getOperationNameAndSubheader
 } from "../../utils/scriptRunner";
 import ActionButton from "./ActionButton";
 import ResultTable from "./ResultTable";
@@ -21,81 +21,119 @@ type ScriptRunnerProps = {
   script: Script;
 };
 
-const ScriptRunner = (props: ScriptRunnerProps): JSX.Element => {
-  const [cardTitle, setCardTitle] = useState("READY");
-  const [cardSubheader, setCardSubheader] = useState("Ready to start");
-  const [tableData, setTableData] = useState<TableData>([]);
+type ScriptRunnerState = {
+  cardTitle: string;
+  cardSubheader: string;
+  actionButtonSpinning: boolean;
+  actionButtonIcon: string;
+  actionButtonColor: ActionButtonColor;
+  tableData: TableData;
+};
 
-  const [actionButtonRunning, setActionButtonRunning] = useState(false);
-  const [actionButtonIcon, setActionButtonIcon] = useState("play_arrow");
-  const [actionButtonColor, setActionButtonColor] =
-    useState<ActionButtonColor>("primary");
+class ScriptRunner extends Component<ScriptRunnerProps, ScriptRunnerState> {
+  runnerStatus: ScriptRunnerStatus;
+  operationGenerator: Generator<
+    ScraperOperation,
+    void,
+    ScraperOperation
+  > | null;
 
-  const runnerStatus = useRef<ScriptRunnerStatus>("stopped");
-  const operationExecutor =
-    useRef<Generator<ScraperOperation, void, ScraperOperation>>();
+  constructor(props: ScriptRunnerProps) {
+    super(props);
+    this.state = {
+      cardTitle: "READY",
+      cardSubheader: "Ready to start",
+      actionButtonIcon: "play_arrow",
+      actionButtonColor: "primary",
+      actionButtonSpinning: false,
+      tableData: []
+    };
+    this.runnerStatus = "stopped";
+    this.operationGenerator = null;
+  }
 
-  const handleRunnerStart = () => {
-    runnerStatus.current = "started";
-    operationExecutor.current = operationGenerator(props.script.operations);
-    setCardTitle("STARTED");
-    setCardSubheader("Execution is running");
-    setActionButtonRunning(true);
-    setActionButtonIcon("stop");
-    setActionButtonColor("primary");
+  handleRunnerStart = (): void => {
+    this.runnerStatus = "started";
+    this.operationGenerator = getOperationGenerator(
+      this.props.script.operations
+    );
+    this.setState({
+      cardTitle: "STARTED",
+      cardSubheader: "Execution is running",
+      actionButtonSpinning: true,
+      actionButtonIcon: "stop",
+      actionButtonColor: "primary"
+    });
   };
 
-  const handleRunnerStop = () => {
-    runnerStatus.current = "stopped";
-    setCardTitle("STOPPED");
-    setCardSubheader("Execution is stopped");
-    setActionButtonRunning(false);
-    setActionButtonIcon("refresh");
-    setActionButtonColor("primary");
+  handleRunnerStop = (): void => {
+    this.runnerStatus = "stopped";
+    this.setState({
+      cardTitle: "STOPPED",
+      cardSubheader: "Execution is stopped",
+      actionButtonSpinning: false,
+      actionButtonIcon: "refresh",
+      actionButtonColor: "primary"
+    });
   };
 
-  const handleRunnerFinish = () => {
-    runnerStatus.current = "stopped";
-    setCardTitle("DONE");
-    setCardSubheader("Execution is finished");
-    setActionButtonRunning(false);
-    setActionButtonIcon("refresh");
-    setActionButtonColor("success");
+  handleRunnerFinish = (): void => {
+    this.runnerStatus = "stopped";
+    this.setState({
+      cardTitle: "DONE",
+      cardSubheader: "Execution is finished",
+      actionButtonSpinning: false,
+      actionButtonIcon: "refresh",
+      actionButtonColor: "success"
+    });
   };
 
-  const handleRunnerError = (message: string) => {
-    runnerStatus.current = "stopped";
-    setCardTitle("ERROR");
-    setCardSubheader(message);
-    setActionButtonRunning(false);
-    setActionButtonIcon("refresh");
-    setActionButtonColor("error");
+  handleRunnerError = (message: string): void => {
+    this.runnerStatus = "stopped";
+    this.setState({
+      cardTitle: "ERROR",
+      cardSubheader: message,
+      actionButtonSpinning: false,
+      actionButtonIcon: "refresh",
+      actionButtonColor: "error"
+    });
   };
 
-  const executeOperation = async () => {
-    if (runnerStatus.current !== "started") {
+  handleActionButtonClick = (): void => {
+    switch (this.runnerStatus) {
+      case "stopped":
+        this.handleRunnerStart();
+        this.handleNextOperation();
+        break;
+      case "started":
+        this.handleRunnerStop();
+        break;
+    }
+  };
+
+  handleNextOperation = (): void => {
+    if (this.runnerStatus !== "started") {
       return;
     }
 
-    const executorData = operationExecutor.current?.next();
-    if (!executorData) {
-      handleRunnerError("Didn't found any operation to execute");
+    const operationData = this.operationGenerator?.next();
+    if (!operationData) {
+      this.handleRunnerError("Didn't found any operation to execute");
       return;
     }
-    if (executorData.done) {
-      handleRunnerFinish();
+    if (operationData.done) {
+      this.handleRunnerFinish();
       window.scraper.closeWindow();
-    }
-
-    const operation = executorData.value;
-    if (!operation) {
-      executeOperation();
       return;
     }
+
+    const operation = operationData.value;
 
     const { name, subheader } = getOperationNameAndSubheader(operation);
-    setCardTitle(name);
-    setCardSubheader(subheader);
+    this.setState({
+      cardTitle: name,
+      cardSubheader: subheader
+    });
 
     window.scraper
       .runOperation(operation)
@@ -106,63 +144,57 @@ const ScriptRunner = (props: ScriptRunnerProps): JSX.Element => {
               case OPERATION_TYPES.EXTRACT:
                 const newTableData = appendExtractResultInTableData(
                   response.data,
-                  tableData
+                  this.state.tableData
                 );
-                setTableData(newTableData);
+                this.setState({
+                  tableData: newTableData
+                });
                 break;
             }
           }
-          executeOperation();
+          this.handleNextOperation();
         } else {
-          handleRunnerError(response.message);
+          this.handleRunnerError(response.message);
         }
       })
       .catch((err) => {
         console.error(err);
-        handleRunnerError("Error occured in executing operation");
+        this.handleRunnerError("Error occured in executing operation");
       });
   };
 
-  const handleActionButtonClick = () => {
-    switch (runnerStatus.current) {
-      case "stopped":
-        handleRunnerStart();
-        executeOperation();
-        break;
-      case "started":
-        handleRunnerStop();
-        break;
-    }
-  };
-
-  return (
-    <>
-      <Card
-        variant="outlined"
-        sx={{
-          backgroundColor: getCardBackgroundColor(actionButtonColor)
-        }}
-      >
-        <CardHeader
-          avatar={
-            <ActionButton
-              running={actionButtonRunning}
-              icon={actionButtonIcon}
-              color={actionButtonColor}
-              onClick={handleActionButtonClick}
-            />
-          }
-          title={cardTitle}
-          subheader={cardSubheader}
-        />
-      </Card>
-      {tableData.length > 0 && (
-        <Box marginTop={3}>
-          <ResultTable data={tableData} />
-        </Box>
-      )}
-    </>
-  );
-};
+  render(): JSX.Element {
+    return (
+      <>
+        <Card
+          variant="outlined"
+          sx={{
+            backgroundColor: getCardBackgroundColor(
+              this.state.actionButtonColor
+            )
+          }}
+        >
+          <CardHeader
+            avatar={
+              <ActionButton
+                spinning={this.state.actionButtonSpinning}
+                icon={this.state.actionButtonIcon}
+                color={this.state.actionButtonColor}
+                onClick={this.handleActionButtonClick}
+              />
+            }
+            title={this.state.cardTitle}
+            subheader={this.state.cardSubheader}
+          />
+        </Card>
+        {this.state.tableData.length > 0 && (
+          <Box marginTop={3}>
+            <ResultTable data={this.state.tableData} />
+          </Box>
+        )}
+      </>
+    );
+  }
+}
 
 export default ScriptRunner;

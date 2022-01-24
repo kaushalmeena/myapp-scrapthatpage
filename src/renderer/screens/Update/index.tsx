@@ -1,11 +1,12 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router";
-import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
-import { fetchScript, updateScript } from "../../database/script";
-import { useNotification } from "../../hooks/useNotification";
+import { loadState } from "../../actions/scriptEditor";
 import PageName from "../../components/PageName";
 import ScriptEditor from "../../containers/ScriptEditor";
+import { fetchScript, updateScript } from "../../database/script";
+import { useNotification } from "../../hooks/useNotification";
 import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
 import { ScriptEditorState } from "../../types/scriptEditor";
@@ -15,16 +16,13 @@ import {
 } from "../../utils/scriptEditor";
 
 const Update = (): JSX.Element => {
+  const dispatch = useDispatch();
   const notification = useNotification();
   const history = useHistory();
   const params = useParams<Params>();
 
   const [status, setStatus] = useState<PAGE_STATUS>("loading");
   const [error, setError] = useState("");
-
-  const [scriptEditorState, setScriptEditorState] = useState(
-    INITIAL_SCRIPT_EDITOR_STATE
-  );
 
   const scriptId = Number(params.scriptId);
 
@@ -34,7 +32,7 @@ const Update = (): JSX.Element => {
       .then((script) => {
         if (script) {
           const state = getScriptEditorStateFromScript(script);
-          setScriptEditorState(state);
+          dispatch(loadState(state));
           setStatus("loaded");
         } else {
           setError("Script not found in database.");
@@ -64,12 +62,7 @@ const Update = (): JSX.Element => {
   return (
     <>
       <PageName name="Update" />
-      {status === "loaded" && (
-        <ScriptEditor
-          scriptEditorState={scriptEditorState}
-          onSubmit={handleSubmit}
-        />
-      )}
+      {status === "loaded" && <ScriptEditor onSubmit={handleSubmit} />}
       {(status === "loading" || status === "error") && (
         <Box
           marginTop={2}

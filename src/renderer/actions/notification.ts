@@ -1,18 +1,18 @@
 import { AlertColor } from "@mui/material";
 import {
-  NotificationCloseAction,
-  NotificationOpenAction
+  NotificationHideAction,
+  NotificationShowAction
 } from "../types/notification";
 
 export const enum NOTIFICATION_ACTIONS {
-  NOTIFICATION_SHOW,
-  NOTIFICATION_HIDE
+  NOTIFICATION_SHOW = "NOTIFICATION_SHOW",
+  NOTIFICATION_HIDE = "NOTIFICATION_HIDE"
 }
 
 export const showNotification = (
   message: string,
   severity: AlertColor
-): NotificationOpenAction => ({
+): NotificationShowAction => ({
   type: NOTIFICATION_ACTIONS.NOTIFICATION_SHOW,
   payload: {
     message,
@@ -20,6 +20,6 @@ export const showNotification = (
   }
 });
 
-export const hideNotification = (): NotificationCloseAction => ({
+export const hideNotification = (): NotificationHideAction => ({
   type: NOTIFICATION_ACTIONS.NOTIFICATION_HIDE
 });

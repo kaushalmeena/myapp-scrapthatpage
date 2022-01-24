@@ -24,7 +24,7 @@ export const replaceWithVariables = (
     return String(value);
   });
 
-export function* operationGenerator(
+export function* getOperationGenerator(
   operations: SmallOperation[],
   variables: VariableMapping = {}
 ): Generator<ScraperOperation, void, ScraperOperation> {
@@ -109,7 +109,7 @@ export function* operationGenerator(
           const formattedCondition = replaceWithVariables(condition, variables);
           const evaluatedValue = evaluate(formattedCondition);
           if (evaluatedValue) {
-            yield* operationGenerator(operations, variables);
+            yield* getOperationGenerator(operations, variables);
           }
         }
         break;
@@ -120,7 +120,7 @@ export function* operationGenerator(
           let formattedCondition = replaceWithVariables(condition, variables);
           let evaluatedValue = evaluate(formattedCondition);
           while (evaluatedValue) {
-            yield* operationGenerator(operations, variables);
+            yield* getOperationGenerator(operations, variables);
             formattedCondition = replaceWithVariables(condition, variables);
             evaluatedValue = evaluate(formattedCondition);
           }

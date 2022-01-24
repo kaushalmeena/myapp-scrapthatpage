@@ -22,7 +22,7 @@ import {
   moveDownOperation,
   moveUpOperation
 } from "../../../../actions/scriptEditor";
-import { RootState } from "../../../../types/store";
+import { StoreRootState } from "../../../../types/store";
 import { getOperationNumber } from "../../../../utils/scriptEditor";
 import OperationInput from "./OperationInput";
 
@@ -35,7 +35,7 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
 
   const [expanded, setExpanded] = useState(false);
 
-  const operation = useSelector<RootState, LargeOperation>((state) =>
+  const operation = useSelector<StoreRootState, LargeOperation>((state) =>
     get(state.scriptEditor, props.path)
   );
 
