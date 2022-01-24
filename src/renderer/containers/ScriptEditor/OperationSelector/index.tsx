@@ -15,13 +15,13 @@ import {
   appendOperation,
   closeOperationSelector
 } from "../../../actions/scriptEditor";
-import { RootState } from "../../../types/store";
+import { StoreRootState } from "../../../types/store";
 
 const OperationSelector = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const selector = useSelector(
-    (state: RootState) => state.scriptEditor.selector.operation
+    (state: StoreRootState) => state.scriptEditor.selector.operation
   );
 
   const handleSelectorClose = () => {

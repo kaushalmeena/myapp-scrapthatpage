@@ -10,16 +10,16 @@ import {
   Select
 } from "@mui/material";
 import React from "react";
-import { SETTINGS_KEYS } from "../../constants/settings";
-import { THEMES } from "../../constants/themes";
-import PageName from "../../components/PageName";
 import { useDispatch, useSelector } from "react-redux";
 import { setSettings } from "../../actions/settings";
-import { RootState } from "../../types/store";
+import PageName from "../../components/PageName";
+import { SETTINGS_KEYS } from "../../constants/settings";
+import { THEMES } from "../../constants/themes";
+import { StoreRootState } from "../../types/store";
 
 const Settings = (): JSX.Element => {
   const dispatch = useDispatch();
-  const settings = useSelector((state: RootState) => state.settings);
+  const settings = useSelector((state: StoreRootState) => state.settings);
 
   return (
     <>

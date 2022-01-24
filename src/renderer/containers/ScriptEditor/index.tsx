@@ -1,10 +1,10 @@
 import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
-import React, { SyntheticEvent, useState } from "react";
-import { batch, useDispatch } from "react-redux";
+import React, { Component, SyntheticEvent } from "react";
+import { batch } from "react-redux";
 import { showNotification } from "../../actions/notification";
 import { loadState } from "../../actions/scriptEditor";
 import { store } from "../../store/store";
-import { ScriptEditorState } from "../../types/scriptEditor";
+import { ScriptEditorState as ScriptEditorReduxState } from "../../types/scriptEditor";
 import { validateScriptEditorState } from "../../utils/scriptEditor";
 import InformationPanel from "./InformationPanel";
 import OperationSelector from "./OperationSelector";
@@ -12,74 +12,86 @@ import OperationsPanel from "./OperationsPanel";
 import VariableSelector from "./VariableSelector";
 
 type ScriptEditorProps = {
-  scriptEditorState: ScriptEditorState;
-  onSubmit: (state: ScriptEditorState) => void;
+  onSubmit: (state: ScriptEditorReduxState) => void;
 };
 
-const ScriptEditor = (props: ScriptEditorProps): JSX.Element => {
-  const dispatch = useDispatch();
+type ScriptEditorState = {
+  activeTab: number;
+};
 
-  const [activeTab, setActiveTab] = useState(0);
+class ScriptEditor extends Component<ScriptEditorProps, ScriptEditorState> {
+  constructor(props: ScriptEditorProps) {
+    super(props);
+    this.state = {
+      activeTab: 0
+    };
+  }
 
-  const handleTabChange = (event: SyntheticEvent, value: number) => {
-    setActiveTab(value);
+  handleTabChange = (event: SyntheticEvent, value: number): void => {
+    this.setState({ activeTab: value });
   };
 
-  const handleSubmitClick = () => {
+  handleSubmitClick = (): void => {
     const state = store.getState().scriptEditor;
     const { errors, newState } = validateScriptEditorState(state);
     if (errors.length > 0) {
       const [message] = errors;
       batch(() => {
-        dispatch(loadState(newState));
-        dispatch(showNotification(message, "error"));
+        store.dispatch(loadState(newState));
+        store.dispatch(showNotification(message, "error"));
       });
     } else {
-      props.onSubmit(state);
+      this.props.onSubmit(state);
     }
   };
 
-  return (
-    <>
-      <Stack direction="row" marginBottom={2} justifyContent="flex-end">
-        <Button variant="contained" onClick={handleSubmitClick}>
-          Submit
-        </Button>
-      </Stack>
-      <Box
-        sx={{
-          borderWidth: 1,
-          borderStyle: "solid",
-          borderColor: "action.disabledBackground",
-          borderRadius: 1,
-          backgroundColor: "background.paper"
-        }}
-      >
+  render(): JSX.Element {
+    return (
+      <>
+        <Stack direction="row" marginBottom={2} justifyContent="flex-end">
+          <Button variant="contained" onClick={this.handleSubmitClick}>
+            Submit
+          </Button>
+        </Stack>
         <Box
           sx={{
-            borderBottomWidth: 1,
-            borderBottomStyle: "solid",
-            borderBottomColor: "action.disabledBackground"
+            borderWidth: 1,
+            borderStyle: "solid",
+            borderColor: "action.disabledBackground",
+            borderRadius: 1,
+            backgroundColor: "background.paper"
           }}
         >
-          <Tabs centered value={activeTab} onChange={handleTabChange}>
-            <Tab label="Information" />
-            <Tab label="Operations" />
-          </Tabs>
-        </Box>
-        <Box padding={2}>
-          <Box display={activeTab === 0 ? "block" : "none"}>
-            <InformationPanel />
+          <Box
+            sx={{
+              borderBottomWidth: 1,
+              borderBottomStyle: "solid",
+              borderBottomColor: "action.disabledBackground"
+            }}
+          >
+            <Tabs
+              centered
+              value={this.state.activeTab}
+              onChange={this.handleTabChange}
+            >
+              <Tab label="Information" />
+              <Tab label="Operations" />
+            </Tabs>
           </Box>
-          <Box display={activeTab === 1 ? "block" : "none"}>
-            <OperationsPanel path="operations" />
+          <Box padding={2}>
+            <Box display={this.state.activeTab === 0 ? "block" : "none"}>
+              <InformationPanel />
+            </Box>
+            <Box display={this.state.activeTab === 1 ? "block" : "none"}>
+              <OperationsPanel path="operations" />
+            </Box>
           </Box>
         </Box>
-      </Box>
-      <OperationSelector />
-      <VariableSelector />
-    </>
-  );
-};
+        <OperationSelector />
+        <VariableSelector />
+      </>
+    );
+  }
+}
 
 export default ScriptEditor;

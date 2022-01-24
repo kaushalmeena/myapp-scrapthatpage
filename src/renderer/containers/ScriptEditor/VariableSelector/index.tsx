@@ -16,16 +16,16 @@ import {
   updateInputWithVariable
 } from "../../../actions/scriptEditor";
 import EmptyText from "../../../components/EmptyText";
-import { RootState } from "../../../types/store";
+import { StoreRootState } from "../../../types/store";
 
 const VariableSelector = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const selector = useSelector(
-    (state: RootState) => state.scriptEditor.selector.variable
+    (state: StoreRootState) => state.scriptEditor.selector.variable
   );
   const variables = useSelector(
-    (state: RootState) => state.scriptEditor.variables
+    (state: StoreRootState) => state.scriptEditor.variables
   );
 
   const handleSelectorClose = () => {

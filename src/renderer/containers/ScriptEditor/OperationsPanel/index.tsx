@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { LargeOperation } from "../../../../common/types/largeOperation";
 import { openOperationSelector } from "../../../actions/scriptEditor";
 import EmptyText from "../../../components/EmptyText";
-import { RootState } from "../../../types/store";
+import { StoreRootState } from "../../../types/store";
 import OperationCard from "./OperationCard";
 
 type OperationsPanelProps = {
@@ -15,7 +15,7 @@ type OperationsPanelProps = {
 const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
   const dispatch = useDispatch();
 
-  const operations = useSelector<RootState, LargeOperation[]>((state) =>
+  const operations = useSelector<StoreRootState, LargeOperation[]>((state) =>
     get(state.scriptEditor, props.path)
   );
 

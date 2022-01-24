@@ -1,7 +1,7 @@
 import { SettingsSetAction } from "../types/settings";
 
 export const enum SETTINGS_ACTIONS {
-  SETTINGS_SET
+  SETTINGS_SET = "SETTINGS_SET"
 }
 
 export const setSettings = (

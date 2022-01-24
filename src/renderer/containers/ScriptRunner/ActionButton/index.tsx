@@ -3,7 +3,7 @@ import React from "react";
 import { ActionButtonColor } from "../../../types/scriptRunner";
 
 type ActionButtonProps = {
-  running: boolean;
+  spinning: boolean;
   color: ActionButtonColor;
   icon: string;
   onClick: () => void;
@@ -27,7 +27,7 @@ const ActionButton = (props: ActionButtonProps): JSX.Element => {
       >
         <Icon>{props.icon}</Icon>
       </Button>
-      {props.running && (
+      {props.spinning && (
         <CircularProgress
           size={50}
           sx={{ position: "absolute", top: -5, left: -5 }}

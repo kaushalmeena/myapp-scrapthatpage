@@ -4,7 +4,7 @@ import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { THEMES } from "../../constants/themes";
-import { RootState } from "../../types/store";
+import { StoreRootState } from "../../types/store";
 import Notification from "./Notification";
 import Sidebar from "./Sidebar";
 
@@ -13,7 +13,7 @@ type LayoutProps = {
 };
 
 const Layout = (props: LayoutProps): JSX.Element => {
-  const theme = useSelector((state: RootState) => state.settings.theme);
+  const theme = useSelector((state: StoreRootState) => state.settings.theme);
 
   const themeData = THEMES[theme].data;
   const muiTheme = createTheme(themeData);
