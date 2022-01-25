@@ -1,4 +1,4 @@
-import { get, wrap } from "object-path-immutable";
+import { wrap } from "object-path-immutable";
 import { INPUT_TYPES } from "../constants/input";
 import { LARGE_OPERTAIONS } from "../constants/largeOperations";
 import { OPERATION_TYPES } from "../constants/operation";
@@ -6,9 +6,6 @@ import { VALIDATION_FUNCTION } from "../constants/validation";
 import { LargeInput, LargeOperation } from "../types/largeOperation";
 import { SmallInput, SmallOperation } from "../types/smallOperation";
 import { ValidationRule } from "../types/validation";
-
-export const getLargeOperation = (type: OPERATION_TYPES): LargeOperation =>
-  get(LARGE_OPERTAIONS[type]);
 
 export const getOperationSubheader = (
   format: string,
