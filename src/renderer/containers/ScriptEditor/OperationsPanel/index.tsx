@@ -3,7 +3,7 @@ import { get } from "object-path-immutable";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { LargeOperation } from "../../../../common/types/largeOperation";
-import { openOperationSelector } from "../../../actions/scriptEditor";
+import { showOperationSelector } from "../../../actions/scriptEditor";
 import EmptyText from "../../../components/EmptyText";
 import { StoreRootState } from "../../../types/store";
 import OperationCard from "./OperationCard";
@@ -19,8 +19,8 @@ const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
     get(state.scriptEditor, props.path)
   );
 
-  const handleOperationSelectorOpen = () => {
-    dispatch(openOperationSelector(props.path));
+  const handleAddOperationClick = () => {
+    dispatch(showOperationSelector(props.path));
   };
 
   return (
@@ -30,7 +30,7 @@ const OperationsPanel = (props: OperationsPanelProps): JSX.Element => {
           title="Add operation"
           size="small"
           variant="outlined"
-          onClick={handleOperationSelectorOpen}
+          onClick={handleAddOperationClick}
         >
           Add
         </Button>

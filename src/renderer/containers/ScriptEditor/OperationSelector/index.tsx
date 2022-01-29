@@ -8,12 +8,12 @@ import {
   ListItemText
 } from "@mui/material";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { batch, useDispatch, useSelector } from "react-redux";
 import { LARGE_OPERTAIONS } from "../../../../common/constants/largeOperations";
 import { LargeOperation } from "../../../../common/types/largeOperation";
 import {
   appendOperation,
-  closeOperationSelector
+  hideOperationSelector
 } from "../../../actions/scriptEditor";
 import { StoreRootState } from "../../../types/store";
 
@@ -24,13 +24,15 @@ const OperationSelector = (): JSX.Element => {
     (state: StoreRootState) => state.scriptEditor.selector.operation
   );
 
-  const handleSelectorClose = () => {
-    dispatch(closeOperationSelector());
+  const handleModalClose = () => {
+    dispatch(hideOperationSelector());
   };
 
   const handleSelect = (item: LargeOperation) => {
-    dispatch(appendOperation(item));
-    dispatch(closeOperationSelector());
+    batch(() => {
+      dispatch(appendOperation(item));
+      dispatch(hideOperationSelector());
+    });
   };
 
   return (
@@ -38,7 +40,7 @@ const OperationSelector = (): JSX.Element => {
       maxWidth="sm"
       scroll="paper"
       open={selector.visible}
-      onClose={handleSelectorClose}
+      onClose={handleModalClose}
     >
       <DialogTitle>Select Operation</DialogTitle>
       <Box overflow="scroll">
