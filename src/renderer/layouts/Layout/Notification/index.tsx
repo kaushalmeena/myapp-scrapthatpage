@@ -11,7 +11,7 @@ export const Notification = (): JSX.Element => {
     (state: StoreRootState) => state.notification
   );
 
-  const handleNotificationClose = () => {
+  const handleSnackbarClose = () => {
     dispatch(hideNotification());
   };
 
@@ -20,7 +20,7 @@ export const Notification = (): JSX.Element => {
       open={notification.visible}
       autoHideDuration={3000}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      onClose={handleNotificationClose}
+      onClose={handleSnackbarClose}
     >
       <Alert variant="filled" severity={notification.severity}>
         {notification.message}

@@ -96,17 +96,17 @@ export const scriptEditorReducer = (
 
       return updateScriptEditorField(state, activePath, newValue);
     }
-    case ACTION_TYPES.OPERATION_SELECTOR_OPEN: {
+    case ACTION_TYPES.OPERATION_SELECTOR_SHOW: {
       const path = action.payload.path;
       return wrap(state)
         .set("selector.operation.visible", true)
         .set("selector.operation.activePath", path)
         .value();
     }
-    case ACTION_TYPES.OPERATION_SELECTOR_CLOSE: {
+    case ACTION_TYPES.OPERATION_SELECTOR_HIDE: {
       return wrap(state).set("selector.operation.visible", false).value();
     }
-    case ACTION_TYPES.VARIABLE_SELECTOR_OPEN: {
+    case ACTION_TYPES.VARIABLE_SELECTOR_SHOW: {
       const path = action.payload.path;
       const picker = action.payload.picker;
       return wrap(state)
@@ -116,7 +116,7 @@ export const scriptEditorReducer = (
         .set("selector.variable.updateMode", picker.mode)
         .value();
     }
-    case ACTION_TYPES.VARIABLE_SELECTOR_CLOSE: {
+    case ACTION_TYPES.VARIABLE_SELECTOR_HIDE: {
       return wrap(state).set("selector.variable.visible", false).value();
     }
     default:

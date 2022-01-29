@@ -8,12 +8,12 @@ import {
   OperationDeleteAction,
   OperationMoveDownAction,
   OperationMoveUpAction,
-  OperationSelectorCloseAction,
-  OperationSelectorOpenAction,
+  OperationSelectorHideAction,
+  OperationSelectorShowAction,
   ScriptEditorState,
   StateLoadAction,
-  VariableSelectorCloseAction,
-  VariableSelectorOpenAction
+  VariableSelectorHideAction,
+  VariableSelectorShowAction
 } from "../types/scriptEditor";
 
 export const enum ACTION_TYPES {
@@ -25,10 +25,10 @@ export const enum ACTION_TYPES {
   OPERATION_MOVE_DOWN = "OPERATION_MOVE_DOWN",
   INPUT_UPDATE = "INPUT_UPDATE",
   INPUT_UPDATE_WITH_VARIABLE = "INPUT_UPDATE_WITH_VARIABLE",
-  OPERATION_SELECTOR_OPEN = "OPERATION_SELECTOR_OPEN",
-  OPERATION_SELECTOR_CLOSE = "OPERATION_SELECTOR_CLOSE",
-  VARIABLE_SELECTOR_OPEN = "VARIABLE_SELECTOR_OPEN",
-  VARIABLE_SELECTOR_CLOSE = "VARIABLE_SELECTOR_CLOSE"
+  OPERATION_SELECTOR_SHOW = "OPERATION_SELECTOR_SHOW",
+  OPERATION_SELECTOR_HIDE = "OPERATION_SELECTOR_HIDE",
+  VARIABLE_SELECTOR_SHOW = "VARIABLE_SELECTOR_SHOW",
+  VARIABLE_SELECTOR_HIDE = "VARIABLE_SELECTOR_HIDE"
 }
 
 export const loadState = (state: ScriptEditorState): StateLoadAction => ({
@@ -99,30 +99,30 @@ export const updateInputWithVariable = (
   }
 });
 
-export const openOperationSelector = (
+export const showOperationSelector = (
   path: string
-): OperationSelectorOpenAction => ({
-  type: ACTION_TYPES.OPERATION_SELECTOR_OPEN,
+): OperationSelectorShowAction => ({
+  type: ACTION_TYPES.OPERATION_SELECTOR_SHOW,
   payload: {
     path
   }
 });
 
-export const closeOperationSelector = (): OperationSelectorCloseAction => ({
-  type: ACTION_TYPES.OPERATION_SELECTOR_CLOSE
+export const hideOperationSelector = (): OperationSelectorHideAction => ({
+  type: ACTION_TYPES.OPERATION_SELECTOR_HIDE
 });
 
-export const openVariableSelector = (
+export const showVariableSelector = (
   path: string,
   picker: VariablePicker
-): VariableSelectorOpenAction => ({
-  type: ACTION_TYPES.VARIABLE_SELECTOR_OPEN,
+): VariableSelectorShowAction => ({
+  type: ACTION_TYPES.VARIABLE_SELECTOR_SHOW,
   payload: {
     path,
     picker
   }
 });
 
-export const closeVariableSelector = (): VariableSelectorCloseAction => ({
-  type: ACTION_TYPES.VARIABLE_SELECTOR_CLOSE
+export const hideVariableSelector = (): VariableSelectorHideAction => ({
+  type: ACTION_TYPES.VARIABLE_SELECTOR_HIDE
 });

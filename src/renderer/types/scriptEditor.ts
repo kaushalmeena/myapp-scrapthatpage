@@ -65,27 +65,27 @@ export type InputUpdateWithVariableAction = {
   };
 };
 
-export type OperationSelectorOpenAction = {
-  type: ACTION_TYPES.OPERATION_SELECTOR_OPEN;
+export type OperationSelectorShowAction = {
+  type: ACTION_TYPES.OPERATION_SELECTOR_SHOW;
   payload: {
     path: string;
   };
 };
 
-export type OperationSelectorCloseAction = {
-  type: ACTION_TYPES.OPERATION_SELECTOR_CLOSE;
+export type OperationSelectorHideAction = {
+  type: ACTION_TYPES.OPERATION_SELECTOR_HIDE;
 };
 
-export type VariableSelectorOpenAction = {
-  type: ACTION_TYPES.VARIABLE_SELECTOR_OPEN;
+export type VariableSelectorShowAction = {
+  type: ACTION_TYPES.VARIABLE_SELECTOR_SHOW;
   payload: {
     path: string;
     picker: VariablePicker;
   };
 };
 
-export type VariableSelectorCloseAction = {
-  type: ACTION_TYPES.VARIABLE_SELECTOR_CLOSE;
+export type VariableSelectorHideAction = {
+  type: ACTION_TYPES.VARIABLE_SELECTOR_HIDE;
 };
 
 export type ScriptEditorAction =
@@ -97,10 +97,10 @@ export type ScriptEditorAction =
   | OperationMoveDownAction
   | InputUpdateAction
   | InputUpdateWithVariableAction
-  | OperationSelectorOpenAction
-  | OperationSelectorCloseAction
-  | VariableSelectorOpenAction
-  | VariableSelectorCloseAction;
+  | OperationSelectorShowAction
+  | OperationSelectorHideAction
+  | VariableSelectorShowAction
+  | VariableSelectorHideAction;
 
 type InformationField = {
   value: string;

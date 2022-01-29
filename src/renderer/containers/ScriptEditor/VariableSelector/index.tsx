@@ -8,11 +8,11 @@ import {
   ListItemText
 } from "@mui/material";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { batch, useDispatch, useSelector } from "react-redux";
 import { VARIABLE_TYPES } from "../../../../common/constants/variable";
 import { Variable } from "../../../../common/types/variable";
 import {
-  closeVariableSelector,
+  hideVariableSelector,
   updateInputWithVariable
 } from "../../../actions/scriptEditor";
 import EmptyText from "../../../components/EmptyText";
@@ -28,13 +28,15 @@ const VariableSelector = (): JSX.Element => {
     (state: StoreRootState) => state.scriptEditor.variables
   );
 
-  const handleSelectorClose = () => {
-    dispatch(closeVariableSelector());
+  const handleModalClose = () => {
+    dispatch(hideVariableSelector());
   };
 
   const handleSelect = (item: Variable) => {
-    dispatch(updateInputWithVariable(item));
-    dispatch(closeVariableSelector());
+    batch(() => {
+      dispatch(updateInputWithVariable(item));
+      dispatch(hideVariableSelector());
+    });
   };
 
   let filteredVariables = variables;
@@ -49,7 +51,7 @@ const VariableSelector = (): JSX.Element => {
       maxWidth="sm"
       scroll="paper"
       open={selector.visible}
-      onClose={handleSelectorClose}
+      onClose={handleModalClose}
     >
       <DialogTitle>Select Variable</DialogTitle>
       <Box overflow="scroll">

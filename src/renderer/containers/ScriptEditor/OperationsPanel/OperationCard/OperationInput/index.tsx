@@ -15,7 +15,7 @@ import {
   LargeTextInput
 } from "../../../../../../common/types/largeOperation";
 import {
-  openVariableSelector,
+  showVariableSelector,
   updateInput
 } from "../../../../../actions/scriptEditor";
 import { StoreRootState } from "../../../../../types/store";
@@ -27,8 +27,8 @@ type OperationInputProps = {
 const OperationInput = (props: OperationInputProps): JSX.Element | null => {
   const dispatch = useDispatch();
 
-  const input = useSelector<StoreRootState, LargeInput>((state: StoreRootState) =>
-    get(state.scriptEditor, props.path)
+  const input = useSelector<StoreRootState, LargeInput>(
+    (state: StoreRootState) => get(state.scriptEditor, props.path)
   );
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +44,7 @@ const OperationInput = (props: OperationInputProps): JSX.Element | null => {
             title="Show variable picker"
             size="small"
             onClick={() => {
-              dispatch(openVariableSelector(props.path, variablePicker));
+              dispatch(showVariableSelector(props.path, variablePicker));
             }}
           >
             <Icon fontSize="small">control_point_duplicate</Icon>
