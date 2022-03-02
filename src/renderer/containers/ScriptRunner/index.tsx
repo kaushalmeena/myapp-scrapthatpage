@@ -24,9 +24,8 @@ type ScriptRunnerProps = {
 type ScriptRunnerState = {
   cardTitle: string;
   cardSubheader: string;
-  actionButtonSpinning: boolean;
-  actionButtonIcon: string;
-  actionButtonColor: ActionButtonColor;
+  buttonIcon: string;
+  buttonColor: ActionButtonColor;
   tableData: TableData;
 };
 
@@ -43,9 +42,8 @@ class ScriptRunner extends Component<ScriptRunnerProps, ScriptRunnerState> {
     this.state = {
       cardTitle: "READY",
       cardSubheader: "Ready to start",
-      actionButtonIcon: "play_arrow",
-      actionButtonColor: "primary",
-      actionButtonSpinning: false,
+      buttonIcon: "play_arrow",
+      buttonColor: "primary",
       tableData: []
     };
     this.runnerStatus = "stopped";
@@ -60,9 +58,8 @@ class ScriptRunner extends Component<ScriptRunnerProps, ScriptRunnerState> {
     this.setState({
       cardTitle: "STARTED",
       cardSubheader: "Execution is running",
-      actionButtonSpinning: true,
-      actionButtonIcon: "stop",
-      actionButtonColor: "primary"
+      buttonIcon: "stop",
+      buttonColor: "primary"
     });
   };
 
@@ -71,9 +68,8 @@ class ScriptRunner extends Component<ScriptRunnerProps, ScriptRunnerState> {
     this.setState({
       cardTitle: "STOPPED",
       cardSubheader: "Execution is stopped",
-      actionButtonSpinning: false,
-      actionButtonIcon: "refresh",
-      actionButtonColor: "primary"
+      buttonIcon: "refresh",
+      buttonColor: "primary"
     });
   };
 
@@ -82,9 +78,8 @@ class ScriptRunner extends Component<ScriptRunnerProps, ScriptRunnerState> {
     this.setState({
       cardTitle: "DONE",
       cardSubheader: "Execution is finished",
-      actionButtonSpinning: false,
-      actionButtonIcon: "refresh",
-      actionButtonColor: "success"
+      buttonIcon: "refresh",
+      buttonColor: "success"
     });
   };
 
@@ -93,9 +88,8 @@ class ScriptRunner extends Component<ScriptRunnerProps, ScriptRunnerState> {
     this.setState({
       cardTitle: "ERROR",
       cardSubheader: message,
-      actionButtonSpinning: false,
-      actionButtonIcon: "refresh",
-      actionButtonColor: "error"
+      buttonIcon: "refresh",
+      buttonColor: "error"
     });
   };
 
@@ -169,17 +163,15 @@ class ScriptRunner extends Component<ScriptRunnerProps, ScriptRunnerState> {
         <Card
           variant="outlined"
           sx={{
-            backgroundColor: getCardBackgroundColor(
-              this.state.actionButtonColor
-            )
+            backgroundColor: getCardBackgroundColor(this.state.buttonColor)
           }}
         >
           <CardHeader
             avatar={
               <ActionButton
-                spinning={this.state.actionButtonSpinning}
-                icon={this.state.actionButtonIcon}
-                color={this.state.actionButtonColor}
+                spinning={this.state.buttonIcon === "stop"}
+                icon={this.state.buttonIcon}
+                color={this.state.buttonColor}
                 onClick={this.handleActionButtonClick}
               />
             }
