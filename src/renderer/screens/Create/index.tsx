@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { showNotification } from "../../actions/notification";
 import { loadState } from "../../actions/scriptEditor";
 import PageName from "../../components/PageName";
@@ -12,7 +12,7 @@ import { getScriptFromScriptEditorState } from "../../utils/scriptEditor";
 
 const Create = (): JSX.Element => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useLayoutEffect(() => {
     dispatch(loadState(INITIAL_SCRIPT_EDITOR_STATE));
@@ -23,7 +23,7 @@ const Create = (): JSX.Element => {
     createScript(script)
       .then(() => {
         dispatch(showNotification("Script successfully created!", "success"));
-        history.push("/search");
+        navigate("/search");
       })
       .catch((err) => {
         console.error(err);

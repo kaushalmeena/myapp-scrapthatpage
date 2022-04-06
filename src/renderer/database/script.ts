@@ -1,11 +1,11 @@
-import Dexie, { PromiseExtended } from "dexie";
+import Dexie, { PromiseExtended, Table } from "dexie";
 import { Script } from "../types/script";
 
 class ScriptDatabase extends Dexie {
-  public scripts: Dexie.Table<Script, number>;
+  public scripts: Table<Script, number>;
 
   public constructor() {
-    super("script_database");
+    super("myDatabase");
     this.version(1).stores({ scripts: "++id, name, favorite" });
     this.scripts = this.table("scripts");
   }

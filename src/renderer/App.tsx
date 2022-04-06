@@ -1,6 +1,6 @@
 import React from "react";
 import { Provider } from "react-redux";
-import { MemoryRouter, Redirect, Route, Switch } from "react-router-dom";
+import { MemoryRouter, Route, Routes, Navigate } from "react-router-dom";
 import { PersistGate } from "redux-persist/es/integration/react";
 import Layout from "./layouts/Layout";
 import Create from "./screens/Create";
@@ -19,19 +19,17 @@ const App = (): JSX.Element => {
       <PersistGate loading={null} persistor={persistor}>
         <MemoryRouter>
           <Layout>
-            <Switch>
-              <Route path="/dashboard" component={Dashboard} />
-              <Route path="/favorites" component={Favorites} />
-              <Route path="/search" component={Search} />
-              <Route path="/settings" component={Settings} />
-              <Route path="/create" component={Create} />
-              <Route path="/update/:scriptId" component={Update} />
-              <Route path="/delete/:scriptId" component={Delete} />
-              <Route path="/execute/:scriptId" component={Execute} />
-              <Route exact path="/">
-                <Redirect to="/dashboard" />
-              </Route>
-            </Switch>
+            <Routes>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/create" element={<Create />} />
+              <Route path="/update/:scriptId" element={<Update />} />
+              <Route path="/delete/:scriptId" element={<Delete />} />
+              <Route path="/execute/:scriptId" element={<Execute />} />
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
           </Layout>
         </MemoryRouter>
       </PersistGate>

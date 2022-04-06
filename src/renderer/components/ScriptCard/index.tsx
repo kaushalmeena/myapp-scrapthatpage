@@ -1,6 +1,6 @@
 import { Card, CardActionArea, CardHeader } from "@mui/material";
 import React from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 
 type ScriptCardProps = {
   id?: number;
@@ -9,10 +9,10 @@ type ScriptCardProps = {
 };
 
 const ScriptCard = (props: ScriptCardProps): JSX.Element => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleExecuteClick = () => {
-    history.push(`/execute/${props.id}`);
+    navigate(`/execute/${props.id}`);
   };
 
   return (

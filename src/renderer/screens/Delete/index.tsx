@@ -6,7 +6,7 @@ import {
   Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import { deleteScript, fetchScript } from "../../database/script";
 import { useNotification } from "../../hooks/useNotification";
@@ -17,7 +17,7 @@ import { Script } from "../../types/script";
 
 const Delete = (): JSX.Element => {
   const notification = useNotification();
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams<Params>();
 
   const [status, setStatus] = useState<PAGE_STATUS>("loading");
@@ -49,7 +49,7 @@ const Delete = (): JSX.Element => {
     deleteScript(scriptId)
       .then(() => {
         notification.show("Script successfully deleted!", "success");
-        history.push("/search");
+        navigate("/search");
       })
       .catch((err) => {
         console.error(err);
@@ -58,7 +58,7 @@ const Delete = (): JSX.Element => {
   };
 
   const handleNoClick = () => {
-    history.goBack();
+    navigate(-1);
   };
 
   return (
