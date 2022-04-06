@@ -1,7 +1,7 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useHistory, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { loadState } from "../../actions/scriptEditor";
 import PageName from "../../components/PageName";
 import ScriptEditor from "../../containers/ScriptEditor";
@@ -18,7 +18,7 @@ import {
 const Update = (): JSX.Element => {
   const dispatch = useDispatch();
   const notification = useNotification();
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams<Params>();
 
   const [status, setStatus] = useState<PAGE_STATUS>("loading");
@@ -51,7 +51,7 @@ const Update = (): JSX.Element => {
     updateScript(script)
       .then(() => {
         notification.show("Script successfully updated!", "success");
-        history.push("/search");
+        navigate("/search");
       })
       .catch((err) => {
         console.error(err);

@@ -8,7 +8,7 @@ import {
   Typography
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import ScriptRunner from "../../containers/ScriptRunner";
 import { fetchScript, updateFavoriteScriptField } from "../../database/script";
@@ -19,7 +19,7 @@ import { Script } from "../../types/script";
 
 const Execute = (): JSX.Element => {
   const notification = useNotification();
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams<Params>();
 
   const [status, setStatus] = useState<PAGE_STATUS>("loading");
@@ -51,11 +51,11 @@ const Execute = (): JSX.Element => {
   }, []);
 
   const handleDeleteClick = () => {
-    history.push(`/delete/${scriptId}`);
+    navigate(`/delete/${scriptId}`);
   };
 
   const handleUpdateClick = () => {
-    history.push(`/update/${scriptId}`);
+    navigate(`/update/${scriptId}`);
   };
 
   const handleFavouriteToogle = () => {

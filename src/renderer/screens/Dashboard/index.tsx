@@ -8,12 +8,12 @@ import {
   Typography
 } from "@mui/material";
 import React from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import PageName from "../../components/PageName";
 import { PAGE_LINKS } from "../../constants/layout";
 
 const Dashboard = (): JSX.Element => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -22,7 +22,7 @@ const Dashboard = (): JSX.Element => {
         <Stack gap={1} flex={1}>
           {PAGE_LINKS.map((link) => (
             <Card key={`link-${link.title}`} variant="outlined">
-              <CardActionArea onClick={() => history.push(link.route)}>
+              <CardActionArea onClick={() => navigate(link.route)}>
                 <CardHeader
                   avatar={<Icon fontSize="large">{link.icon}</Icon>}
                   title={link.title}
