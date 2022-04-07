@@ -194,7 +194,7 @@ export const getOperationNameAndSubheader = (
       };
     case OPERATION_TYPES.EXTRACT:
       return {
-        name: "EXTARCT",
+        name: "EXTRACT",
         subheader: `${operation.name} [${operation.selector}]`
       };
     case OPERATION_TYPES.CLICK:

@@ -1,6 +1,6 @@
 import { wrap } from "object-path-immutable";
 import { INPUT_TYPES } from "../constants/input";
-import { LARGE_OPERTAIONS } from "../constants/largeOperations";
+import { LARGE_OPERATIONS } from "../constants/largeOperations";
 import { OPERATION_TYPES } from "../constants/operation";
 import { VALIDATION_FUNCTION } from "../constants/validation";
 import { LargeInput, LargeOperation } from "../types/largeOperation";
@@ -23,7 +23,7 @@ export const getOperationSubheader = (
 export const convertToLargeOperation = (
   operation: SmallOperation
 ): LargeOperation => {
-  let wrappedOperation = wrap(LARGE_OPERTAIONS[operation.type]);
+  let wrappedOperation = wrap(LARGE_OPERATIONS[operation.type]);
   switch (operation.type) {
     case OPERATION_TYPES.OPEN:
     case OPERATION_TYPES.CLICK:

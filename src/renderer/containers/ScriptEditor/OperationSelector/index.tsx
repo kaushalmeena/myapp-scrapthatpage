@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { batch, useDispatch, useSelector } from "react-redux";
-import { LARGE_OPERTAIONS } from "../../../../common/constants/largeOperations";
+import { LARGE_OPERATIONS } from "../../../../common/constants/largeOperations";
 import { LargeOperation } from "../../../../common/types/largeOperation";
 import {
   appendOperation,
@@ -45,7 +45,7 @@ const OperationSelector = (): JSX.Element => {
       <DialogTitle>Select Operation</DialogTitle>
       <Box overflow="scroll">
         <List disablePadding>
-          {LARGE_OPERTAIONS.map((item) => (
+          {LARGE_OPERATIONS.map((item) => (
             <ListItemButton
               key={`list-item-${item.type}`}
               onClick={() => {

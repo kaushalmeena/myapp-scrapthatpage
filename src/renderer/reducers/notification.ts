@@ -1,10 +1,10 @@
 import { wrap } from "object-path-immutable";
 import { NOTIFICATION_ACTIONS } from "../actions/notification";
-import { INTIAL_NOTIFICATION_STATE } from "../constants/notification";
+import { INITIAL_NOTIFICATION_STATE } from "../constants/notification";
 import { NotificationAction, NotificationState } from "../types/notification";
 
 export const notificationReducer = (
-  state = INTIAL_NOTIFICATION_STATE,
+  state = INITIAL_NOTIFICATION_STATE,
   action: NotificationAction
 ): NotificationState => {
   switch (action.type) {

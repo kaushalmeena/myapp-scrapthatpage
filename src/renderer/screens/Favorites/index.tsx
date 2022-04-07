@@ -19,7 +19,7 @@ const Favorites = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        notification.show("Error occured while fetching.", "error");
+        notification.show("Error occurred while fetching.", "error");
       });
   }, []);
 

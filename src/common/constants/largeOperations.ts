@@ -8,7 +8,7 @@ import {
   VARIABLE_TYPES
 } from "./variable";
 
-export const LARGE_OPERTAIONS: LargeOperation[] = [
+export const LARGE_OPERATIONS: LargeOperation[] = [
   {
     name: "OPEN",
     type: OPERATION_TYPES.OPEN,
@@ -352,7 +352,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
   {
     name: "WHILE",
     type: OPERATION_TYPES.WHILE,
-    description: "Executes block untill specified condition become false.",
+    description: "Executes block until specified condition become false.",
     format: "{0}",
     inputs: [
       {

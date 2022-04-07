@@ -48,7 +48,7 @@ const Execute = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        setError("Error occured while fetching.");
+        setError("Error occurred while fetching.");
         setStatus("error");
       });
   }, []);
@@ -61,7 +61,7 @@ const Execute = (): JSX.Element => {
     navigate(`/update/${scriptId}`);
   };
 
-  const handleFavouriteToogle = () => {
+  const handleFavouriteToggle = () => {
     const newFavoriteValue = 1 - favorite;
     updateFavoriteScriptField(scriptId, newFavoriteValue)
       .then(() => {
@@ -69,7 +69,7 @@ const Execute = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        notification.show("Error occured while updating.", "error");
+        notification.show("Error occurred while updating.", "error");
       });
   };
 
@@ -100,7 +100,7 @@ const Execute = (): JSX.Element => {
         <Typography fontSize={28} fontWeight="400">
           Execute
         </Typography>
-        <IconButton color="primary" onClick={handleFavouriteToogle}>
+        <IconButton color="primary" onClick={handleFavouriteToggle}>
           <Icon>{favorite === 1 ? "favorite" : "favorite_border"}</Icon>
         </IconButton>
       </Box>

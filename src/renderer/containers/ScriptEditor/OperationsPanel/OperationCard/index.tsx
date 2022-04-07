@@ -39,7 +39,7 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
     get(state.scriptEditor, props.path)
   );
 
-  const handleExpandToogle = () => {
+  const handleExpandToggle = () => {
     setExpanded((value) => !value);
   };
 
@@ -94,7 +94,7 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
               size="small"
               title="Edit operation"
               color="primary"
-              onClick={handleExpandToogle}
+              onClick={handleExpandToggle}
             >
               <Icon fontSize="small">{expanded ? "edit_off" : "edit"}</Icon>
             </IconButton>

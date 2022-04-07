@@ -68,7 +68,7 @@ export const handleExecuteOperation = async (
     console.log(err);
     return {
       status: "error",
-      message: "Error occured in executing operation"
+      message: "Error occurred in executing operation"
     };
   }
 };
