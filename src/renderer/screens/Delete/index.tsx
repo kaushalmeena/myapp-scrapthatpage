@@ -40,7 +40,7 @@ const Delete = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        setError("Error occured while fetching.");
+        setError("Error occurred while fetching.");
         setStatus("error");
       });
   }, []);
@@ -53,7 +53,7 @@ const Delete = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        notification.show("Error occured while deleting.", "error");
+        notification.show("Error occurred while deleting.", "error");
       });
   };
 

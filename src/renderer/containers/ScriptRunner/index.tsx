@@ -153,7 +153,7 @@ class ScriptRunner extends Component<ScriptRunnerProps, ScriptRunnerState> {
       })
       .catch((err) => {
         console.error(err);
-        this.handleRunnerError("Error occured in executing operation");
+        this.handleRunnerError("Error occurred in executing operation");
       });
   };
 

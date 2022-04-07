@@ -41,7 +41,7 @@ const Update = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        setError("Error occured while fetching.");
+        setError("Error occurred while fetching.");
         setStatus("error");
       });
   }, []);
@@ -55,7 +55,7 @@ const Update = (): JSX.Element => {
       })
       .catch((err) => {
         console.error(err);
-        notification.show("Error occured while updating.", "error");
+        notification.show("Error occurred while updating.", "error");
       });
   };
 
