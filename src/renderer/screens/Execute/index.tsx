@@ -11,7 +11,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import ScriptRunner from "../../containers/ScriptRunner";
-import { fetchScript, updateFavoriteScriptField } from "../../database/script";
+import {
+  fetchScript,
+  updateFavoriteScriptField
+} from "../../database/scriptDB";
 import { useNotification } from "../../hooks/useNotification";
 import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";

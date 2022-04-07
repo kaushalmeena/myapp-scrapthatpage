@@ -83,7 +83,7 @@ export const LARGE_OPERTAIONS: LargeOperation[] = [
         options: [
           {
             label: "Text",
-            value: "text"
+            value: "textContent"
           },
           {
             label: "Href",
