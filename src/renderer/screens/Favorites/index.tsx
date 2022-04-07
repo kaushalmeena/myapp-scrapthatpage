@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
-import { fetchAllFavoriteScripts } from "../../database/script";
+import { fetchAllFavoriteScripts } from "../../database/scriptDB";
 import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 

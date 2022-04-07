@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router";
 import { loadState } from "../../actions/scriptEditor";
 import PageName from "../../components/PageName";
 import ScriptEditor from "../../containers/ScriptEditor";
-import { fetchScript, updateScript } from "../../database/script";
+import { fetchScript, updateScript } from "../../database/scriptDB";
 import { useNotification } from "../../hooks/useNotification";
 import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";

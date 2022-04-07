@@ -1,13 +1,17 @@
 import Dexie, { PromiseExtended, Table } from "dexie";
 import { Script } from "../types/script";
+import { topYoutubeVideosScript } from "./dummyData";
 
 class ScriptDatabase extends Dexie {
   public scripts: Table<Script, number>;
 
   public constructor() {
-    super("myDatabase");
+    super("script_database");
     this.version(1).stores({ scripts: "++id, name, favorite" });
     this.scripts = this.table("scripts");
+    this.on("populate", () => {
+      this.scripts.add(topYoutubeVideosScript);
+    });
   }
 }
 

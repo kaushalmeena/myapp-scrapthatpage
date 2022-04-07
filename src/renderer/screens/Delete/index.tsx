@@ -8,7 +8,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
-import { deleteScript, fetchScript } from "../../database/script";
+import { deleteScript, fetchScript } from "../../database/scriptDB";
 import { useNotification } from "../../hooks/useNotification";
 import PageName from "../../components/PageName";
 import { PAGE_STATUS } from "../../types/page";
