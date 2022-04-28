@@ -3,13 +3,14 @@ import React, { Component, SyntheticEvent } from "react";
 import { batch } from "react-redux";
 import { showNotification } from "../../actions/notification";
 import { loadState } from "../../actions/scriptEditor";
+import TabPanel from "../../components/TabPanel";
 import { store } from "../../store/store";
 import { ScriptEditorState as ScriptEditorReduxState } from "../../types/scriptEditor";
 import { validateScriptEditorState } from "../../utils/scriptEditor";
 import InformationPanel from "./InformationPanel";
-import OperationSelector from "./OperationSelector";
+import OperationSelectorDialog from "./OperationSelectorDialog";
 import OperationsPanel from "./OperationsPanel";
-import VariableSelector from "./VariableSelector";
+import VariableSelectorDialog from "./VariableSelectorDialog";
 
 type ScriptEditorProps = {
   onSubmit: (state: ScriptEditorReduxState) => void;
@@ -79,16 +80,16 @@ class ScriptEditor extends Component<ScriptEditorProps, ScriptEditorState> {
             </Tabs>
           </Box>
           <Box padding={2}>
-            <Box display={this.state.activeTab === 0 ? "block" : "none"}>
+            <TabPanel value={this.state.activeTab} index={0}>
               <InformationPanel />
-            </Box>
-            <Box display={this.state.activeTab === 1 ? "block" : "none"}>
+            </TabPanel>
+            <TabPanel value={this.state.activeTab} index={1}>
               <OperationsPanel path="operations" />
-            </Box>
+            </TabPanel>
           </Box>
         </Box>
-        <OperationSelector />
-        <VariableSelector />
+        <OperationSelectorDialog />
+        <VariableSelectorDialog />
       </>
     );
   }

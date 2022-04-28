@@ -18,7 +18,7 @@ import {
 import EmptyText from "../../../components/EmptyText";
 import { StoreRootState } from "../../../types/store";
 
-const VariableSelector = (): JSX.Element => {
+const VariableSelectorDialog = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const selector = useSelector(
@@ -77,4 +77,4 @@ const VariableSelector = (): JSX.Element => {
   );
 };
 
-export default VariableSelector;
+export default VariableSelectorDialog;
