@@ -17,7 +17,7 @@ import {
 } from "../../../actions/scriptEditor";
 import { StoreRootState } from "../../../types/store";
 
-const OperationSelector = (): JSX.Element => {
+const OperationSelectorDialog = (): JSX.Element => {
   const dispatch = useDispatch();
 
   const selector = useSelector(
@@ -62,4 +62,4 @@ const OperationSelector = (): JSX.Element => {
   );
 };
 
-export default OperationSelector;
+export default OperationSelectorDialog;
