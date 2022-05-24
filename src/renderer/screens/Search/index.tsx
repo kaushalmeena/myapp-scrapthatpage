@@ -3,7 +3,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
-import { fetchAllScripts } from "../../database/scriptDB";
+import db from "../../database";
 import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 
@@ -15,7 +15,7 @@ const Search = (): JSX.Element => {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    fetchAllScripts()
+    db.fetchAllScripts()
       .then((data) => {
         setScripts(data);
         setFilteredScripts(data);

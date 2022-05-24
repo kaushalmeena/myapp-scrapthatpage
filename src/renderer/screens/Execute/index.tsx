@@ -11,10 +11,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import ScriptRunner from "../../containers/ScriptRunner";
-import {
-  fetchScript,
-  updateFavoriteScriptField
-} from "../../database/scriptDB";
+import db from "../../database";
 import { useNotification } from "../../hooks/useNotification";
 import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
@@ -35,7 +32,7 @@ const Execute = (): JSX.Element => {
 
   useEffect(() => {
     setStatus("loading");
-    fetchScript(scriptId)
+    db.fetchScriptById(scriptId)
       .then((data) => {
         if (data) {
           setScript(data);
@@ -63,7 +60,7 @@ const Execute = (): JSX.Element => {
 
   const handleFavouriteToggle = () => {
     const newFavoriteValue = 1 - favorite;
-    updateFavoriteScriptField(scriptId, newFavoriteValue)
+    db.updateScriptFavoriteField(scriptId, newFavoriteValue)
       .then(() => {
         setFavorite(newFavoriteValue);
       })

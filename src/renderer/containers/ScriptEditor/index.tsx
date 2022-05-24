@@ -4,7 +4,7 @@ import { batch } from "react-redux";
 import { showNotification } from "../../actions/notification";
 import { loadState } from "../../actions/scriptEditor";
 import TabPanel from "../../components/TabPanel";
-import { store } from "../../store/store";
+import { store } from "../../store";
 import { ScriptEditorState as ScriptEditorReduxState } from "../../types/scriptEditor";
 import { validateScriptEditorState } from "../../utils/scriptEditor";
 import InformationPanel from "./InformationPanel";

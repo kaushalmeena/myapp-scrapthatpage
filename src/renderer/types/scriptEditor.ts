@@ -102,30 +102,30 @@ export type ScriptEditorAction =
   | VariableSelectorShowAction
   | VariableSelectorHideAction;
 
-type InformationField = {
+export type InformationField = {
   value: string;
   error: string;
   rules: ValidationRule[];
 };
 
-type Information = {
+export type Information = {
   name: InformationField;
   description: InformationField;
 };
 
-type OperationSelector = {
+export type OperationSelector = {
   visible: boolean;
   activePath: string;
 };
 
-type VariableSelector = {
+export type VariableSelector = {
   visible: boolean;
   activePath: string;
   filterType: VARIABLE_TYPES;
   updateMode: VARIABLE_PICKER_MODES;
 };
 
-type Selector = {
+export type Selector = {
   operation: OperationSelector;
   variable: VariableSelector;
 };

@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router";
 import { loadState } from "../../actions/scriptEditor";
 import PageName from "../../components/PageName";
 import ScriptEditor from "../../containers/ScriptEditor";
-import { fetchScript, updateScript } from "../../database/scriptDB";
+import db from "../../database";
 import { useNotification } from "../../hooks/useNotification";
 import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
@@ -28,7 +28,7 @@ const Update = (): JSX.Element => {
 
   useEffect(() => {
     setStatus("loading");
-    fetchScript(scriptId)
+    db.fetchScriptById(scriptId)
       .then((script) => {
         if (script) {
           const state = getScriptEditorStateFromScript(script);
@@ -48,7 +48,7 @@ const Update = (): JSX.Element => {
 
   const handleSubmit = (state: ScriptEditorState) => {
     const script = getScriptFromScriptEditorState(state);
-    updateScript(script)
+    db.updateScript(script)
       .then(() => {
         notification.show("Script successfully updated!", "success");
         navigate("/search");

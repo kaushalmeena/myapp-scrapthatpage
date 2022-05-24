@@ -8,11 +8,11 @@ import { StoreRootState } from "../../types/store";
 import Notification from "./Notification";
 import Sidebar from "./Sidebar";
 
-type LayoutProps = {
+type MainLayoutProps = {
   children?: ReactNode;
 };
 
-const Layout = (props: LayoutProps): JSX.Element => {
+const MainLayout = (props: MainLayoutProps): JSX.Element => {
   const theme = useSelector((state: StoreRootState) => state.settings.theme);
 
   const themeData = THEMES[theme].data;
@@ -37,4 +37,4 @@ const Layout = (props: LayoutProps): JSX.Element => {
   );
 };
 
-export default Layout;
+export default MainLayout;
