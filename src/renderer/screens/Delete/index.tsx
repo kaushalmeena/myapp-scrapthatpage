@@ -7,10 +7,10 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { INITIAL_SCRIPT } from "../../constants/script";
-import { deleteScript, fetchScript } from "../../database/scriptDB";
-import { useNotification } from "../../hooks/useNotification";
 import PageName from "../../components/PageName";
+import { INITIAL_SCRIPT } from "../../constants/script";
+import db from "../../database";
+import { useNotification } from "../../hooks/useNotification";
 import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";
@@ -28,7 +28,7 @@ const Delete = (): JSX.Element => {
 
   useEffect(() => {
     setStatus("loading");
-    fetchScript(scriptId)
+    db.fetchScriptById(scriptId)
       .then((script) => {
         if (script) {
           setScript(script);
@@ -46,7 +46,7 @@ const Delete = (): JSX.Element => {
   }, []);
 
   const handleYesClick = () => {
-    deleteScript(scriptId)
+    db.deleteScriptById(scriptId)
       .then(() => {
         notification.show("Script successfully deleted!", "success");
         navigate("/search");

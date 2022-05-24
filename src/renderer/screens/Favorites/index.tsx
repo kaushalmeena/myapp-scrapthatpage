@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
-import { fetchAllFavoriteScripts } from "../../database/scriptDB";
+import db from "../../database";
 import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 
@@ -13,7 +13,7 @@ const Favorites = (): JSX.Element => {
   const [scripts, setScripts] = useState<Script[]>([]);
 
   useEffect(() => {
-    fetchAllFavoriteScripts()
+    db.fetchAllFavoriteScripts()
       .then((data) => {
         setScripts(data);
       })

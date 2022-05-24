@@ -6,7 +6,7 @@ import { loadState } from "../../actions/scriptEditor";
 import PageName from "../../components/PageName";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
 import ScriptEditor from "../../containers/ScriptEditor";
-import { createScript } from "../../database/scriptDB";
+import db from "../../database";
 import { ScriptEditorState } from "../../types/scriptEditor";
 import { getScriptFromScriptEditorState } from "../../utils/scriptEditor";
 
@@ -20,7 +20,7 @@ const Create = (): JSX.Element => {
 
   const handleSubmit = (state: ScriptEditorState) => {
     const script = getScriptFromScriptEditorState(state);
-    createScript(script)
+    db.createScript(script)
       .then(() => {
         dispatch(showNotification("Script successfully created!", "success"));
         navigate("/search");
