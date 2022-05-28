@@ -2,20 +2,24 @@ import { Box, createTheme } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, { ReactNode } from "react";
-import { useSelector } from "react-redux";
-import { THEMES } from "../../constants/themes";
+import { connect, MapStateToProps } from "react-redux";
+import { THEMES, THEME_TYPES } from "../../constants/themes";
 import { StoreRootState } from "../../types/store";
 import Notification from "./Notification";
 import Sidebar from "./Sidebar";
 
-type MainLayoutProps = {
+type MainLayoutStateProps = {
+  theme: THEME_TYPES;
+};
+
+type MainLayoutOwnProps = {
   children?: ReactNode;
 };
 
-const MainLayout = (props: MainLayoutProps): JSX.Element => {
-  const theme = useSelector((state: StoreRootState) => state.settings.theme);
+type MainLayoutProps = MainLayoutStateProps & MainLayoutOwnProps;
 
-  const themeData = THEMES[theme].data;
+const MainLayout = (props: MainLayoutProps): JSX.Element => {
+  const themeData = THEMES[props.theme].data;
   const muiTheme = createTheme(themeData);
 
   return (
@@ -37,4 +41,12 @@ const MainLayout = (props: MainLayoutProps): JSX.Element => {
   );
 };
 
-export default MainLayout;
+const mapStateToProps: MapStateToProps<
+  MainLayoutStateProps,
+  MainLayoutOwnProps,
+  StoreRootState
+> = (state) => ({
+  theme: state.settings.theme
+});
+
+export default connect(mapStateToProps)(MainLayout);

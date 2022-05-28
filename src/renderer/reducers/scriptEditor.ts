@@ -1,6 +1,7 @@
 import { get, wrap } from "object-path-immutable";
 import { OPERATION_TYPES } from "../../common/constants/operation";
 import { VARIABLE_PICKER_MODES } from "../../common/constants/variable";
+import { LargeInput, LargeTextInput } from "../../common/types/largeOperation";
 import { Variable } from "../../common/types/variable";
 import { ACTION_TYPES } from "../actions/scriptEditor";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "../constants/scriptEditor";
@@ -26,7 +27,7 @@ export const scriptEditorReducer = (
     }
     case ACTION_TYPES.OPERATION_APPEND: {
       const operation = action.payload.operation;
-      const activePath = state.selector.operation.activePath;
+      const activePath = state.operationSelector.activePath;
       return wrap(state).push(activePath, operation).value();
     }
     case ACTION_TYPES.OPERATION_DELETE: {
@@ -78,8 +79,8 @@ export const scriptEditorReducer = (
     }
     case ACTION_TYPES.INPUT_UPDATE_WITH_VARIABLE: {
       const variable = action.payload.variable;
-      const activePath = state.selector.variable.activePath;
-      const updateMode = state.selector.variable.updateMode;
+      const activePath = state.variableSelector.activePath;
+      const updateMode = state.variableSelector.updateMode;
 
       const valuePath = `${activePath}.value`;
       const value = get(state, valuePath);
@@ -99,25 +100,28 @@ export const scriptEditorReducer = (
     case ACTION_TYPES.OPERATION_SELECTOR_SHOW: {
       const path = action.payload.path;
       return wrap(state)
-        .set("selector.operation.visible", true)
-        .set("selector.operation.activePath", path)
+        .set("operationSelector.visible", true)
+        .set("operationSelector.activePath", path)
         .value();
     }
     case ACTION_TYPES.OPERATION_SELECTOR_HIDE: {
-      return wrap(state).set("selector.operation.visible", false).value();
+      return wrap(state).set("operationSelector.visible", false).value();
     }
     case ACTION_TYPES.VARIABLE_SELECTOR_SHOW: {
       const path = action.payload.path;
-      const picker = action.payload.picker;
-      return wrap(state)
-        .set("selector.variable.visible", true)
-        .set("selector.variable.activePath", path)
-        .set("selector.variable.filterType", picker.type)
-        .set("selector.variable.updateMode", picker.mode)
-        .value();
+      const input = get(state, path);
+      if ("variablePicker" in input && input.variablePicker) {
+        const variablePicker = input.variablePicker;
+        return wrap(state)
+          .set("variableSelector.visible", true)
+          .set("variableSelector.activePath", path)
+          .set("variableSelector.filterType", variablePicker.type)
+          .set("variableSelector.updateMode", variablePicker.mode)
+          .value();
+      }
     }
     case ACTION_TYPES.VARIABLE_SELECTOR_HIDE: {
-      return wrap(state).set("selector.variable.visible", false).value();
+      return wrap(state).set("variableSelector.visible", false).value();
     }
     default:
   }

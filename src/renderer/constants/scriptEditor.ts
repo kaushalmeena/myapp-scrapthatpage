@@ -31,16 +31,14 @@ export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
   },
   operations: [],
   variables: [],
-  selector: {
-    operation: {
-      visible: false,
-      activePath: ""
-    },
-    variable: {
-      visible: false,
-      activePath: "",
-      filterType: VARIABLE_TYPES.ANY,
-      updateMode: VARIABLE_PICKER_MODES.SET
-    }
+  operationSelector: {
+    visible: false,
+    activePath: ""
+  },
+  variableSelector: {
+    visible: false,
+    activePath: "",
+    filterType: VARIABLE_TYPES.ANY,
+    updateMode: VARIABLE_PICKER_MODES.SET
   }
 };

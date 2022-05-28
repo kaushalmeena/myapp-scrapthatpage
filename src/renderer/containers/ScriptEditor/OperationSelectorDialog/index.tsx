@@ -8,39 +8,45 @@ import {
   ListItemText
 } from "@mui/material";
 import React from "react";
-import { batch, useDispatch, useSelector } from "react-redux";
+import {
+  batch,
+  connect,
+  MapDispatchToProps,
+  MapStateToProps
+} from "react-redux";
 import { LARGE_OPERATIONS } from "../../../../common/constants/largeOperations";
 import { LargeOperation } from "../../../../common/types/largeOperation";
 import {
   appendOperation,
   hideOperationSelector
 } from "../../../actions/scriptEditor";
+import { OperationSelector } from "../../../types/scriptEditor";
 import { StoreRootState } from "../../../types/store";
 
-const OperationSelectorDialog = (): JSX.Element => {
-  const dispatch = useDispatch();
+type OperationSelectorDialogStateProps = {
+  selector: OperationSelector;
+};
 
-  const selector = useSelector(
-    (state: StoreRootState) => state.scriptEditor.selector.operation
-  );
+type OperationSelectorDialogDispatchProps = {
+  handleModalClose: () => void;
+  handleSelect: (item: LargeOperation) => void;
+};
 
-  const handleModalClose = () => {
-    dispatch(hideOperationSelector());
-  };
+type OperationSelectorDialogOwnProps = Record<string, never>;
 
-  const handleSelect = (item: LargeOperation) => {
-    batch(() => {
-      dispatch(appendOperation(item));
-      dispatch(hideOperationSelector());
-    });
-  };
+type OperationSelectorDialogProps = OperationSelectorDialogStateProps &
+  OperationSelectorDialogDispatchProps &
+  OperationSelectorDialogOwnProps;
 
+const OperationSelectorDialog = (
+  props: OperationSelectorDialogProps
+): JSX.Element => {
   return (
     <Dialog
       maxWidth="sm"
       scroll="paper"
-      open={selector.visible}
-      onClose={handleModalClose}
+      open={props.selector.visible}
+      onClose={props.handleModalClose}
     >
       <DialogTitle>Select Operation</DialogTitle>
       <Box overflow="scroll">
@@ -49,7 +55,7 @@ const OperationSelectorDialog = (): JSX.Element => {
             <ListItemButton
               key={`list-item-${item.type}`}
               onClick={() => {
-                handleSelect(item);
+                props.handleSelect(item);
               }}
             >
               <ListItemText primary={item.name} secondary={item.description} />
@@ -62,4 +68,27 @@ const OperationSelectorDialog = (): JSX.Element => {
   );
 };
 
-export default OperationSelectorDialog;
+const mapStateToProps: MapStateToProps<
+  OperationSelectorDialogStateProps,
+  OperationSelectorDialogOwnProps,
+  StoreRootState
+> = (state) => ({
+  selector: state.scriptEditor.operationSelector
+});
+
+const mapDispatchToProps: MapDispatchToProps<
+  OperationSelectorDialogDispatchProps,
+  OperationSelectorDialogOwnProps
+> = (dispatch) => ({
+  handleModalClose: () => dispatch(hideOperationSelector()),
+  handleSelect: (item: LargeOperation) =>
+    batch(() => {
+      dispatch(appendOperation(item));
+      dispatch(hideOperationSelector());
+    })
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(OperationSelectorDialog);

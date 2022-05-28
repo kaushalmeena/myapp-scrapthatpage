@@ -1,32 +1,52 @@
 import { Alert, Snackbar } from "@mui/material";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { hideNotification } from "../../../actions/notification";
-import { StoreRootState } from "../../../types/store";
+import { NotificationState } from "../../../types/notification";
+import { StoreRootDispatch, StoreRootState } from "../../../types/store";
 
-export const Notification = (): JSX.Element => {
-  const dispatch = useDispatch();
+type NotificationStateProps = {
+  notification: NotificationState;
+};
 
-  const notification = useSelector(
-    (state: StoreRootState) => state.notification
-  );
+type NotificationDispatchProps = {
+  handleSnackbarClose: () => void;
+};
 
-  const handleSnackbarClose = () => {
-    dispatch(hideNotification());
-  };
+type NotificationOwnProps = Record<string, never>;
 
+type NotificationProps = NotificationStateProps &
+  NotificationDispatchProps &
+  NotificationOwnProps;
+
+export const Notification = (props: NotificationProps): JSX.Element => {
   return (
     <Snackbar
-      open={notification.visible}
+      open={props.notification.visible}
       autoHideDuration={3000}
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      onClose={handleSnackbarClose}
+      onClose={props.handleSnackbarClose}
     >
-      <Alert variant="filled" severity={notification.severity}>
-        {notification.message}
+      <Alert variant="filled" severity={props.notification.severity}>
+        {props.notification.message}
       </Alert>
     </Snackbar>
   );
 };
 
-export default Notification;
+const mapStateToProps: MapStateToProps<
+  NotificationStateProps,
+  NotificationOwnProps,
+  StoreRootState
+> = (state) => ({
+  notification: state.notification
+});
+
+const mapDispatchToProps: MapDispatchToProps<
+  NotificationDispatchProps,
+  NotificationOwnProps
+> = (dispatch: StoreRootDispatch) => ({
+  handleSnackbarClose: () => dispatch(hideNotification())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Notification);

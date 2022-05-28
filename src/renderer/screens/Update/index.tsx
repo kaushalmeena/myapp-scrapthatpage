@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { connect, MapDispatchToProps } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { loadState } from "../../actions/scriptEditor";
 import PageName from "../../components/PageName";
@@ -15,8 +15,15 @@ import {
   getScriptFromScriptEditorState
 } from "../../utils/scriptEditor";
 
-const Update = (): JSX.Element => {
-  const dispatch = useDispatch();
+type UpdateDispatchProps = {
+  loadEditorState: (state: ScriptEditorState) => void;
+};
+
+type UpdateOwnProps = Record<string, never>;
+
+type UpdateProps = UpdateDispatchProps & UpdateOwnProps;
+
+const Update = (props: UpdateProps): JSX.Element => {
   const notification = useNotification();
   const navigate = useNavigate();
   const params = useParams<Params>();
@@ -32,7 +39,7 @@ const Update = (): JSX.Element => {
       .then((script) => {
         if (script) {
           const state = getScriptEditorStateFromScript(script);
-          dispatch(loadState(state));
+          props.loadEditorState(state);
           setStatus("loaded");
         } else {
           setError("Script not found in database.");
@@ -78,4 +85,11 @@ const Update = (): JSX.Element => {
   );
 };
 
-export default Update;
+const mapDispatchToProps: MapDispatchToProps<
+  UpdateDispatchProps,
+  UpdateOwnProps
+> = (dispatch) => ({
+  loadEditorState: (state: ScriptEditorState) => dispatch(loadState(state))
+});
+
+export default connect(undefined, mapDispatchToProps)(Update);

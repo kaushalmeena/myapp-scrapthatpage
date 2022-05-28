@@ -1,75 +1,55 @@
-import {
-  Icon,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  TextField
-} from "@mui/material";
+import { MenuItem, TextField } from "@mui/material";
 import { get } from "object-path-immutable";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import OperationsPanel from "../..";
 import { INPUT_TYPES } from "../../../../../../common/constants/input";
-import {
-  LargeInput,
-  LargeTextInput
-} from "../../../../../../common/types/largeOperation";
+import { LargeInput } from "../../../../../../common/types/largeOperation";
 import {
   showVariableSelector,
   updateInput
 } from "../../../../../actions/scriptEditor";
+import VariablePickerAdornment from "../../../../../components/VariablePickerAdornment";
 import { StoreRootState } from "../../../../../types/store";
 
-type OperationInputProps = {
+type OperationInputStateProps = {
+  input: LargeInput;
+};
+
+type OperationInputDispatchProps = {
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePickerOpen: () => void;
+};
+
+type OperationInputOwnProps = {
   path: string;
 };
 
+type OperationInputProps = OperationInputStateProps &
+  OperationInputDispatchProps &
+  OperationInputOwnProps;
+
 const OperationInput = (props: OperationInputProps): JSX.Element | null => {
-  const dispatch = useDispatch();
-
-  const input = useSelector<StoreRootState, LargeInput>(
-    (state: StoreRootState) => get(state.scriptEditor, props.path)
-  );
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(updateInput(event.target.value, props.path));
-  };
-
-  const renderTextInputAdornment = (input: LargeTextInput) => {
-    if ("variablePicker" in input && input.variablePicker) {
-      const variablePicker = input.variablePicker;
-      return (
-        <InputAdornment position="end">
-          <IconButton
-            title="Show variable picker"
-            size="small"
-            onClick={() => {
-              dispatch(showVariableSelector(props.path, variablePicker));
-            }}
-          >
-            <Icon fontSize="small">control_point_duplicate</Icon>
-          </IconButton>
-        </InputAdornment>
-      );
-    }
-    return null;
-  };
-
-  switch (input.type) {
+  switch (props.input.type) {
     case INPUT_TYPES.TEXT:
       return (
         <TextField
           fullWidth
           variant="standard"
           size="small"
-          label={input.label}
-          helperText={input.error}
-          value={input.value}
-          error={input.error ? true : false}
-          onChange={handleInputChange}
+          label={props.input.label}
+          helperText={props.input.error}
+          value={props.input.value}
+          error={Boolean(props.input.error)}
+          onChange={props.handleInputChange}
           InputProps={{
-            ...input.inputProps,
-            endAdornment: renderTextInputAdornment(input)
+            ...props.input.inputProps,
+            endAdornment: (
+              <VariablePickerAdornment
+                picker={props.input.variablePicker}
+                handlePickerOpen={props.handlePickerOpen}
+              />
+            )
           }}
         />
       );
@@ -80,13 +60,13 @@ const OperationInput = (props: OperationInputProps): JSX.Element | null => {
           fullWidth
           variant="standard"
           size="small"
-          label={input.label}
-          helperText={input.error}
-          value={input.value}
-          error={input.error ? true : false}
-          onChange={handleInputChange}
+          label={props.input.label}
+          helperText={props.input.error}
+          value={props.input.value}
+          error={Boolean(props.input.error)}
+          onChange={props.handleInputChange}
         >
-          {input.options.map((item) => (
+          {props.input.options.map((item) => (
             <MenuItem
               key={`${props.path}-option-${item.value}`}
               value={item.value}
@@ -104,4 +84,21 @@ const OperationInput = (props: OperationInputProps): JSX.Element | null => {
   return null;
 };
 
-export default OperationInput;
+const mapStateToProps: MapStateToProps<
+  OperationInputStateProps,
+  OperationInputOwnProps,
+  StoreRootState
+> = (state, ownProps) => ({
+  input: get(state.scriptEditor, ownProps.path) as LargeInput
+});
+
+const mapDispatchToProps: MapDispatchToProps<
+  OperationInputDispatchProps,
+  OperationInputOwnProps
+> = (dispatch, ownProps) => ({
+  handleInputChange: (event: React.ChangeEvent<HTMLInputElement>) =>
+    dispatch(updateInput(event.target.value, ownProps.path)),
+  handlePickerOpen: () => dispatch(showVariableSelector(ownProps.path))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(OperationInput);

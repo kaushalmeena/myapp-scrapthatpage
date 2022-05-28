@@ -7,20 +7,33 @@ import {
   ListItemIcon,
   ListItemText,
   MenuItem,
-  Select
+  Select,
+  SelectChangeEvent
 } from "@mui/material";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { setSettings } from "../../actions/settings";
 import PageName from "../../components/PageName";
 import { SETTINGS_KEYS } from "../../constants/settings";
-import { THEMES } from "../../constants/themes";
+import { THEMES, THEME_TYPES } from "../../constants/themes";
+import { SettingsState } from "../../types/settings";
 import { StoreRootState } from "../../types/store";
 
-const Settings = (): JSX.Element => {
-  const dispatch = useDispatch();
-  const settings = useSelector((state: StoreRootState) => state.settings);
+type SettingsStateProps = {
+  settings: SettingsState;
+};
 
+type SettingsDispatchProps = {
+  handleThemeChange: (event: SelectChangeEvent<THEME_TYPES>) => void;
+};
+
+type SettingsOwnProps = Record<string, never>;
+
+type SettingsProps = SettingsStateProps &
+  SettingsDispatchProps &
+  SettingsOwnProps;
+
+const Settings = (props: SettingsProps): JSX.Element => {
   return (
     <>
       <PageName name="Settings" />
@@ -36,12 +49,8 @@ const Settings = (): JSX.Element => {
             />
             <FormControl size="small">
               <Select
-                value={settings.theme}
-                onChange={(event) => {
-                  dispatch(
-                    setSettings(SETTINGS_KEYS.THEME, Number(event.target.value))
-                  );
-                }}
+                value={props.settings.theme}
+                onChange={props.handleThemeChange}
               >
                 {THEMES.map((item) => (
                   <MenuItem key={item.type} value={item.type}>
@@ -57,4 +66,20 @@ const Settings = (): JSX.Element => {
   );
 };
 
-export default Settings;
+const mapStateToProps: MapStateToProps<
+  SettingsStateProps,
+  SettingsOwnProps,
+  StoreRootState
+> = (state) => ({
+  settings: state.settings
+});
+
+const mapDispatchToProps: MapDispatchToProps<
+  SettingsDispatchProps,
+  SettingsOwnProps
+> = (dispatch) => ({
+  handleThemeChange: (event) =>
+    dispatch(setSettings(SETTINGS_KEYS.THEME, Number(event.target.value)))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Settings);
