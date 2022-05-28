@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { get } from "object-path-immutable";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { connect, MapDispatchToProps, MapStateToProps } from "react-redux";
 import { LargeOperation } from "../../../../../common/types/largeOperation";
 import {
   getOperationSubheader,
@@ -26,67 +26,63 @@ import { StoreRootState } from "../../../../types/store";
 import { getOperationNumber } from "../../../../utils/scriptEditor";
 import OperationInput from "./OperationInput";
 
-type OperationCardProps = {
+type OperationCardStateProps = {
+  operation: LargeOperation;
+};
+
+type OperationCardDispatchProps = {
+  handleMoveUpClick: () => void;
+  handleMoveDownClick: () => void;
+  handleDeleteClick: () => void;
+};
+
+type OperationCardOwnProps = {
   path: string;
 };
 
+type OperationCardProps = OperationCardStateProps &
+  OperationCardDispatchProps &
+  OperationCardOwnProps;
+
 const OperationCard = (props: OperationCardProps): JSX.Element => {
-  const dispatch = useDispatch();
-
   const [expanded, setExpanded] = useState(false);
-
-  const operation = useSelector<StoreRootState, LargeOperation>((state) =>
-    get(state.scriptEditor, props.path)
-  );
 
   const handleExpandToggle = () => {
     setExpanded((value) => !value);
   };
 
-  const handleMoveUpClick = () => {
-    dispatch(moveUpOperation(props.path));
-  };
-
-  const handleMoveDownClick = () => {
-    dispatch(moveDownOperation(props.path));
-  };
-
-  const handleDeleteClick = () => {
-    dispatch(deleteOperation(props.path));
-  };
-
   const operationNumber = getOperationNumber(props.path);
   const operationSubheader = getOperationSubheader(
-    operation.format,
-    operation.inputs
+    props.operation.format,
+    props.operation.inputs
   );
 
   return (
     <Card
       variant="outlined"
       sx={{
-        backgroundColor: isOperationValid(operation)
+        backgroundColor: isOperationValid(props.operation)
           ? "auto"
           : "rgba(211, 47, 47, 0.1)"
       }}
     >
       <CardHeader
         avatar={<Chip variant="outlined" label={operationNumber} />}
-        title={operation.name}
+        title={props.operation.name}
         subheader={operationSubheader}
         action={
           <Stack direction="row">
             <IconButton
               size="small"
               title="Move-up operation"
-              onClick={handleMoveUpClick}
+              onClick={props.handleMoveUpClick}
             >
               <Icon fontSize="small">arrow_upward</Icon>
             </IconButton>
             <IconButton
               size="small"
               title="Move-down operation"
-              onClick={handleMoveDownClick}
+              onClick={props.handleMoveDownClick}
             >
               <Icon fontSize="small">arrow_downward</Icon>
             </IconButton>
@@ -102,7 +98,7 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
               size="small"
               title="Delete operation"
               color="secondary"
-              onClick={handleDeleteClick}
+              onClick={props.handleDeleteClick}
             >
               <Icon fontSize="small">clear</Icon>
             </IconButton>
@@ -112,7 +108,7 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
       <Collapse in={expanded} timeout="auto">
         <CardContent>
           <Grid container spacing={2}>
-            {operation.inputs.map((input, index) => (
+            {props.operation.inputs.map((input, index) => (
               <Grid
                 item
                 key={`${props.path}.inputs.${index}`}
@@ -129,4 +125,21 @@ const OperationCard = (props: OperationCardProps): JSX.Element => {
   );
 };
 
-export default OperationCard;
+const mapStateToProps: MapStateToProps<
+  OperationCardStateProps,
+  OperationCardOwnProps,
+  StoreRootState
+> = (state, ownProps) => ({
+  operation: get(state.scriptEditor, ownProps.path)
+});
+
+const mapDispatchToProps: MapDispatchToProps<
+  OperationCardDispatchProps,
+  OperationCardOwnProps
+> = (dispatch, ownProps) => ({
+  handleMoveUpClick: () => dispatch(moveUpOperation(ownProps.path)),
+  handleMoveDownClick: () => dispatch(moveDownOperation(ownProps.path)),
+  handleDeleteClick: () => dispatch(deleteOperation(ownProps.path))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(OperationCard);

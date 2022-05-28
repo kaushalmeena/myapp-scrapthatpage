@@ -1,10 +1,9 @@
 import {
-  VARIABLE_TYPES,
-  VARIABLE_PICKER_MODES
+  VARIABLE_PICKER_MODES, VARIABLE_TYPES
 } from "../../common/constants/variable";
 import { LargeOperation } from "../../common/types/largeOperation";
 import { ValidationRule } from "../../common/types/validation";
-import { Variable, VariablePicker } from "../../common/types/variable";
+import { Variable } from "../../common/types/variable";
 import { ACTION_TYPES } from "../actions/scriptEditor";
 
 export type StateLoadAction = {
@@ -80,7 +79,6 @@ export type VariableSelectorShowAction = {
   type: ACTION_TYPES.VARIABLE_SELECTOR_SHOW;
   payload: {
     path: string;
-    picker: VariablePicker;
   };
 };
 
@@ -125,18 +123,14 @@ export type VariableSelector = {
   updateMode: VARIABLE_PICKER_MODES;
 };
 
-export type Selector = {
-  operation: OperationSelector;
-  variable: VariableSelector;
-};
-
 export type ScriptEditorState = {
   id?: number;
   favorite: number;
   information: Information;
   operations: LargeOperation[];
   variables: Variable[];
-  selector: Selector;
+  variableSelector: VariableSelector;
+  operationSelector: OperationSelector;
 };
 
 export type OperationsPathAndIndex = {

@@ -113,13 +113,11 @@ export const hideOperationSelector = (): OperationSelectorHideAction => ({
 });
 
 export const showVariableSelector = (
-  path: string,
-  picker: VariablePicker
+  path: string
 ): VariableSelectorShowAction => ({
   type: ACTION_TYPES.VARIABLE_SELECTOR_SHOW,
   payload: {
-    path,
-    picker
+    path
   }
 });
 

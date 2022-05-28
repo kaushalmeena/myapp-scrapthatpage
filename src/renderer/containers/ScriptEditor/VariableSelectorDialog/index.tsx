@@ -8,7 +8,12 @@ import {
   ListItemText
 } from "@mui/material";
 import React from "react";
-import { batch, useDispatch, useSelector } from "react-redux";
+import {
+  batch,
+  connect,
+  MapDispatchToProps,
+  MapStateToProps
+} from "react-redux";
 import { VARIABLE_TYPES } from "../../../../common/constants/variable";
 import { Variable } from "../../../../common/types/variable";
 import {
@@ -16,33 +21,32 @@ import {
   updateInputWithVariable
 } from "../../../actions/scriptEditor";
 import EmptyText from "../../../components/EmptyText";
+import { VariableSelector } from "../../../types/scriptEditor";
 import { StoreRootState } from "../../../types/store";
 
-const VariableSelectorDialog = (): JSX.Element => {
-  const dispatch = useDispatch();
+type VariableSelectorDialogStateProps = {
+  selector: VariableSelector;
+  variables: Variable[];
+};
 
-  const selector = useSelector(
-    (state: StoreRootState) => state.scriptEditor.selector.variable
-  );
-  const variables = useSelector(
-    (state: StoreRootState) => state.scriptEditor.variables
-  );
+type VariableSelectorDialogDispatchProps = {
+  handleModalClose: () => void;
+  handleSelect: (item: Variable) => void;
+};
 
-  const handleModalClose = () => {
-    dispatch(hideVariableSelector());
-  };
+type VariableSelectorDialogOwnProps = Record<string, never>;
 
-  const handleSelect = (item: Variable) => {
-    batch(() => {
-      dispatch(updateInputWithVariable(item));
-      dispatch(hideVariableSelector());
-    });
-  };
+type VariableSelectorDialogProps = VariableSelectorDialogStateProps &
+  VariableSelectorDialogDispatchProps &
+  VariableSelectorDialogOwnProps;
 
-  let filteredVariables = variables;
-  if (selector.filterType !== VARIABLE_TYPES.ANY) {
+const VariableSelectorDialog = (
+  props: VariableSelectorDialogProps
+): JSX.Element => {
+  let filteredVariables = props.variables;
+  if (props.selector.filterType !== VARIABLE_TYPES.ANY) {
     filteredVariables = filteredVariables.filter(
-      (item) => item.type === selector.filterType
+      (item) => item.type === props.selector.filterType
     );
   }
 
@@ -50,8 +54,8 @@ const VariableSelectorDialog = (): JSX.Element => {
     <Dialog
       maxWidth="sm"
       scroll="paper"
-      open={selector.visible}
-      onClose={handleModalClose}
+      open={props.selector.visible}
+      onClose={props.handleModalClose}
     >
       <DialogTitle>Select Variable</DialogTitle>
       <Box overflow="scroll">
@@ -61,7 +65,7 @@ const VariableSelectorDialog = (): JSX.Element => {
               <ListItemButton
                 key={`list-item-${item.name}`}
                 onClick={() => {
-                  handleSelect(item);
+                  props.handleSelect(item);
                 }}
               >
                 <ListItemText primary={item.name} secondary={item.type} />
@@ -77,4 +81,28 @@ const VariableSelectorDialog = (): JSX.Element => {
   );
 };
 
-export default VariableSelectorDialog;
+const mapStateToProps: MapStateToProps<
+  VariableSelectorDialogStateProps,
+  VariableSelectorDialogOwnProps,
+  StoreRootState
+> = (state) => ({
+  selector: state.scriptEditor.variableSelector,
+  variables: state.scriptEditor.variables
+});
+
+const mapDispatchToProps: MapDispatchToProps<
+  VariableSelectorDialogDispatchProps,
+  VariableSelectorDialogOwnProps
+> = (dispatch) => ({
+  handleModalClose: () => dispatch(hideVariableSelector()),
+  handleSelect: (item: Variable) =>
+    batch(() => {
+      dispatch(updateInputWithVariable(item));
+      dispatch(hideVariableSelector());
+    })
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(VariableSelectorDialog);
