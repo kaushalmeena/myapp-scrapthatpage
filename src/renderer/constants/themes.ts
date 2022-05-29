@@ -1,14 +1,13 @@
-import { Theme } from "../types/theme";
+import { Themes } from "../types/theme";
 
 export const enum THEME_TYPES {
-  DARK = 0,
-  LIGHT = 1
+  DARK = "dark",
+  LIGHT = "light"
 }
 
-export const THEMES: Theme[] = [
-  {
+export const THEMES: Themes = {
+  [THEME_TYPES.DARK]: {
     name: "Dark",
-    type: THEME_TYPES.DARK,
     data: {
       palette: {
         mode: "dark",
@@ -40,9 +39,8 @@ export const THEMES: Theme[] = [
       }
     }
   },
-  {
+  [THEME_TYPES.LIGHT]: {
     name: "Light",
-    type: THEME_TYPES.LIGHT,
     data: {
       palette: {
         mode: "light",
@@ -74,4 +72,4 @@ export const THEMES: Theme[] = [
       }
     }
   }
-];
+};

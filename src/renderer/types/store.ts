@@ -1,7 +1,7 @@
-import { Dispatch } from "react";
-import { NotificationState, NotificationAction } from "./notification";
-import { ScriptEditorAction, ScriptEditorState } from "./scriptEditor";
-import { SettingsAction, SettingsState } from "./settings";
+import { AnyAction, ThunkDispatch } from "@reduxjs/toolkit";
+import { NotificationState } from "../features/notification/types";
+import { ScriptEditorState } from "../features/scriptEditor/types";
+import { SettingsState } from "../features/settings/types";
 
 export type StoreRootState = {
   notification: NotificationState;
@@ -9,9 +9,8 @@ export type StoreRootState = {
   scriptEditor: ScriptEditorState;
 };
 
-export type StoreRootAction =
-  | NotificationAction
-  | SettingsAction
-  | ScriptEditorAction;
-
-export type StoreRootDispatch = Dispatch<StoreRootAction>;
+export type StoreRootDispatch = ThunkDispatch<
+  StoreRootState,
+  undefined,
+  AnyAction
+>;

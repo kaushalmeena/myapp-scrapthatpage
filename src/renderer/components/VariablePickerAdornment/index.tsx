@@ -1,20 +1,19 @@
 import { Icon, IconButton, InputAdornment } from "@mui/material";
 import React from "react";
-import { VariablePicker } from "../../../common/types/variable";
 
 type VariablePickerAdornmentProps = {
-  picker?: VariablePicker;
-  handlePickerOpen: () => void;
+  visible: boolean;
+  onClick: () => void;
 };
 
 const VariablePickerAdornment = (props: VariablePickerAdornmentProps) => {
-  if (props.picker) {
+  if (props.visible) {
     return (
       <InputAdornment position="end">
         <IconButton
           title="Show variable picker"
           size="small"
-          onClick={props.handlePickerOpen}
+          onClick={props.onClick}
         >
           <Icon fontSize="small">control_point_duplicate</Icon>
         </IconButton>

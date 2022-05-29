@@ -1,34 +1,22 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { connect, MapDispatchToProps } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import { loadState } from "../../actions/scriptEditor";
 import PageName from "../../components/PageName";
-import ScriptEditor from "../../containers/ScriptEditor";
+import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
-import { useNotification } from "../../hooks/useNotification";
+import { useNotification } from "../../features/notification/hooks";
+import ScriptEditor from "../../features/scriptEditor/ScriptEditor";
 import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
-import { ScriptEditorState } from "../../types/scriptEditor";
-import {
-  getScriptEditorStateFromScript,
-  getScriptFromScriptEditorState
-} from "../../utils/scriptEditor";
+import { Script } from "../../types/script";
 
-type UpdateDispatchProps = {
-  loadEditorState: (state: ScriptEditorState) => void;
-};
-
-type UpdateOwnProps = Record<string, never>;
-
-type UpdateProps = UpdateDispatchProps & UpdateOwnProps;
-
-const Update = (props: UpdateProps): JSX.Element => {
+const Update = (): JSX.Element => {
   const notification = useNotification();
   const navigate = useNavigate();
   const params = useParams<Params>();
 
   const [status, setStatus] = useState<PAGE_STATUS>("loading");
+  const [script, setScript] = useState<Script>(INITIAL_SCRIPT);
   const [error, setError] = useState("");
 
   const scriptId = Number(params.scriptId);
@@ -38,9 +26,8 @@ const Update = (props: UpdateProps): JSX.Element => {
     db.fetchScriptById(scriptId)
       .then((script) => {
         if (script) {
-          const state = getScriptEditorStateFromScript(script);
-          props.loadEditorState(state);
           setStatus("loaded");
+          setScript(script);
         } else {
           setError("Script not found in database.");
           setStatus("error");
@@ -53,8 +40,7 @@ const Update = (props: UpdateProps): JSX.Element => {
       });
   }, []);
 
-  const handleSubmit = (state: ScriptEditorState) => {
-    const script = getScriptFromScriptEditorState(state);
+  const handleSubmit = (script: Script) => {
     db.updateScript(script)
       .then(() => {
         notification.show("Script successfully updated!", "success");
@@ -69,7 +55,9 @@ const Update = (props: UpdateProps): JSX.Element => {
   return (
     <>
       <PageName name="Update" />
-      {status === "loaded" && <ScriptEditor onSubmit={handleSubmit} />}
+      {status === "loaded" && (
+        <ScriptEditor script={script} onSubmit={handleSubmit} />
+      )}
       {(status === "loading" || status === "error") && (
         <Box
           marginTop={2}
@@ -85,11 +73,4 @@ const Update = (props: UpdateProps): JSX.Element => {
   );
 };
 
-const mapDispatchToProps: MapDispatchToProps<
-  UpdateDispatchProps,
-  UpdateOwnProps
-> = (dispatch) => ({
-  loadEditorState: (state: ScriptEditorState) => dispatch(loadState(state))
-});
-
-export default connect(undefined, mapDispatchToProps)(Update);
+export default Update;

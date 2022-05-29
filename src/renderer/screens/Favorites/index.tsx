@@ -4,7 +4,7 @@ import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
 import db from "../../database";
-import { useNotification } from "../../hooks/useNotification";
+import { useNotification } from "../../features/notification/hooks";
 import { Script } from "../../types/script";
 
 const Favorites = (): JSX.Element => {

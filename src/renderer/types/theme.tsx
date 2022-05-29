@@ -3,6 +3,9 @@ import { THEME_TYPES } from "../constants/themes";
 
 export type Theme = {
   name: string;
-  type: THEME_TYPES;
   data: ThemeOptions;
+};
+
+export type Themes = {
+  [theme in THEME_TYPES]: Theme;
 };

@@ -10,9 +10,9 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
-import ScriptRunner from "../../containers/ScriptRunner";
 import db from "../../database";
-import { useNotification } from "../../hooks/useNotification";
+import { useNotification } from "../../features/notification/hooks";
+import ScriptRunner from "../../features/scriptRunner/ScriptRunner";
 import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";

@@ -78,7 +78,7 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
         label: "Attribute",
         type: INPUT_TYPES.SELECT,
         width: 4,
-        value: "text",
+        value: "textContent",
         error: "",
         options: [
           {
