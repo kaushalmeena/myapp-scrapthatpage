@@ -1,33 +1,16 @@
-import React, { useEffect } from "react";
-import { connect, MapDispatchToProps } from "react-redux";
+import React from "react";
 import { useNavigate } from "react-router";
-import { loadState } from "../../actions/scriptEditor";
 import PageName from "../../components/PageName";
-import { INITIAL_SCRIPT_EDITOR_STATE } from "../../constants/scriptEditor";
-import ScriptEditor from "../../containers/ScriptEditor";
 import db from "../../database";
-import { useNotification } from "../../hooks/useNotification";
-import { ScriptEditorState } from "../../types/scriptEditor";
-import { getScriptFromScriptEditorState } from "../../utils/scriptEditor";
+import { useNotification } from "../../features/notification/hooks";
+import ScriptEditor from "../../features/scriptEditor/ScriptEditor";
+import { Script } from "../../types/script";
 
-type CreateDispatchProps = {
-  loadInitialEditorState: () => void;
-};
-
-type CreateOwnProps = Record<string, never>;
-
-type CreateProps = CreateDispatchProps & CreateOwnProps;
-
-const Create = (props: CreateProps): JSX.Element => {
+const Create = (): JSX.Element => {
   const notification = useNotification();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    props.loadInitialEditorState();
-  }, []);
-
-  const handleSubmit = (state: ScriptEditorState) => {
-    const script = getScriptFromScriptEditorState(state);
+  const handleSubmit = (script: Script) => {
     db.createScript(script)
       .then(() => {
         notification.show("Script successfully created!", "success");
@@ -47,11 +30,4 @@ const Create = (props: CreateProps): JSX.Element => {
   );
 };
 
-const mapDispatchToProps: MapDispatchToProps<
-  CreateDispatchProps,
-  CreateOwnProps
-> = (dispatch) => ({
-  loadInitialEditorState: () => dispatch(loadState(INITIAL_SCRIPT_EDITOR_STATE))
-});
-
-export default connect(undefined, mapDispatchToProps)(Create);
+export default Create;

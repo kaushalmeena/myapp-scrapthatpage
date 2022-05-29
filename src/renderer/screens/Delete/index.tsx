@@ -10,7 +10,7 @@ import { useNavigate, useParams } from "react-router";
 import PageName from "../../components/PageName";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
-import { useNotification } from "../../hooks/useNotification";
+import { useNotification } from "../../features/notification/hooks";
 import { PAGE_STATUS } from "../../types/page";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";

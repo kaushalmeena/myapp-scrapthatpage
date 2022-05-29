@@ -11,7 +11,7 @@ import Favorites from "./screens/Favorites";
 import Search from "./screens/Search";
 import Settings from "./screens/Settings";
 import Update from "./screens/Update";
-import { persistor, store } from "./store";
+import store, { persistor } from "./store";
 
 const App = (): JSX.Element => {
   return (

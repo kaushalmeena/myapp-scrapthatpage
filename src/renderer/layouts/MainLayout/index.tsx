@@ -4,8 +4,8 @@ import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import React, { ReactNode } from "react";
 import { connect, MapStateToProps } from "react-redux";
 import { THEMES, THEME_TYPES } from "../../constants/themes";
+import Notification from "../../features/notification/AppNotification";
 import { StoreRootState } from "../../types/store";
-import Notification from "./Notification";
 import Sidebar from "./Sidebar";
 
 type MainLayoutStateProps = {
