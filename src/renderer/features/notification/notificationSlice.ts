@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { INITIAL_NOTIFICATION_STATE } from "./constants";
 import { ShowNotificationActionPayload } from "./types";

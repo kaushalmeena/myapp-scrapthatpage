@@ -30,7 +30,11 @@ function Execute() {
     result: script,
     status,
     error
-  } = useDatabaseFetch<Script>(db.fetchScriptById(scriptId), INITIAL_SCRIPT);
+  } = useDatabaseFetch<Script>({
+    fetcher: db.fetchScriptById(scriptId),
+    defaultValue: INITIAL_SCRIPT,
+    onSuccess: (result) => setFavorite(result.favorite)
+  });
 
   const handleDeleteClick = () => {
     navigate(`/delete/${scriptId}`);

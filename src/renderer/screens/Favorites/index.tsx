@@ -12,7 +12,10 @@ function Favorites() {
     result: scripts,
     status,
     error
-  } = useDatabaseFetch<Script[]>(db.fetchAllFavoriteScripts(), []);
+  } = useDatabaseFetch<Script[]>({
+    fetcher: db.fetchAllFavoriteScripts(),
+    defaultValue: []
+  });
 
   return (
     <>
