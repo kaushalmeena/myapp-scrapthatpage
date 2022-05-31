@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { INITIAL_SETTINGS_STATE } from "./constants";
 import { UpdateThemeActionPayload } from "./types";

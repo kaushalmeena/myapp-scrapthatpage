@@ -21,7 +21,10 @@ function Update() {
     result: fetchedScript,
     status,
     error
-  } = useDatabaseFetch<Script>(db.fetchScriptById(scriptId), INITIAL_SCRIPT);
+  } = useDatabaseFetch<Script>({
+    fetcher: db.fetchScriptById(scriptId),
+    defaultValue: INITIAL_SCRIPT
+  });
 
   const handleSubmit = (script: Script) => {
     db.updateScript(script)

@@ -21,15 +21,17 @@ function Search() {
     result: scripts,
     status,
     error
-  } = useDatabaseFetch<Script[]>(db.fetchAllScripts(), []);
+  } = useDatabaseFetch<Script[]>({
+    fetcher: db.fetchAllScripts(),
+    defaultValue: []
+  });
 
   const handleQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
 
-  const searchQuery = search.toLowerCase();
   const filteredScripts = scripts.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery)
+    item.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
