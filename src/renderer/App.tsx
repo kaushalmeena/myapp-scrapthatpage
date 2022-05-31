@@ -13,7 +13,7 @@ import Settings from "./screens/Settings";
 import Update from "./screens/Update";
 import store, { persistor } from "./store";
 
-const App = (): JSX.Element => {
+function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -35,6 +35,6 @@ const App = (): JSX.Element => {
       </PersistGate>
     </Provider>
   );
-};
+}
 
 export default App;

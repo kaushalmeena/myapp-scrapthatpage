@@ -1,9 +1,9 @@
 import { get, set, wrap } from "object-path-immutable";
-import { INPUT_TYPES } from "../../../common/constants/input";
+import { InputTypes } from "../../../common/constants/input";
 import {
-  VARIABLE_PICKER_MODES,
-  VARIABLE_SETTER_MODES,
-  VARIABLE_TYPES
+  VariablePickerModes,
+  VariableSetterModes,
+  VariableTypes
 } from "../../../common/constants/variable";
 import {
   LargeOperation,
@@ -13,7 +13,7 @@ import { Variable } from "../../../common/types/variable";
 import {
   convertToLargeOperation,
   convertToSmallOperation,
-  validateInput
+  validateValueWithRules
 } from "../../../common/utils/operation";
 import { Script } from "../../types/script";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "./constants";
@@ -23,13 +23,58 @@ import {
   ValidatedData
 } from "./types";
 
+export const getUpdatedInputValueWithVariable = (
+  value: string,
+  mode: VariablePickerModes,
+  variable: Variable
+): string => {
+  switch (mode) {
+    case VariablePickerModes.SET:
+      return variable.name;
+    case VariablePickerModes.APPEND:
+      return `${value}{{${variable.name}}}`;
+    default:
+  }
+  return "";
+};
+
+export const getUpdatedVariables = (
+  path: string,
+  value: string,
+  mode: VariableSetterModes,
+  variables: Variable[]
+): Variable[] => {
+  const newVariables = variables;
+  const foundIndex = variables.findIndex((item) => item.path === path);
+  switch (mode) {
+    case VariableSetterModes.NAME:
+      if (foundIndex > -1) {
+        newVariables[foundIndex].name = value;
+      } else {
+        newVariables.push({
+          path,
+          name: value,
+          type: VariableTypes.NUMBER
+        });
+      }
+      break;
+    case VariableSetterModes.TYPE:
+      if (foundIndex > -1) {
+        newVariables[foundIndex].type = value;
+      }
+      break;
+    default:
+  }
+  return newVariables;
+};
+
 export const updateDraftScriptEditorField = (
   state: ScriptEditorState,
   path: string,
   value: string
 ): void => {
   const field = get(state, path) as LargeTextInput;
-  field.error = validateInput(value, field.rules);
+  field.error = validateValueWithRules(value, field.rules);
   field.value = value;
   if (field.variableSetter) {
     const oldVariables = state.variables;
@@ -44,62 +89,12 @@ export const updateDraftScriptEditorField = (
   }
 };
 
-export const getUpdatedInputValueWithVariable = (
-  value: string,
-  mode: VARIABLE_PICKER_MODES,
-  variable: Variable
-): string => {
-  let newValue = "";
-  switch (mode) {
-    case VARIABLE_PICKER_MODES.SET:
-      newValue = variable.name;
-      break;
-    case VARIABLE_PICKER_MODES.APPEND:
-      newValue = `${value}{{${variable.name}}}`;
-      break;
-  }
-  return newValue;
-};
-
-export const getUpdatedVariables = (
-  path: string,
-  value: string,
-  mode: VARIABLE_SETTER_MODES,
-  variables: Variable[]
-): Variable[] => {
-  const newVariables = variables;
-  const foundIndex = variables.findIndex((item) => item.path === path);
-  switch (mode) {
-    case VARIABLE_SETTER_MODES.NAME:
-      {
-        if (foundIndex > -1) {
-          newVariables[foundIndex].name = value;
-        } else {
-          newVariables.push({
-            path,
-            name: value,
-            type: VARIABLE_TYPES.NUMBER
-          });
-        }
-      }
-      break;
-    case VARIABLE_SETTER_MODES.TYPE: {
-      if (foundIndex > -1) {
-        newVariables[foundIndex].type = value;
-      }
-    }
-    default:
-      break;
-  }
-  return newVariables;
-};
-
 export const getOperationsPathAndIndex = (
   path: string
 ): OperationsPathAndIndex => {
   const splittedPath = path.split(".");
   const operationsPath = splittedPath.slice(0, -1).join(".");
-  const index = Number.parseInt(splittedPath.at(-1) || "NaN");
+  const index = Number.parseInt(splittedPath.at(-1) || "NaN", 10);
   return { operationsPath, index };
 };
 
@@ -113,79 +108,24 @@ export const getOperationNumber = (path: string): string =>
 
 export const getScriptFromScriptEditorState = (
   state: ScriptEditorState
-): Script => {
-  return {
-    id: state.id,
-    favorite: state.favorite,
-    name: state.information.name.value,
-    description: state.information.description.value,
-    operations: state.operations.map(convertToSmallOperation)
-  };
-};
+): Script => ({
+  id: state.id,
+  favorite: state.favorite,
+  name: state.information.name.value,
+  description: state.information.description.value,
+  operations: state.operations.map(convertToSmallOperation)
+});
 
 export const getScriptEditorStateFromScript = (
   script: Script
-): ScriptEditorState => {
-  return wrap(INITIAL_SCRIPT_EDITOR_STATE)
+): ScriptEditorState =>
+  wrap(INITIAL_SCRIPT_EDITOR_STATE)
     .set("id", script.id)
     .set("favorite", script.favorite)
     .set("information.name.value", script.name)
     .set("information.description.value", script.description)
     .set("operations", script.operations.map(convertToLargeOperation))
     .value();
-};
-
-const validateScriptEditorOperations = (
-  state: ScriptEditorState,
-  path: string
-): ValidatedData => {
-  let newState = state;
-  const newErrors: string[] = [];
-
-  const operations = get(state, path) as LargeOperation[];
-
-  for (let i = 0; i < operations.length; i++) {
-    const operation = operations[i];
-    const inputErrors: string[] = [];
-    const operationPath = `${path}.${i}`;
-
-    for (let j = 0; j < operation.inputs.length; j++) {
-      const input = operation.inputs[j];
-
-      switch (input.type) {
-        case INPUT_TYPES.TEXT:
-        case INPUT_TYPES.SELECT:
-          const inputPath = `${operationPath}.inputs.${j}`;
-          const validatedFieldData = validateScriptEditorField(
-            newState,
-            inputPath
-          );
-          if (validatedFieldData.errors.length > 0) {
-            inputErrors.push(...validatedFieldData.errors);
-            newState = validatedFieldData.newState;
-          }
-          break;
-        case INPUT_TYPES.OPERATION_BOX:
-          const operationsPath = `${operationPath}.inputs.${j}.operations`;
-          const validatedOperationsData = validateScriptEditorOperations(
-            newState,
-            operationsPath
-          );
-          if (validatedOperationsData.errors.length > 0) {
-            newErrors.push(...validatedOperationsData.errors);
-            newState = validatedOperationsData.newState;
-          }
-          break;
-      }
-    }
-    if (inputErrors.length > 0) {
-      const operationNumber = getOperationNumber(operationPath);
-      newErrors.push(`Please fix error in operation ${operationNumber}`);
-    }
-  }
-
-  return { newState, errors: newErrors };
-};
 
 const validateScriptEditorField = (
   state: ScriptEditorState,
@@ -199,7 +139,7 @@ const validateScriptEditorField = (
   const rulesPath = `${path}.rules`;
   const value = get(state, valuePath);
   const rules = get(state, rulesPath);
-  const error = validateInput(value, rules);
+  const error = validateValueWithRules(value, rules);
 
   if (error) {
     errors.push(error);
@@ -207,6 +147,63 @@ const validateScriptEditorField = (
   }
 
   return { errors, newState };
+};
+
+const validateScriptEditorOperations = (
+  state: ScriptEditorState,
+  path: string
+): ValidatedData => {
+  let newState = state;
+  const newErrors: string[] = [];
+
+  const operations = get(state, path) as LargeOperation[];
+
+  for (let i = 0; i < operations.length; i += 1) {
+    const operation = operations[i];
+    const inputErrors: string[] = [];
+    const operationPath = `${path}.${i}`;
+
+    for (let j = 0; j < operation.inputs.length; j += 1) {
+      const input = operation.inputs[j];
+
+      switch (input.type) {
+        case InputTypes.TEXT:
+        case InputTypes.SELECT:
+          {
+            const inputPath = `${operationPath}.inputs.${j}`;
+            const validatedFieldData = validateScriptEditorField(
+              newState,
+              inputPath
+            );
+            if (validatedFieldData.errors.length > 0) {
+              inputErrors.push(...validatedFieldData.errors);
+              newState = validatedFieldData.newState;
+            }
+          }
+          break;
+        case InputTypes.OPERATION_BOX:
+          {
+            const operationsPath = `${operationPath}.inputs.${j}.operations`;
+            const validatedOperationsData = validateScriptEditorOperations(
+              newState,
+              operationsPath
+            );
+            if (validatedOperationsData.errors.length > 0) {
+              newErrors.push(...validatedOperationsData.errors);
+              newState = validatedOperationsData.newState;
+            }
+          }
+          break;
+        default:
+      }
+    }
+    if (inputErrors.length > 0) {
+      const operationNumber = getOperationNumber(operationPath);
+      newErrors.push(`Please fix error in operation ${operationNumber}`);
+    }
+  }
+
+  return { newState, errors: newErrors };
 };
 
 export const validateScriptEditorState = (

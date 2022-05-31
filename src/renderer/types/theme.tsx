@@ -1,5 +1,4 @@
 import { ThemeOptions } from "@mui/material";
-import { THEME_TYPES } from "../constants/themes";
 
 export type Theme = {
   name: string;
@@ -7,5 +6,5 @@ export type Theme = {
 };
 
 export type Themes = {
-  [theme in THEME_TYPES]: Theme;
+  [key: string]: Theme;
 };

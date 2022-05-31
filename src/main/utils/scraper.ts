@@ -1,4 +1,4 @@
-import { OPERATION_TYPES } from "../../common/constants/operation";
+import { OperationTypes } from "../../common/constants/operation";
 import {
   ExecuteResult,
   ScraperOperation,
@@ -13,12 +13,10 @@ const executeOperation = async (
   let result = null;
 
   switch (operation.type) {
-    case OPERATION_TYPES.OPEN:
-      {
-        await scraper.loadURL(operation.url);
-      }
+    case OperationTypes.OPEN:
+      await scraper.loadURL(operation.url);
       break;
-    case OPERATION_TYPES.EXTRACT:
+    case OperationTypes.EXTRACT:
       {
         const data = await scraper.executeJavascript(`
           Array.from(document.querySelectorAll("${operation.selector}")).map(
@@ -31,24 +29,21 @@ const executeOperation = async (
           name: operation.name,
           selector: operation.selector,
           attribute: operation.attribute,
-          result: data as string[]
+          data: data as string[]
         };
       }
       break;
-    case OPERATION_TYPES.CLICK:
-      {
-        await scraper.executeJavascript(`
+    case OperationTypes.CLICK:
+      await scraper.executeJavascript(`
           document.querySelector("${operation.selector}").click();
         `);
-      }
       break;
-    case OPERATION_TYPES.TYPE:
-      {
-        await scraper.executeJavascript(`
+    case OperationTypes.TYPE:
+      await scraper.executeJavascript(`
           document.querySelector("${operation.selector}").value = "${operation.text}";
         `);
-      }
       break;
+    default:
   }
 
   return result;
@@ -62,10 +57,9 @@ export const handleExecuteOperation = async (
     const result = await executeOperation(scraper, operation);
     return {
       status: "success",
-      data: result
+      result
     };
   } catch (err) {
-    console.log(err);
     return {
       status: "error",
       message: "Error occurred in executing operation"

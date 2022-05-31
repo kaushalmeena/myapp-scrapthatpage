@@ -3,7 +3,7 @@ import React from "react";
 import PageName from "../../components/PageName";
 import AppSettings from "../../features/settings/AppSettings";
 
-const Settings = (): JSX.Element => {
+function Settings() {
   return (
     <>
       <PageName name="Settings" />
@@ -12,6 +12,6 @@ const Settings = (): JSX.Element => {
       </Box>
     </>
   );
-};
+}
 
 export default Settings;

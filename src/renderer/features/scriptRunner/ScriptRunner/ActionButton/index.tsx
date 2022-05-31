@@ -9,13 +9,13 @@ type ActionButtonProps = {
   onClick: () => void;
 };
 
-const ActionButton = (props: ActionButtonProps): JSX.Element => {
+function ActionButton({ spinning, color, icon, onClick }: ActionButtonProps) {
   return (
     <Box position="relative">
       <Button
         variant="contained"
-        color={props.color}
-        onClick={props.onClick}
+        color={color}
+        onClick={onClick}
         sx={{
           padding: 0,
           minWidth: 0,
@@ -25,9 +25,9 @@ const ActionButton = (props: ActionButtonProps): JSX.Element => {
           zIndex: 1
         }}
       >
-        <Icon>{props.icon}</Icon>
+        <Icon>{icon}</Icon>
       </Button>
-      {props.spinning && (
+      {spinning && (
         <CircularProgress
           size={50}
           sx={{ position: "absolute", top: -5, left: -5 }}
@@ -35,6 +35,6 @@ const ActionButton = (props: ActionButtonProps): JSX.Element => {
       )}
     </Box>
   );
-};
+}
 
 export default ActionButton;

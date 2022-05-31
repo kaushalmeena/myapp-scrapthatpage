@@ -11,7 +11,7 @@ type OperationalPaneProps = {
   path: string;
 };
 
-const OperationsPanel = ({ path }: OperationalPaneProps): JSX.Element => {
+function OperationsPanel({ path }: OperationalPaneProps) {
   const dispatch = useAppDispatch();
   const operations = useAppSelector(
     (state) => get(state.scriptEditor, path) as LargeOperation[]
@@ -42,6 +42,6 @@ const OperationsPanel = ({ path }: OperationalPaneProps): JSX.Element => {
       </Stack>
     </Box>
   );
-};
+}
 
 export default OperationsPanel;

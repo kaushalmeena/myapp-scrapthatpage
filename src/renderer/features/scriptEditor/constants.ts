@@ -1,7 +1,7 @@
-import { VALIDATION_TYPES } from "../../../common/constants/validation";
+import { ValidationTypes } from "../../../common/constants/validation";
 import {
-  VARIABLE_PICKER_MODES,
-  VARIABLE_TYPES
+  VariablePickerModes,
+  VariableTypes
 } from "../../../common/constants/variable";
 import { ScriptEditorState } from "./types";
 
@@ -13,7 +13,7 @@ export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
       error: "",
       rules: [
         {
-          type: VALIDATION_TYPES.REQUIRED,
+          type: ValidationTypes.REQUIRED,
           message: "Please enter name."
         }
       ]
@@ -23,7 +23,7 @@ export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
       error: "",
       rules: [
         {
-          type: VALIDATION_TYPES.REQUIRED,
+          type: ValidationTypes.REQUIRED,
           message: "Please enter description."
         }
       ]
@@ -38,7 +38,7 @@ export const INITIAL_SCRIPT_EDITOR_STATE: ScriptEditorState = {
   variableSelector: {
     visible: false,
     activePath: "",
-    filterType: VARIABLE_TYPES.ANY,
-    updateMode: VARIABLE_PICKER_MODES.SET
+    filterType: VariableTypes.ANY,
+    updateMode: VariablePickerModes.SET
   }
 };

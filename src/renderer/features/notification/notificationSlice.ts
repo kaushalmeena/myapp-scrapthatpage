@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { INITIAL_NOTIFICATION_STATE } from "./constants";
 import { ShowNotificationActionPayload } from "./types";
@@ -10,8 +11,7 @@ const notificationSlice = createSlice({
       state,
       action: PayloadAction<ShowNotificationActionPayload>
     ) {
-      const message = action.payload.message;
-      const severity = action.payload.severity;
+      const { message, severity } = action.payload;
       state.visible = true;
       state.message = message;
       state.severity = severity;

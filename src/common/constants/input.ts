@@ -1,4 +1,4 @@
-export const enum INPUT_TYPES {
+export const enum InputTypes {
   TEXT,
   SELECT,
   OPERATION_BOX

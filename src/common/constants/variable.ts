@@ -1,15 +1,15 @@
-export const enum VARIABLE_TYPES {
+export const enum VariableTypes {
   NUMBER = "number",
   STRING = "string",
   ANY = "*"
 }
 
-export const enum VARIABLE_PICKER_MODES {
+export const enum VariablePickerModes {
   SET,
   APPEND
 }
 
-export const enum VARIABLE_SETTER_MODES {
+export const enum VariableSetterModes {
   TYPE,
   NAME
 }

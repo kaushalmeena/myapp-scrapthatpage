@@ -29,7 +29,7 @@ type OperationCardProps = {
   path: string;
 };
 
-const OperationCard = ({ path }: OperationCardProps): JSX.Element => {
+function OperationCard({ path }: OperationCardProps) {
   const dispatch = useAppDispatch();
   const operation = useAppSelector(
     (state) => get(state.scriptEditor, path) as LargeOperation
@@ -119,6 +119,6 @@ const OperationCard = ({ path }: OperationCardProps): JSX.Element => {
       </Collapse>
     </Card>
   );
-};
+}
 
 export default OperationCard;

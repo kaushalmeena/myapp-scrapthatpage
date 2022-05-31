@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { INITIAL_SETTINGS_STATE } from "./constants";
 import { UpdateThemeActionPayload } from "./types";
@@ -7,7 +8,7 @@ const settingsSlice = createSlice({
   initialState: INITIAL_SETTINGS_STATE,
   reducers: {
     updateTheme(state, action: PayloadAction<UpdateThemeActionPayload>) {
-      const theme = action.payload.theme;
+      const { theme } = action.payload;
       state.theme = theme;
     }
   }

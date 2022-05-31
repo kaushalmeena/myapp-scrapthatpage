@@ -12,7 +12,7 @@ import { useNavigate } from "react-router";
 import PageName from "../../components/PageName";
 import { PAGE_LINKS } from "../../constants/layout";
 
-const Dashboard = (): JSX.Element => {
+function Dashboard() {
   const navigate = useNavigate();
 
   return (
@@ -45,6 +45,6 @@ const Dashboard = (): JSX.Element => {
       </Box>
     </>
   );
-};
+}
 
 export default Dashboard;

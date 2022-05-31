@@ -1,4 +1,4 @@
-export const enum SCRAPER_CHANNELS {
+export const enum ScraperChannels {
   OPEN_WINDOW = "OPEN_WINDOW",
   CLOSE_WINDOW = "CLOSE_WINDOW",
   LOAD_URL = "LOAD_URL",

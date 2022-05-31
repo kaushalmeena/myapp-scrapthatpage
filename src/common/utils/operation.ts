@@ -1,7 +1,7 @@
 import { wrap } from "object-path-immutable";
-import { INPUT_TYPES } from "../constants/input";
+import { InputTypes } from "../constants/input";
 import { LARGE_OPERATIONS } from "../constants/largeOperations";
-import { OPERATION_TYPES } from "../constants/operation";
+import { OperationTypes } from "../constants/operation";
 import { VALIDATION_FUNCTION } from "../constants/validation";
 import { LargeInput, LargeOperation } from "../types/largeOperation";
 import { SmallInput, SmallOperation } from "../types/smallOperation";
@@ -12,7 +12,7 @@ export const getOperationSubheader = (
   inputs: LargeInput[] | SmallInput[]
 ): string =>
   format.replace(/{[\w-]+}/g, (match: string) => {
-    const index = Number.parseInt(match.slice(1, -1));
+    const index = Number.parseInt(match.slice(1, -1), 10);
     const input = inputs[index];
     if ("value" in input) {
       return input.value || "undefined";
@@ -25,29 +25,29 @@ export const convertToLargeOperation = (
 ): LargeOperation => {
   let wrappedOperation = wrap(LARGE_OPERATIONS[operation.type]);
   switch (operation.type) {
-    case OPERATION_TYPES.OPEN:
-    case OPERATION_TYPES.CLICK:
+    case OperationTypes.OPEN:
+    case OperationTypes.CLICK:
       wrappedOperation = wrappedOperation.set(
         "inputs.0.value",
         operation.inputs[0].value
       );
       break;
-    case OPERATION_TYPES.EXTRACT:
-    case OPERATION_TYPES.SET:
+    case OperationTypes.EXTRACT:
+    case OperationTypes.SET:
       wrappedOperation = wrappedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set("inputs.1.value", operation.inputs[1].value)
         .set("inputs.2.value", operation.inputs[2].value);
       break;
-    case OPERATION_TYPES.TYPE:
-    case OPERATION_TYPES.INCREASE:
-    case OPERATION_TYPES.DECREASE:
+    case OperationTypes.TYPE:
+    case OperationTypes.INCREASE:
+    case OperationTypes.DECREASE:
       wrappedOperation = wrappedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set("inputs.1.value", operation.inputs[1].value);
       break;
-    case OPERATION_TYPES.IF:
-    case OPERATION_TYPES.WHILE:
+    case OperationTypes.IF:
+    case OperationTypes.WHILE:
       wrappedOperation = wrappedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set(
@@ -55,6 +55,7 @@ export const convertToLargeOperation = (
           operation.inputs[1].operations.map(convertToLargeOperation)
         );
       break;
+    default:
   }
   return wrappedOperation.value();
 };
@@ -63,83 +64,93 @@ export const convertToSmallOperation = (
   operation: LargeOperation
 ): SmallOperation => {
   switch (operation.type) {
-    case OPERATION_TYPES.OPEN:
-    case OPERATION_TYPES.CLICK:
+    case OperationTypes.OPEN:
+    case OperationTypes.CLICK:
       return {
         type: operation.type,
         inputs: [
           {
-            type: INPUT_TYPES.TEXT,
+            type: InputTypes.TEXT,
             value: operation.inputs[0].value
           }
         ]
       };
-    case OPERATION_TYPES.EXTRACT:
+    case OperationTypes.EXTRACT:
       return {
         type: operation.type,
         inputs: [
           {
-            type: INPUT_TYPES.TEXT,
+            type: InputTypes.TEXT,
             value: operation.inputs[0].value
           },
           {
-            type: INPUT_TYPES.TEXT,
+            type: InputTypes.TEXT,
             value: operation.inputs[1].value
           },
           {
-            type: INPUT_TYPES.SELECT,
+            type: InputTypes.SELECT,
             value: operation.inputs[2].value
           }
         ]
       };
-    case OPERATION_TYPES.TYPE:
-    case OPERATION_TYPES.INCREASE:
-    case OPERATION_TYPES.DECREASE:
+    case OperationTypes.TYPE:
+    case OperationTypes.INCREASE:
+    case OperationTypes.DECREASE:
       return {
         type: operation.type,
         inputs: [
           {
-            type: INPUT_TYPES.TEXT,
+            type: InputTypes.TEXT,
             value: operation.inputs[0].value
           },
           {
-            type: INPUT_TYPES.TEXT,
+            type: InputTypes.TEXT,
             value: operation.inputs[1].value
           }
         ]
       };
-    case OPERATION_TYPES.SET:
+    case OperationTypes.SET:
       return {
         type: operation.type,
         inputs: [
           {
-            type: INPUT_TYPES.TEXT,
+            type: InputTypes.TEXT,
             value: operation.inputs[0].value
           },
           {
-            type: INPUT_TYPES.SELECT,
+            type: InputTypes.SELECT,
             value: operation.inputs[1].value
           },
           {
-            type: INPUT_TYPES.TEXT,
+            type: InputTypes.TEXT,
             value: operation.inputs[2].value
           }
         ]
       };
-    case OPERATION_TYPES.IF:
-    case OPERATION_TYPES.WHILE:
+    case OperationTypes.IF:
+    case OperationTypes.WHILE:
       return {
         type: operation.type,
         inputs: [
           {
-            type: INPUT_TYPES.TEXT,
+            type: InputTypes.TEXT,
             value: operation.inputs[0].value
           },
           {
-            type: INPUT_TYPES.OPERATION_BOX,
+            type: InputTypes.OPERATION_BOX,
             operations: operation.inputs[1].operations.map(
               convertToSmallOperation
             )
+          }
+        ]
+      };
+    default:
+      return {
+        type: OperationTypes.OPEN,
+        inputs: [
+          {
+            type: InputTypes.TEXT,
+            value: ""
           }
         ]
       };
@@ -149,11 +160,11 @@ export const convertToSmallOperation = (
 export const isOperationValid = (operation: LargeOperation): boolean =>
   operation.inputs.some((input) => "error" in input && !input.error);
 
-export const validateInput = (
+export const validateValueWithRules = (
   value: string,
   rules: ValidationRule[]
 ): string => {
-  for (let i = 0; i < rules.length; i++) {
+  for (let i = 0; i < rules.length; i += 1) {
     const validate = VALIDATION_FUNCTION[rules[i].type];
     if (validate && !validate(value)) {
       return rules[i].message;

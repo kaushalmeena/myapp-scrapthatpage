@@ -2,6 +2,7 @@ import { BrowserWindow } from "electron";
 
 class Scraper {
   private mainWindow: BrowserWindow;
+
   private scraperWindow?: BrowserWindow;
 
   constructor(mainWindow: BrowserWindow) {

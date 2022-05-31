@@ -1,47 +1,44 @@
-import { Stack } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Box, CircularProgress, Stack, Typography } from "@mui/material";
+import React from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
 import db from "../../database";
-import { useNotification } from "../../features/notification/hooks";
+import { useDatabaseFetch } from "../../hooks";
 import { Script } from "../../types/script";
 
-const Favorites = (): JSX.Element => {
-  const notification = useNotification();
-
-  const [scripts, setScripts] = useState<Script[]>([]);
-
-  useEffect(() => {
-    db.fetchAllFavoriteScripts()
-      .then((data) => {
-        setScripts(data);
-      })
-      .catch((err) => {
-        console.error(err);
-        notification.show("Error occurred while fetching.", "error");
-      });
-  }, []);
+function Favorites() {
+  const {
+    result: scripts,
+    status,
+    error
+  } = useDatabaseFetch<Script[]>(db.fetchAllFavoriteScripts(), []);
 
   return (
     <>
       <PageName name="Favorites" />
-      <Stack gap={1}>
-        {scripts.length > 0 ? (
-          scripts.map((item) => (
-            <ScriptCard
-              key={`script-${item.id}`}
-              id={item.id}
-              title={item.name}
-              description={item.description}
-            />
-          ))
-        ) : (
-          <EmptyText />
+      <Box marginTop={2}>
+        {status === "loading" && <CircularProgress />}
+        {status === "loaded" && (
+          <Stack gap={1}>
+            {scripts.length > 0 ? (
+              scripts.map((item) => (
+                <ScriptCard
+                  key={`script-${item.id}`}
+                  id={item.id as number}
+                  title={item.name}
+                  description={item.description}
+                />
+              ))
+            ) : (
+              <EmptyText />
+            )}
+          </Stack>
         )}
-      </Stack>
+        {status === "error" && <Typography variant="h6">{error}</Typography>}
+      </Box>
     </>
   );
-};
+}
 
 export default Favorites;

@@ -17,7 +17,7 @@ import {
   hideOperationSelector
 } from "../../scriptEditorSlice";
 
-const OperationSelectorDialog = (): JSX.Element => {
+function OperationSelectorDialog() {
   const dispatch = useAppDispatch();
   const selector = useAppSelector(
     (state) => state.scriptEditor.operationSelector
@@ -56,6 +56,6 @@ const OperationSelectorDialog = (): JSX.Element => {
       <DialogActions />
     </Dialog>
   );
-};
+}
 
 export default OperationSelectorDialog;

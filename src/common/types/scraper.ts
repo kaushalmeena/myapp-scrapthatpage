@@ -1,24 +1,24 @@
-import { OPERATION_TYPES } from "../constants/operation";
+import { OperationTypes } from "../constants/operation";
 
 type ScraperOpenOperation = {
-  type: OPERATION_TYPES.OPEN;
+  type: OperationTypes.OPEN;
   url: string;
 };
 
 type ScraperExtractOperation = {
-  type: OPERATION_TYPES.EXTRACT;
+  type: OperationTypes.EXTRACT;
   name: string;
   selector: string;
   attribute: string;
 };
 
 type ScraperClickOperation = {
-  type: OPERATION_TYPES.CLICK;
+  type: OperationTypes.CLICK;
   selector: string;
 };
 
 type ScraperTypeOperation = {
-  type: OPERATION_TYPES.TYPE;
+  type: OperationTypes.TYPE;
   selector: string;
   text: string;
 };
@@ -30,12 +30,12 @@ export type ScraperOperation =
   | ScraperTypeOperation;
 
 export type ExtractOperationResult = {
-  type: OPERATION_TYPES.EXTRACT;
+  type: OperationTypes.EXTRACT;
   url: string;
   name: string;
   selector: string;
   attribute: string;
-  result: string[];
+  data: string[];
 };
 
 export type ScraperResult = ExtractOperationResult | null;
@@ -47,7 +47,7 @@ type ExecuteError = {
 
 type ExecuteSuccess = {
   status: "success";
-  data: ScraperResult;
+  result: ScraperResult;
 };
 
 export type ExecuteResult = ExecuteError | ExecuteSuccess;

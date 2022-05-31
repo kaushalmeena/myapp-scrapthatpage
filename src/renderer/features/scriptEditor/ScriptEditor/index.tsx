@@ -2,7 +2,6 @@ import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
 import React, { SyntheticEvent, useLayoutEffect, useState } from "react";
 import { batch } from "react-redux";
 import TabPanel from "../../../components/TabPanel";
-import { INITIAL_SCRIPT } from "../../../constants/script";
 import { useAppDispatch } from "../../../hooks";
 import store from "../../../store";
 import { Script } from "../../../types/script";
@@ -19,11 +18,11 @@ import OperationsPanel from "./OperationsPanel";
 import VariableSelectorDialog from "./VariableSelectorDialog";
 
 type ScriptEditorProps = {
-  script?: Script;
+  script: Script;
   onSubmit: (script: Script) => void;
 };
 
-const ScriptEditor = (props: ScriptEditorProps) => {
+function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
   const dispatch = useAppDispatch();
 
   const [activeTab, setActiveTab] = useState(0);
@@ -42,16 +41,14 @@ const ScriptEditor = (props: ScriptEditorProps) => {
         dispatch(showNotification({ message, severity: "error" }));
       });
     } else {
-      const script = getScriptFromScriptEditorState(state);
-      props.onSubmit(script);
+      const resultantScript = getScriptFromScriptEditorState(state);
+      onSubmit(resultantScript);
     }
   };
 
   useLayoutEffect(() => {
-    const state = getScriptEditorStateFromScript(
-      props.script || INITIAL_SCRIPT
-    );
-    dispatch(updateState({ state }));
+    const resultantState = getScriptEditorStateFromScript(script);
+    dispatch(updateState({ state: resultantState }));
   }, []);
 
   return (
@@ -95,6 +92,6 @@ const ScriptEditor = (props: ScriptEditorProps) => {
       <VariableSelectorDialog />
     </>
   );
-};
+}
 
 export default ScriptEditor;
