@@ -1,6 +1,7 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { get } from "object-path-immutable";
-import { OPERATION_TYPES } from "../../../common/constants/operation";
+import { OperationTypes } from "../../../common/constants/operation";
 import {
   LargeInput,
   LargeOperation
@@ -35,20 +36,16 @@ const scriptEditorSlice = createSlice({
       state,
       action: PayloadAction<UpdateInformationActionPayload>
     ) {
-      const key = action.payload.key;
-      const value = action.payload.value;
-
+      const { key, value } = action.payload;
       const fieldPath = `information.${key}`;
-
       updateDraftScriptEditorField(state, fieldPath, value);
     },
     appendOperation(
       state,
       action: PayloadAction<AppendOperationActionPayload>
     ) {
-      const operation = action.payload.operation;
-      const activePath = state.operationSelector.activePath;
-
+      const { operation } = action.payload;
+      const { activePath } = state.operationSelector;
       const operations = get(state, activePath) as LargeOperation[];
       operations.push(operation);
     },
@@ -56,13 +53,11 @@ const scriptEditorSlice = createSlice({
       state,
       action: PayloadAction<DeleteOperationActionPayload>
     ) {
-      const path = action.payload.path;
-
+      const { path } = action.payload;
       const { operationsPath, index } = getOperationsPathAndIndex(path);
       const operations = get(state, operationsPath) as LargeOperation[];
       const [deletedOperation] = operations.splice(index, 1);
-
-      if (deletedOperation?.type === OPERATION_TYPES.SET) {
+      if (deletedOperation?.type === OperationTypes.SET) {
         const oldVariables = state.variables;
         const newVariables = oldVariables.filter((item) => item.path !== path);
         state.variables = newVariables;
@@ -72,11 +67,9 @@ const scriptEditorSlice = createSlice({
       state,
       action: PayloadAction<MoveUpOperationActionPayload>
     ) {
-      const path = action.payload.path;
-
+      const { path } = action.payload;
       const { operationsPath, index } = getOperationsPathAndIndex(path);
       const operations = get(state, operationsPath) as LargeOperation[];
-
       if (index > 0) {
         const tempOperation = operations[index];
         operations[index] = operations[index - 1];
@@ -87,10 +80,8 @@ const scriptEditorSlice = createSlice({
       state,
       action: PayloadAction<MoveDownOperationActionPayload>
     ) {
-      const path = action.payload.path;
-
+      const { path } = action.payload;
       const { operationsPath, index } = getOperationsPathAndIndex(path);
-
       const operations = get(state, operationsPath) as LargeOperation[];
       if (index < operations.length - 1) {
         const tempOperation = operations[index];
@@ -99,36 +90,29 @@ const scriptEditorSlice = createSlice({
       }
     },
     updateInput(state, action: PayloadAction<UpdateInputActionPayload>) {
-      const path = action.payload.path;
-      const value = action.payload.value;
-
+      const { path, value } = action.payload;
       updateDraftScriptEditorField(state, path, value);
     },
     updateInputWithVariable(
       state,
       action: PayloadAction<UpdateInputWithVariableActionPayload>
     ) {
-      const variable = action.payload.variable;
-      const activePath = state.variableSelector.activePath;
-      const updateMode = state.variableSelector.updateMode;
-
+      const { variable } = action.payload;
+      const { activePath, updateMode } = state.variableSelector;
       const valuePath = `${activePath}.value`;
       const value = get(state, valuePath) as string;
-
       const newValue = getUpdatedInputValueWithVariable(
         value,
         updateMode,
         variable
       );
-
       updateDraftScriptEditorField(state, activePath, newValue);
     },
     showOperationSelector(
       state,
       action: PayloadAction<ShowOperationSelectorActionPayload>
     ) {
-      const path = action.payload.path;
-
+      const { path } = action.payload;
       state.operationSelector.visible = true;
       state.operationSelector.activePath = path;
     },
@@ -139,12 +123,10 @@ const scriptEditorSlice = createSlice({
       state,
       action: PayloadAction<ShowVariableSelectorActionPayload>
     ) {
-      const path = action.payload.path;
-
+      const { path } = action.payload;
       const field = get(state, path) as LargeInput;
-
       if ("variablePicker" in field && field.variablePicker) {
-        const variablePicker = field.variablePicker;
+        const { variablePicker } = field;
         state.variableSelector.visible = true;
         state.variableSelector.activePath = path;
         state.variableSelector.filterType = variablePicker.type;

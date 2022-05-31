@@ -1,78 +1,78 @@
-import { Icon, InputAdornment, Stack, TextField } from "@mui/material";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import {
+  Box,
+  CircularProgress,
+  Icon,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography
+} from "@mui/material";
+import React, { ChangeEvent, useState } from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
 import db from "../../database";
-import { useNotification } from "../../features/notification/hooks";
+import { useDatabaseFetch } from "../../hooks";
 import { Script } from "../../types/script";
 
-const Search = (): JSX.Element => {
-  const notification = useNotification();
-
-  const [scripts, setScripts] = useState<Script[]>([]);
-  const [filteredScripts, setFilteredScripts] = useState<Script[]>([]);
-  const [query, setQuery] = useState("");
-
-  useEffect(() => {
-    db.fetchAllScripts()
-      .then((data) => {
-        setScripts(data);
-        setFilteredScripts(data);
-      })
-      .catch((err) => {
-        console.error(err);
-        notification.show("Error occurred while fetching.", "error");
-      });
-  }, []);
+function Search() {
+  const [search, setSearch] = useState("");
+  const {
+    result: scripts,
+    status,
+    error
+  } = useDatabaseFetch<Script[]>(db.fetchAllScripts(), []);
 
   const handleQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const searchValue = event.target.value;
-    if (searchValue) {
-      const searchQuery = query.toLowerCase();
-      const filteredList = scripts.filter((item) =>
-        item.name.toLowerCase().includes(searchQuery)
-      );
-      setFilteredScripts(filteredList);
-    } else {
-      setFilteredScripts(scripts);
-    }
-    setQuery(searchValue);
+    setSearch(event.target.value);
   };
+
+  const searchQuery = search.toLowerCase();
+  const filteredScripts = scripts.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery)
+  );
 
   return (
     <>
       <PageName name="Search" />
-      <TextField
-        fullWidth
-        variant="outlined"
-        size="small"
-        value={query}
-        onChange={handleQueryChange}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Icon>search</Icon>
-            </InputAdornment>
-          )
-        }}
-      />
-      <Stack marginTop={2} gap={1}>
-        {filteredScripts.length > 0 ? (
-          filteredScripts.map((item) => (
-            <ScriptCard
-              key={`script-${item.id}`}
-              id={item.id}
-              title={item.name}
-              description={item.description}
+      <Box marginTop={2}>
+        {status === "loading" && <CircularProgress />}
+        {status === "loaded" && (
+          <>
+            <TextField
+              fullWidth
+              variant="outlined"
+              size="small"
+              value={search}
+              onChange={handleQueryChange}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Icon>search</Icon>
+                  </InputAdornment>
+                )
+              }}
             />
-          ))
-        ) : (
-          <EmptyText />
+            <Stack marginTop={2} gap={1}>
+              {filteredScripts.length > 0 ? (
+                filteredScripts.map((item) => (
+                  <ScriptCard
+                    key={`script-${item.id}`}
+                    id={item.id as number}
+                    title={item.name}
+                    description={item.description}
+                  />
+                ))
+              ) : (
+                <EmptyText />
+              )}
+            </Stack>
+          </>
         )}
-      </Stack>
+        {status === "error" && <Typography variant="h6">{error}</Typography>}
+      </Box>
     </>
   );
-};
+}
 
 export default Search;

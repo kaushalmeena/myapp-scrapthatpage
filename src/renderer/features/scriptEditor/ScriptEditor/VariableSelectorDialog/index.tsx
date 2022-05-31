@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { batch } from "react-redux";
-import { VARIABLE_TYPES } from "../../../../../common/constants/variable";
+import { VariableTypes } from "../../../../../common/constants/variable";
 import { Variable } from "../../../../../common/types/variable";
 import EmptyText from "../../../../components/EmptyText";
 import { useAppDispatch, useAppSelector } from "../../../../hooks";
@@ -18,7 +18,7 @@ import {
   updateInputWithVariable
 } from "../../scriptEditorSlice";
 
-const VariableSelectorDialog = (): JSX.Element => {
+function VariableSelectorDialog() {
   const dispatch = useAppDispatch();
   const { selector, variables } = useAppSelector((state) => ({
     selector: state.scriptEditor.variableSelector,
@@ -34,7 +34,7 @@ const VariableSelectorDialog = (): JSX.Element => {
     });
 
   let filteredVariables = variables;
-  if (selector.filterType !== VARIABLE_TYPES.ANY) {
+  if (selector.filterType !== VariableTypes.ANY) {
     filteredVariables = filteredVariables.filter(
       (item) => item.type === selector.filterType
     );
@@ -69,6 +69,6 @@ const VariableSelectorDialog = (): JSX.Element => {
       <DialogActions />
     </Dialog>
   );
-};
+}
 
 export default VariableSelectorDialog;

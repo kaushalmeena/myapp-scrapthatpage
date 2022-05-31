@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import {
   Icon,
   IconButton,
@@ -18,11 +19,11 @@ type ResultTableProps = {
   data: TableData;
 };
 
-const ResultTable = (props: ResultTableProps): JSX.Element => {
+function ResultTable({ data }: ResultTableProps) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 
@@ -34,70 +35,68 @@ const ResultTable = (props: ResultTableProps): JSX.Element => {
   };
 
   const handleDownloadClick = () => {
-    downloadAsCSV(props.data);
+    downloadAsCSV(data);
   };
 
-  const headers = props.data.length > 0 ? Object.keys(props.data[0]) : [];
+  const headers = data.length > 0 ? Object.keys(data[0]) : [];
 
-  const paginatedData = props.data.slice(
+  const paginatedData = data.slice(
     page * rowsPerPage,
     (page + 1) * rowsPerPage
   );
 
   return (
-    <>
-      <TableContainer
-        sx={{
-          borderWidth: 1,
-          borderStyle: "solid",
-          borderColor: "action.disabledBackground",
-          borderRadius: 1,
-          backgroundColor: "background.paper"
-        }}
+    <TableContainer
+      sx={{
+        borderWidth: 1,
+        borderStyle: "solid",
+        borderColor: "action.disabledBackground",
+        borderRadius: 1,
+        backgroundColor: "background.paper"
+      }}
+    >
+      <Stack
+        direction="row"
+        gap={1}
+        paddingTop={1}
+        paddingX={1}
+        justifyContent="flex-end"
       >
-        <Stack
-          direction="row"
-          gap={1}
-          paddingTop={1}
-          paddingX={1}
-          justifyContent="flex-end"
-        >
-          <IconButton onClick={handleDownloadClick}>
-            <Icon>file_download</Icon>
-          </IconButton>
-        </Stack>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
+        <IconButton onClick={handleDownloadClick}>
+          <Icon>file_download</Icon>
+        </IconButton>
+      </Stack>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            {headers.map((key) => (
+              <TableCell key={`table-head-${key}`}>{key}</TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {paginatedData.map((row, rowIndex) => (
+            <TableRow key={`table-row-${rowIndex}`}>
               {headers.map((key) => (
-                <TableCell key={`table-head-${key}`}>{key}</TableCell>
+                <TableCell key={`table-cell-${rowIndex}-${key}`}>
+                  {row[key]}
+                </TableCell>
               ))}
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedData.map((row, rowIndex) => (
-              <TableRow key={`table-row-${rowIndex}`}>
-                {headers.map((key) => (
-                  <TableCell key={`table-cell-${rowIndex}-${key}`}>
-                    {row[key]}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={props.data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
-    </>
+          ))}
+        </TableBody>
+      </Table>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={data.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </TableContainer>
   );
-};
+}
 
 export default ResultTable;

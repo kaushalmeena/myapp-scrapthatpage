@@ -3,7 +3,7 @@ import React, { ChangeEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../hooks";
 import { updateInformation } from "../../scriptEditorSlice";
 
-const InformationPanel = (): JSX.Element => {
+function InformationPanel() {
   const dispatch = useAppDispatch();
   const information = useAppSelector((state) => state.scriptEditor.information);
 
@@ -40,6 +40,6 @@ const InformationPanel = (): JSX.Element => {
       />
     </Box>
   );
-};
+}
 
 export default InformationPanel;

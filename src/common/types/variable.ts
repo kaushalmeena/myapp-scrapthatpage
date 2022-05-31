@@ -1,7 +1,7 @@
 import {
-  VARIABLE_PICKER_MODES,
-  VARIABLE_SETTER_MODES,
-  VARIABLE_TYPES
+  VariablePickerModes,
+  VariableSetterModes,
+  VariableTypes
 } from "../constants/variable";
 
 export type Variable = {
@@ -11,12 +11,12 @@ export type Variable = {
 };
 
 export type VariablePicker = {
-  type: VARIABLE_TYPES;
-  mode: VARIABLE_PICKER_MODES;
+  type: VariableTypes;
+  mode: VariablePickerModes;
 };
 
 export type VariableSetter = {
-  mode: VARIABLE_SETTER_MODES;
+  mode: VariableSetterModes;
 };
 
 export type VariableMapping = Record<string, string | number>;

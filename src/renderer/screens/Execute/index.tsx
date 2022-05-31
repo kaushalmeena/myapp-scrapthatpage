@@ -7,48 +7,30 @@ import {
   Stack,
   Typography
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
 import { useNotification } from "../../features/notification/hooks";
 import ScriptRunner from "../../features/scriptRunner/ScriptRunner";
-import { PAGE_STATUS } from "../../types/page";
+import { useDatabaseFetch } from "../../hooks";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";
 
-const Execute = (): JSX.Element => {
+function Execute() {
   const notification = useNotification();
   const navigate = useNavigate();
   const params = useParams<Params>();
-
-  const [status, setStatus] = useState<PAGE_STATUS>("loading");
-  const [script, setScript] = useState<Script>(INITIAL_SCRIPT);
-  const [error, setError] = useState("");
 
   const [favorite, setFavorite] = useState(0);
 
   const scriptId = Number(params.scriptId);
 
-  useEffect(() => {
-    setStatus("loading");
-    db.fetchScriptById(scriptId)
-      .then((data) => {
-        if (data) {
-          setScript(data);
-          setFavorite(data.favorite);
-          setStatus("loaded");
-        } else {
-          setError("Script not found in database.");
-          setStatus("error");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("Error occurred while fetching.");
-        setStatus("error");
-      });
-  }, []);
+  const {
+    result: script,
+    status,
+    error
+  } = useDatabaseFetch<Script>(db.fetchScriptById(scriptId), INITIAL_SCRIPT);
 
   const handleDeleteClick = () => {
     navigate(`/delete/${scriptId}`);
@@ -64,8 +46,7 @@ const Execute = (): JSX.Element => {
       .then(() => {
         setFavorite(newFavoriteValue);
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
         notification.show("Error occurred while updating.", "error");
       });
   };
@@ -134,6 +115,6 @@ const Execute = (): JSX.Element => {
       <ScriptRunner script={script} />
     </>
   );
-};
+}
 
 export default Execute;

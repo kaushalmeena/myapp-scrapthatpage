@@ -10,16 +10,16 @@ import {
   SelectChangeEvent
 } from "@mui/material";
 import React from "react";
-import { THEMES, THEME_TYPES } from "../../../constants/themes";
+import { THEMES, ThemeTypes } from "../../../constants/themes";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 import { updateTheme } from "../settingsSlice";
 
-const AppSettings = (): JSX.Element => {
+function AppSettings() {
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state) => state.settings);
 
-  const handleThemeChange = (event: SelectChangeEvent<THEME_TYPES>) =>
-    dispatch(updateTheme({ theme: event.target.value as THEME_TYPES }));
+  const handleThemeChange = (event: SelectChangeEvent<ThemeTypes>) =>
+    dispatch(updateTheme({ theme: event.target.value as ThemeTypes }));
 
   return (
     <List>
@@ -43,6 +43,6 @@ const AppSettings = (): JSX.Element => {
       </ListItem>
     </List>
   );
-};
+}
 
 export default AppSettings;

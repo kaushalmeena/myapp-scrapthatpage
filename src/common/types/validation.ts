@@ -1,6 +1,6 @@
-import { VALIDATION_TYPES } from "../constants/validation";
+import { ValidationTypes } from "../constants/validation";
 
 export type ValidationRule = {
-  type: VALIDATION_TYPES;
+  type: ValidationTypes;
   message: string;
 };

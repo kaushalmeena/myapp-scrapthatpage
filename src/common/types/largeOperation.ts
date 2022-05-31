@@ -1,6 +1,6 @@
 import { GridSize, InputBaseProps } from "@mui/material";
-import { INPUT_TYPES } from "../constants/input";
-import { OPERATION_TYPES } from "../constants/operation";
+import { InputTypes } from "../constants/input";
+import { OperationTypes } from "../constants/operation";
 import { ValidationRule } from "./validation";
 import { VariablePicker, VariableSetter } from "./variable";
 
@@ -11,7 +11,7 @@ export type SelectOption = {
 
 export type LargeTextInput = {
   label: string;
-  type: INPUT_TYPES.TEXT;
+  type: InputTypes.TEXT;
   width: GridSize;
   value: string;
   error: string;
@@ -23,7 +23,7 @@ export type LargeTextInput = {
 
 export type LargeSelectInput = {
   label: string;
-  type: INPUT_TYPES.SELECT;
+  type: InputTypes.SELECT;
   width: GridSize;
   options: SelectOption[];
   value: string;
@@ -34,7 +34,7 @@ export type LargeSelectInput = {
 
 export type LargeOperationBoxInput = {
   label: string;
-  type: INPUT_TYPES.OPERATION_BOX;
+  type: InputTypes.OPERATION_BOX;
   operations: LargeOperation[];
 };
 
@@ -42,7 +42,7 @@ type LargeOpenOperation = {
   name: string;
   description: string;
   format: string;
-  type: OPERATION_TYPES.OPEN;
+  type: OperationTypes.OPEN;
   inputs: [LargeTextInput];
 };
 
@@ -50,7 +50,7 @@ type LargeExtractOperation = {
   name: string;
   description: string;
   format: string;
-  type: OPERATION_TYPES.EXTRACT;
+  type: OperationTypes.EXTRACT;
   inputs: [LargeTextInput, LargeTextInput, LargeSelectInput];
 };
 
@@ -58,7 +58,7 @@ type LargeClickOperation = {
   name: string;
   description: string;
   format: string;
-  type: OPERATION_TYPES.CLICK;
+  type: OperationTypes.CLICK;
   inputs: [LargeTextInput];
 };
 
@@ -66,7 +66,7 @@ type LargeTypeOperation = {
   name: string;
   description: string;
   format: string;
-  type: OPERATION_TYPES.TYPE;
+  type: OperationTypes.TYPE;
   inputs: [LargeTextInput, LargeTextInput];
 };
 
@@ -74,7 +74,7 @@ type LargeSetOperation = {
   name: string;
   description: string;
   format: string;
-  type: OPERATION_TYPES.SET;
+  type: OperationTypes.SET;
   inputs: [LargeTextInput, LargeSelectInput, LargeTextInput];
 };
 
@@ -82,7 +82,7 @@ type LargeIncreaseOperation = {
   name: string;
   description: string;
   format: string;
-  type: OPERATION_TYPES.INCREASE;
+  type: OperationTypes.INCREASE;
   inputs: [LargeTextInput, LargeTextInput];
 };
 
@@ -90,7 +90,7 @@ type LargeDecreaseOperation = {
   name: string;
   description: string;
   format: string;
-  type: OPERATION_TYPES.DECREASE;
+  type: OperationTypes.DECREASE;
   inputs: [LargeTextInput, LargeTextInput];
 };
 
@@ -98,7 +98,7 @@ type LargeIfOperation = {
   name: string;
   description: string;
   format: string;
-  type: OPERATION_TYPES.IF;
+  type: OperationTypes.IF;
   inputs: [LargeTextInput, LargeOperationBoxInput];
 };
 
@@ -106,7 +106,7 @@ type LargeWhileOperation = {
   name: string;
   description: string;
   format: string;
-  type: OPERATION_TYPES.WHILE;
+  type: OperationTypes.WHILE;
   inputs: [LargeTextInput, LargeOperationBoxInput];
 };
 

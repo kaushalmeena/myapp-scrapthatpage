@@ -6,21 +6,20 @@ type VariablePickerAdornmentProps = {
   onClick: () => void;
 };
 
-const VariablePickerAdornment = (props: VariablePickerAdornmentProps) => {
-  if (props.visible) {
+function VariablePickerAdornment({
+  visible,
+  onClick
+}: VariablePickerAdornmentProps) {
+  if (visible) {
     return (
       <InputAdornment position="end">
-        <IconButton
-          title="Show variable picker"
-          size="small"
-          onClick={props.onClick}
-        >
+        <IconButton title="Show variable picker" size="small" onClick={onClick}>
           <Icon fontSize="small">control_point_duplicate</Icon>
         </IconButton>
       </InputAdornment>
     );
   }
   return null;
-};
+}
 
 export default VariablePickerAdornment;

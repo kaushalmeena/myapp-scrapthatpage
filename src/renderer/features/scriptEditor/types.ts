@@ -1,6 +1,6 @@
 import {
-  VARIABLE_PICKER_MODES,
-  VARIABLE_TYPES
+  VariablePickerModes,
+  VariableTypes
 } from "../../../common/constants/variable";
 import { LargeOperation } from "../../../common/types/largeOperation";
 import { ValidationRule } from "../../../common/types/validation";
@@ -26,8 +26,8 @@ export type OperationSelector = {
 export type VariableSelector = {
   visible: boolean;
   activePath: string;
-  filterType: VARIABLE_TYPES;
-  updateMode: VARIABLE_PICKER_MODES;
+  filterType: VariableTypes;
+  updateMode: VariablePickerModes;
 };
 
 export type ScriptEditorState = {

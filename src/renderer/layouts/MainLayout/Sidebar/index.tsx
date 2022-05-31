@@ -12,7 +12,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { DRAWER_WIDTH, PAGE_LINKS } from "../../../constants/layout";
 
-const Sidebar = (): JSX.Element => {
+function Sidebar() {
   const navigate = useNavigate();
 
   return (
@@ -57,6 +57,6 @@ const Sidebar = (): JSX.Element => {
       </List>
     </Drawer>
   );
-};
+}
 
 export default Sidebar;

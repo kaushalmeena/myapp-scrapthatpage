@@ -1,11 +1,11 @@
-import { THEME_TYPES } from "../../constants/themes";
+import { ThemeTypes } from "../../constants/themes";
 
 // Settings state types
 export type SettingsState = {
-  theme: THEME_TYPES;
+  theme: ThemeTypes;
 };
 
 // Settings payload types
 export type UpdateThemeActionPayload = {
-  theme: THEME_TYPES;
+  theme: ThemeTypes;
 };

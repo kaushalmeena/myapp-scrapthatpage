@@ -1,6 +1,6 @@
 import { evaluate } from "mathjs";
-import { OPERATION_TYPES } from "../../../common/constants/operation";
-import { VARIABLE_TYPES } from "../../../common/constants/variable";
+import { OperationTypes } from "../../../common/constants/operation";
+import { VariableTypes } from "../../../common/constants/variable";
 import {
   ExtractOperationResult,
   ScraperOperation
@@ -8,10 +8,12 @@ import {
 import { SmallOperation } from "../../../common/types/smallOperation";
 import { VariableMapping } from "../../../common/types/variable";
 import {
-  ActionButtonColor,
+  HeadingAndMessage,
+  IconAndColor,
+  RunnerGenerator,
+  RunnerStatus,
   TableData,
-  TableRow,
-  OperationNameAndSubheader
+  TableRow
 } from "./types";
 
 export const replaceWithVariables = (
@@ -27,11 +29,11 @@ export const replaceWithVariables = (
 export function* getOperationGenerator(
   operations: SmallOperation[],
   variables: VariableMapping = {}
-): Generator<ScraperOperation, void, ScraperOperation> {
-  for (let i = 0; i < operations.length; i++) {
+): RunnerGenerator {
+  for (let i = 0; i < operations.length; i += 1) {
     const operation = operations[i];
     switch (operation.type) {
-      case OPERATION_TYPES.OPEN:
+      case OperationTypes.OPEN:
         {
           const url = operation.inputs[0].value;
           yield {
@@ -40,20 +42,20 @@ export function* getOperationGenerator(
           };
         }
         break;
-      case OPERATION_TYPES.EXTRACT:
+      case OperationTypes.EXTRACT:
         {
           const name = operation.inputs[0].value;
           const selector = operation.inputs[1].value;
           const attribute = operation.inputs[2].value;
           yield {
             type: operation.type,
-            name: name,
+            name,
             selector: replaceWithVariables(selector, variables),
-            attribute: attribute
+            attribute
           };
         }
         break;
-      case OPERATION_TYPES.CLICK:
+      case OperationTypes.CLICK:
         {
           const selector = operation.inputs[0].value;
           yield {
@@ -62,116 +64,106 @@ export function* getOperationGenerator(
           };
         }
         break;
-      case OPERATION_TYPES.TYPE:
+      case OperationTypes.TYPE:
         {
           const selector = operation.inputs[0].value;
           const text = operation.inputs[1].value;
           yield {
             type: operation.type,
             selector: replaceWithVariables(selector, variables),
-            text: text
+            text
           };
         }
         break;
-      case OPERATION_TYPES.SET:
+      case OperationTypes.SET:
         {
           const name = operation.inputs[0].value;
           const type = operation.inputs[1].value;
-          const value = operation.inputs[2].value;
+          const { value } = operation.inputs[2];
           switch (type) {
-            case VARIABLE_TYPES.STRING:
+            case VariableTypes.STRING:
               variables[name] = String(value);
               break;
-            case VARIABLE_TYPES.NUMBER:
+            case VariableTypes.NUMBER:
               variables[name] = Number(value);
               break;
+            default:
           }
         }
         break;
-      case OPERATION_TYPES.INCREASE:
+      case OperationTypes.INCREASE:
         {
           const name = operation.inputs[0].value;
-          const value = operation.inputs[1].value;
+          const { value } = operation.inputs[1];
           (variables[name] as number) += Number(value);
         }
         break;
-      case OPERATION_TYPES.DECREASE:
+      case OperationTypes.DECREASE:
         {
           const name = operation.inputs[0].value;
-          const value = operation.inputs[1].value;
+          const { value } = operation.inputs[1];
           (variables[name] as number) -= Number(value);
         }
         break;
-      case OPERATION_TYPES.IF:
+      case OperationTypes.IF:
         {
           const condition = operation.inputs[0].value;
-          const operations = operation.inputs[1].operations;
+          const { operations: nestedOperations } = operation.inputs[1];
           const formattedCondition = replaceWithVariables(condition, variables);
           const evaluatedValue = evaluate(formattedCondition);
           if (evaluatedValue) {
-            yield* getOperationGenerator(operations, variables);
+            yield* getOperationGenerator(nestedOperations, variables);
           }
         }
         break;
-      case OPERATION_TYPES.WHILE:
+      case OperationTypes.WHILE:
         {
           const condition = operation.inputs[0].value;
-          const operations = operation.inputs[1].operations;
+          const { operations: nestedOperations } = operation.inputs[1];
           let formattedCondition = replaceWithVariables(condition, variables);
           let evaluatedValue = evaluate(formattedCondition);
           while (evaluatedValue) {
-            yield* getOperationGenerator(operations, variables);
+            yield* getOperationGenerator(nestedOperations, variables);
             formattedCondition = replaceWithVariables(condition, variables);
             evaluatedValue = evaluate(formattedCondition);
           }
         }
         break;
+      default:
     }
   }
-  return;
 }
 
-export const getCardBackgroundColor = (color: ActionButtonColor): string => {
-  if (color === "error") {
-    return "rgba(211, 47, 47, 0.1)";
-  }
-  if (color === "success") {
-    return "rgba(46, 125, 50, 0.1)";
-  }
-  return "auto";
-};
-
 export const appendExtractResultInTableData = (
-  extractResult: ExtractOperationResult,
+  result: ExtractOperationResult,
   tableData: TableData
 ): TableData => {
   const newTableData: TableData = [];
-  const newData = extractResult.result;
-  const newHeader = extractResult.name;
+  const { name, data } = result;
 
   const headers = tableData.length ? Object.keys(tableData[0]) : [];
-  headers.push(newHeader);
+  headers.push(name);
 
-  for (let i = 0; i < tableData.length; i++) {
+  for (let i = 0; i < tableData.length; i += 1) {
     const row: TableRow = {};
-    for (let j = 0; j < headers.length; j++) {
+    for (let j = 0; j < headers.length; j += 1) {
       const header = headers[j];
       if (tableData[i][header]) {
         row[header] = tableData[i][header];
-      } else if (header === newHeader) {
-        row[header] = newData.shift() || "";
+      } else if (header === name) {
+        row[header] = data.shift() || "";
       }
     }
     newTableData.push(row);
   }
 
-  if (newData.length > 0) {
-    for (let i = 0; i < newData.length; i++) {
+  if (data.length > 0) {
+    for (let i = 0; i < data.length; i += 1) {
       const row: TableRow = {};
-      for (let j = 0; j < headers.length; j++) {
+      for (let j = 0; j < headers.length; j += 1) {
         const header = headers[j];
-        if (header === newHeader) {
-          row[header] = newData.shift() || "";
+        if (header === name) {
+          row[header] = data.shift() || "";
         } else {
           row[header] = "";
         }
@@ -183,51 +175,98 @@ export const appendExtractResultInTableData = (
   return newTableData;
 };
 
-export const getOperationNameAndSubheader = (
+export const getHeadingAndMessageForOperation = (
   operation: ScraperOperation
-): OperationNameAndSubheader => {
+): HeadingAndMessage => {
   switch (operation.type) {
-    case OPERATION_TYPES.OPEN:
+    case OperationTypes.OPEN:
       return {
-        name: "OPEN",
-        subheader: `${operation.url}`
+        heading: "OPEN",
+        message: `${operation.url}`
       };
-    case OPERATION_TYPES.EXTRACT:
+    case OperationTypes.EXTRACT:
       return {
-        name: "EXTRACT",
-        subheader: `${operation.name} [${operation.selector}]`
+        heading: "EXTRACT",
+        message: `${operation.name} [${operation.selector}]`
       };
-    case OPERATION_TYPES.CLICK:
+    case OperationTypes.CLICK:
       return {
-        name: "CLICK",
-        subheader: `[${operation.selector}]`
+        heading: "CLICK",
+        message: `[${operation.selector}]`
       };
-    case OPERATION_TYPES.TYPE:
+    case OperationTypes.TYPE:
       return {
-        name: "TYPE",
-        subheader: `[${operation.selector}] ${operation.text}`
+        heading: "TYPE",
+        message: `[${operation.selector}] ${operation.text}`
+      };
+    default:
+      return {
+        heading: "UNKNOWN",
+        message: ""
       };
   }
 };
 
-export const downloadAsCSV = (tableData: TableData): void => {
-  const csvString = convertToCSV(tableData);
-  saveFile(csvString, "csv", "text/csv");
+export const getBackgroundColorForStatus = (status: RunnerStatus): string => {
+  if (status === "ERROR") {
+    return "rgba(211, 47, 47, 0.1)";
+  }
+  if (status === "FINISHED") {
+    return "rgba(46, 125, 50, 0.1)";
+  }
+  return "auto";
+};
+
+export const getIconAndColorForStatus = (
+  status: RunnerStatus
+): IconAndColor => {
+  switch (status) {
+    case "READY":
+      return {
+        icon: "play_arrow",
+        color: "primary"
+      };
+    case "STARTED":
+      return {
+        icon: "stop",
+        color: "primary"
+      };
+    case "STOPPED":
+      return {
+        icon: "refresh",
+        color: "primary"
+      };
+    case "FINISHED":
+      return {
+        icon: "refresh",
+        color: "success"
+      };
+    case "ERROR":
+      return {
+        icon: "refresh",
+        color: "error"
+      };
+    default:
+      return {
+        icon: "play_arrow",
+        color: "primary"
+      };
+  }
 };
 
 export const convertToCSV = (tableData: TableData): string => {
   let result = "";
   const headers = Object.keys(tableData[0]);
-  result += headers.join(",") + "\r\n";
-  for (let i = 0; i < tableData.length; i++) {
+  result += `${headers.join(",")}\r\n`;
+  for (let i = 0; i < tableData.length; i += 1) {
     let line = "";
-    for (const key in tableData[i]) {
-      if (line != "") {
+    Object.keys(tableData[i]).forEach((key) => {
+      if (line !== "") {
         line += ",";
       }
       line += tableData[i][key];
-    }
-    result += line + "\r\n";
+    });
+    result += `${line}\r\n`;
   }
   return result;
 };
@@ -242,4 +281,9 @@ export const saveFile = (
   a.download = `output.${extension}`;
   a.href = window.URL.createObjectURL(blob);
   a.click();
+};
+
+export const downloadAsCSV = (tableData: TableData): void => {
+  const csvString = convertToCSV(tableData);
+  saveFile(csvString, "csv", "text/csv");
 };

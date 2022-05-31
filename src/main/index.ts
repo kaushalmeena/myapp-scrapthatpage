@@ -5,6 +5,7 @@ import { connectScraperProxy, disconnectScraperProxy } from "./proxy/scraper";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
+// eslint-disable-next-line global-require
 if (require("electron-squirrel-startup")) {
   app.quit();
 }

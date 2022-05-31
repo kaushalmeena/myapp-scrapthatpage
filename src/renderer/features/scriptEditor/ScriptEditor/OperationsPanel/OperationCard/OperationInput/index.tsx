@@ -2,7 +2,7 @@ import { MenuItem, TextField } from "@mui/material";
 import { get } from "object-path-immutable";
 import React from "react";
 import OperationsPanel from "../..";
-import { INPUT_TYPES } from "../../../../../../../common/constants/input";
+import { InputTypes } from "../../../../../../../common/constants/input";
 import { LargeInput } from "../../../../../../../common/types/largeOperation";
 import VariablePickerAdornment from "../../../../../../components/VariablePickerAdornment";
 import { useAppDispatch, useAppSelector } from "../../../../../../hooks";
@@ -15,7 +15,7 @@ type OperationInputProps = {
   path: string;
 };
 
-const OperationInput = ({ path }: OperationInputProps): JSX.Element | null => {
+function OperationInput({ path }: OperationInputProps) {
   const dispatch = useAppDispatch();
   const input = useAppSelector(
     (state) => get(state.scriptEditor, path) as LargeInput
@@ -27,7 +27,7 @@ const OperationInput = ({ path }: OperationInputProps): JSX.Element | null => {
   const handlePickerOpen = () => dispatch(showVariableSelector({ path }));
 
   switch (input.type) {
-    case INPUT_TYPES.TEXT:
+    case InputTypes.TEXT:
       return (
         <TextField
           fullWidth
@@ -49,7 +49,7 @@ const OperationInput = ({ path }: OperationInputProps): JSX.Element | null => {
           }}
         />
       );
-    case INPUT_TYPES.SELECT:
+    case InputTypes.SELECT:
       return (
         <TextField
           select
@@ -69,12 +69,12 @@ const OperationInput = ({ path }: OperationInputProps): JSX.Element | null => {
           ))}
         </TextField>
       );
-    case INPUT_TYPES.OPERATION_BOX:
+    case InputTypes.OPERATION_BOX:
       return <OperationsPanel path={`${path}.operations`} />;
     default:
   }
 
   return null;
-};
+}
 
 export default OperationInput;

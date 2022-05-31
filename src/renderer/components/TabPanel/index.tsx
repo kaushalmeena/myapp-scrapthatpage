@@ -6,12 +6,12 @@ type TabPanelProps = {
   children: ReactNode;
 };
 
-const TabPanel = (props: TabPanelProps) => {
+function TabPanel({ value, index, children }: TabPanelProps) {
   return (
-    <div role="tabpanel" hidden={props.value !== props.index}>
-      {props.value === props.index && props.children}
+    <div role="tabpanel" hidden={value !== index}>
+      {value === index && children}
     </div>
   );
-};
+}
 
 export default TabPanel;

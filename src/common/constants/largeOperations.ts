@@ -1,37 +1,37 @@
 import { LargeOperation } from "../types/largeOperation";
-import { INPUT_TYPES } from "./input";
-import { OPERATION_TYPES } from "./operation";
-import { VALIDATION_TYPES } from "./validation";
+import { OperationTypes } from "./operation";
+import { InputTypes } from "./input";
 import {
-  VARIABLE_PICKER_MODES,
-  VARIABLE_SETTER_MODES,
-  VARIABLE_TYPES
+  VariablePickerModes,
+  VariableSetterModes,
+  VariableTypes
 } from "./variable";
+import { ValidationTypes } from "./validation";
 
 export const LARGE_OPERATIONS: LargeOperation[] = [
   {
     name: "OPEN",
-    type: OPERATION_TYPES.OPEN,
+    type: OperationTypes.OPEN,
     description: "Open url for web scrapping.",
     format: "{0}",
     inputs: [
       {
         label: "URL",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 12,
         value: "",
         error: "",
         variablePicker: {
-          type: VARIABLE_TYPES.ANY,
-          mode: VARIABLE_PICKER_MODES.APPEND
+          type: VariableTypes.ANY,
+          mode: VariablePickerModes.APPEND
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter URL."
           },
           {
-            type: VALIDATION_TYPES.URL,
+            type: ValidationTypes.URL,
             message: "Please enter valid URL."
           }
         ]
@@ -40,43 +40,43 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
   },
   {
     name: "Extract",
-    type: OPERATION_TYPES.EXTRACT,
+    type: OperationTypes.EXTRACT,
     description: "Scraps specified elements from opened page.",
     format: "{0} [{1}]",
     inputs: [
       {
         label: "Name",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 4,
         value: "",
         error: "",
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter name."
           }
         ]
       },
       {
         label: "Selector",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 4,
         value: "",
         error: "",
         variablePicker: {
-          type: VARIABLE_TYPES.ANY,
-          mode: VARIABLE_PICKER_MODES.APPEND
+          type: VariableTypes.ANY,
+          mode: VariablePickerModes.APPEND
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter selector."
           }
         ]
       },
       {
         label: "Attribute",
-        type: INPUT_TYPES.SELECT,
+        type: InputTypes.SELECT,
         width: 4,
         value: "textContent",
         error: "",
@@ -92,7 +92,7 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
         ],
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please select type."
           }
         ]
@@ -101,23 +101,23 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
   },
   {
     name: "CLICK",
-    type: OPERATION_TYPES.CLICK,
+    type: OperationTypes.CLICK,
     description: "Click on specified element.",
     format: "[{0}]",
     inputs: [
       {
         label: "Selector",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 6,
         value: "",
         error: "",
         variablePicker: {
-          type: VARIABLE_TYPES.ANY,
-          mode: VARIABLE_PICKER_MODES.APPEND
+          type: VariableTypes.ANY,
+          mode: VariablePickerModes.APPEND
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter selector."
           }
         ]
@@ -126,36 +126,36 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
   },
   {
     name: "TYPE",
-    type: OPERATION_TYPES.TYPE,
+    type: OperationTypes.TYPE,
     description: "Type text into specified input.",
     format: "[{0}] {1}",
     inputs: [
       {
         label: "Selector",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 6,
         value: "",
         error: "",
         variablePicker: {
-          type: VARIABLE_TYPES.ANY,
-          mode: VARIABLE_PICKER_MODES.APPEND
+          type: VariableTypes.ANY,
+          mode: VariablePickerModes.APPEND
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter selector."
           }
         ]
       },
       {
         label: "Text",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 6,
         value: "",
         error: "",
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter text."
           }
         ]
@@ -164,65 +164,65 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
   },
   {
     name: "SET",
-    type: OPERATION_TYPES.SET,
+    type: OperationTypes.SET,
     description: "Set specified data to a variable.",
     format: "{0} [{1}]",
     inputs: [
       {
         label: "Variable",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 4,
         value: "",
         error: "",
         variablePicker: {
-          type: VARIABLE_TYPES.ANY,
-          mode: VARIABLE_PICKER_MODES.SET
+          type: VariableTypes.ANY,
+          mode: VariablePickerModes.SET
         },
         variableSetter: {
-          mode: VARIABLE_SETTER_MODES.NAME
+          mode: VariableSetterModes.NAME
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter variable."
           }
         ]
       },
       {
         label: "Type",
-        type: INPUT_TYPES.SELECT,
+        type: InputTypes.SELECT,
         width: 4,
-        value: VARIABLE_TYPES.NUMBER,
+        value: VariableTypes.NUMBER,
         error: "",
         variableSetter: {
-          mode: VARIABLE_SETTER_MODES.TYPE
+          mode: VariableSetterModes.TYPE
         },
         options: [
           {
             label: "Number",
-            value: VARIABLE_TYPES.NUMBER
+            value: VariableTypes.NUMBER
           },
           {
             label: "String",
-            value: VARIABLE_TYPES.STRING
+            value: VariableTypes.STRING
           }
         ],
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please select type."
           }
         ]
       },
       {
         label: "Value",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 4,
         value: "",
         error: "",
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter value."
           }
         ]
@@ -231,19 +231,19 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
   },
   {
     name: "INCREASE",
-    type: OPERATION_TYPES.INCREASE,
+    type: OperationTypes.INCREASE,
     description: "Increase specified variable",
     format: "{0} [+{1}]",
     inputs: [
       {
         label: "Number Variable",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 6,
         value: "",
         error: "",
         variablePicker: {
-          type: VARIABLE_TYPES.NUMBER,
-          mode: VARIABLE_PICKER_MODES.SET
+          type: VariableTypes.NUMBER,
+          mode: VariablePickerModes.SET
         },
         inputProps: {
           readOnly: true,
@@ -251,14 +251,14 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter number variable."
           }
         ]
       },
       {
         label: "Amount",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 6,
         value: "1",
         error: "",
@@ -267,7 +267,7 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter amount."
           }
         ]
@@ -276,19 +276,19 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
   },
   {
     name: "DECREASE",
-    type: OPERATION_TYPES.DECREASE,
+    type: OperationTypes.DECREASE,
     description: "Decrease specified variable",
     format: "{0} [-{1}]",
     inputs: [
       {
         label: "Number Variable",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 6,
         value: "1",
         error: "",
         variablePicker: {
-          type: VARIABLE_TYPES.NUMBER,
-          mode: VARIABLE_PICKER_MODES.SET
+          type: VariableTypes.NUMBER,
+          mode: VariablePickerModes.SET
         },
         inputProps: {
           readOnly: true,
@@ -296,14 +296,14 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter number variable."
           }
         ]
       },
       {
         label: "Amount",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 6,
         value: "",
         error: "",
@@ -312,7 +312,7 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter amount."
           }
         ]
@@ -321,60 +321,60 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
   },
   {
     name: "IF",
-    type: OPERATION_TYPES.IF,
+    type: OperationTypes.IF,
     description: "Executes block only if specified condition is true.",
     format: "{0}",
     inputs: [
       {
         label: "Condition",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 12,
         value: "",
         error: "",
         variablePicker: {
-          type: VARIABLE_TYPES.ANY,
-          mode: VARIABLE_PICKER_MODES.APPEND
+          type: VariableTypes.ANY,
+          mode: VariablePickerModes.APPEND
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter condition."
           }
         ]
       },
       {
         label: "If Block",
-        type: INPUT_TYPES.OPERATION_BOX,
+        type: InputTypes.OPERATION_BOX,
         operations: []
       }
     ]
   },
   {
     name: "WHILE",
-    type: OPERATION_TYPES.WHILE,
+    type: OperationTypes.WHILE,
     description: "Executes block until specified condition become false.",
     format: "{0}",
     inputs: [
       {
         label: "Condition",
-        type: INPUT_TYPES.TEXT,
+        type: InputTypes.TEXT,
         width: 12,
         value: "",
         error: "",
         variablePicker: {
-          type: VARIABLE_TYPES.ANY,
-          mode: VARIABLE_PICKER_MODES.APPEND
+          type: VariableTypes.ANY,
+          mode: VariablePickerModes.APPEND
         },
         rules: [
           {
-            type: VALIDATION_TYPES.REQUIRED,
+            type: ValidationTypes.REQUIRED,
             message: "Please enter condition."
           }
         ]
       },
       {
         label: "While Block",
-        type: INPUT_TYPES.OPERATION_BOX,
+        type: InputTypes.OPERATION_BOX,
         operations: []
       }
     ]

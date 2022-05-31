@@ -5,45 +5,28 @@ import {
   Stack,
   Typography
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate, useParams } from "react-router";
 import PageName from "../../components/PageName";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
 import { useNotification } from "../../features/notification/hooks";
-import { PAGE_STATUS } from "../../types/page";
+import { useDatabaseFetch } from "../../hooks";
 import { Params } from "../../types/router";
 import { Script } from "../../types/script";
 
-const Delete = (): JSX.Element => {
+function Delete() {
   const notification = useNotification();
   const navigate = useNavigate();
   const params = useParams<Params>();
 
-  const [status, setStatus] = useState<PAGE_STATUS>("loading");
-  const [script, setScript] = useState<Script>(INITIAL_SCRIPT);
-  const [error, setError] = useState("");
-
   const scriptId = Number(params.scriptId);
 
-  useEffect(() => {
-    setStatus("loading");
-    db.fetchScriptById(scriptId)
-      .then((script) => {
-        if (script) {
-          setScript(script);
-          setStatus("loaded");
-        } else {
-          setError("Script not found in database.");
-          setStatus("error");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("Error occurred while fetching.");
-        setStatus("error");
-      });
-  }, []);
+  const {
+    result: script,
+    status,
+    error
+  } = useDatabaseFetch<Script>(db.fetchScriptById(scriptId), INITIAL_SCRIPT);
 
   const handleYesClick = () => {
     db.deleteScriptById(scriptId)
@@ -51,8 +34,7 @@ const Delete = (): JSX.Element => {
         notification.show("Script successfully deleted!", "success");
         navigate("/search");
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
         notification.show("Error occurred while deleting.", "error");
       });
   };
@@ -64,7 +46,12 @@ const Delete = (): JSX.Element => {
   return (
     <>
       <PageName name="Delete" />
-      <Box display="flex" flexDirection="column" alignItems="center">
+      <Box
+        marginTop={2}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+      >
         {status === "loading" && <CircularProgress />}
         {status === "loaded" && (
           <>
@@ -85,6 +72,6 @@ const Delete = (): JSX.Element => {
       </Box>
     </>
   );
-};
+}
 
 export default Delete;

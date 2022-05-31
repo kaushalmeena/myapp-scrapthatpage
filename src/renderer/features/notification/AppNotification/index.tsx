@@ -3,7 +3,7 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 import { hideNotification } from "../notificationSlice";
 
-export const AppNotification = (): JSX.Element => {
+function AppNotification() {
   const dispatch = useAppDispatch();
   const notification = useAppSelector((state) => state.notification);
 
@@ -21,6 +21,6 @@ export const AppNotification = (): JSX.Element => {
       </Alert>
     </Snackbar>
   );
-};
+}
 
 export default AppNotification;
