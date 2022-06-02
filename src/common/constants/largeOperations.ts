@@ -108,7 +108,7 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
       {
         label: "Selector",
         type: InputTypes.TEXT,
-        width: 6,
+        width: 12,
         value: "",
         error: "",
         variablePicker: {
