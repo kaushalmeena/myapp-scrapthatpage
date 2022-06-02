@@ -16,7 +16,7 @@ import {
   TableRow
 } from "./types";
 
-export const replaceWithVariables = (
+export const replaceTextWithVariables = (
   text: string,
   variables: VariableMapping
 ): string =>
@@ -38,7 +38,7 @@ export function* getOperationGenerator(
           const url = operation.inputs[0].value;
           yield {
             type: operation.type,
-            url: replaceWithVariables(url, variables)
+            url: replaceTextWithVariables(url, variables)
           };
         }
         break;
@@ -50,7 +50,7 @@ export function* getOperationGenerator(
           yield {
             type: operation.type,
             name,
-            selector: replaceWithVariables(selector, variables),
+            selector: replaceTextWithVariables(selector, variables),
             attribute
           };
         }
@@ -60,7 +60,7 @@ export function* getOperationGenerator(
           const selector = operation.inputs[0].value;
           yield {
             type: operation.type,
-            selector: replaceWithVariables(selector, variables)
+            selector: replaceTextWithVariables(selector, variables)
           };
         }
         break;
@@ -70,7 +70,7 @@ export function* getOperationGenerator(
           const text = operation.inputs[1].value;
           yield {
             type: operation.type,
-            selector: replaceWithVariables(selector, variables),
+            selector: replaceTextWithVariables(selector, variables),
             text
           };
         }
@@ -109,7 +109,10 @@ export function* getOperationGenerator(
         {
           const condition = operation.inputs[0].value;
           const { operations: nestedOperations } = operation.inputs[1];
-          const formattedCondition = replaceWithVariables(condition, variables);
+          const formattedCondition = replaceTextWithVariables(
+            condition,
+            variables
+          );
           const evaluatedValue = evaluate(formattedCondition);
           if (evaluatedValue) {
             yield* getOperationGenerator(nestedOperations, variables);
@@ -120,11 +123,14 @@ export function* getOperationGenerator(
         {
           const condition = operation.inputs[0].value;
           const { operations: nestedOperations } = operation.inputs[1];
-          let formattedCondition = replaceWithVariables(condition, variables);
+          let formattedCondition = replaceTextWithVariables(
+            condition,
+            variables
+          );
           let evaluatedValue = evaluate(formattedCondition);
           while (evaluatedValue) {
             yield* getOperationGenerator(nestedOperations, variables);
-            formattedCondition = replaceWithVariables(condition, variables);
+            formattedCondition = replaceTextWithVariables(condition, variables);
             evaluatedValue = evaluate(formattedCondition);
           }
         }
@@ -286,4 +292,9 @@ export const saveFile = (
 export const downloadAsCSV = (tableData: TableData): void => {
   const csvString = convertToCSV(tableData);
   saveFile(csvString, "csv", "text/csv");
+};
+
+export const downloadAsJSON = (tableData: TableData): void => {
+  const jsonString = JSON.stringify(tableData, null, 2);
+  saveFile(jsonString, "json", "application/json");
 };
