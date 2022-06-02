@@ -1,3 +1,4 @@
+import { Draft } from "@reduxjs/toolkit";
 import { get, set, wrap } from "object-path-immutable";
 import { InputTypes } from "../../../common/constants/input";
 import {
@@ -69,7 +70,7 @@ export const getUpdatedVariables = (
 };
 
 export const updateDraftScriptEditorField = (
-  state: ScriptEditorState,
+  state: Draft<ScriptEditorState>,
   path: string,
   value: string
 ): void => {
