@@ -1,7 +1,4 @@
 import {
-  Icon,
-  IconButton,
-  Stack,
   Table,
   TableBody,
   TableCell,
@@ -12,7 +9,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { TableData } from "../../types";
-import { downloadAsCSV } from "../../utils";
+import ResultTableToolbar from "./ResultTableToolbar";
 
 type ResultTableProps = {
   data: TableData;
@@ -33,16 +30,8 @@ function ResultTable({ data }: ResultTableProps) {
     setPage(0);
   };
 
-  const handleDownloadClick = () => {
-    downloadAsCSV(data);
-  };
-
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
-
-  const paginatedData = data.slice(
-    page * rowsPerPage,
-    (page + 1) * rowsPerPage
-  );
+  const pageData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
   return (
     <TableContainer
@@ -54,17 +43,7 @@ function ResultTable({ data }: ResultTableProps) {
         backgroundColor: "background.paper"
       }}
     >
-      <Stack
-        direction="row"
-        gap={1}
-        paddingTop={1}
-        paddingX={1}
-        justifyContent="flex-end"
-      >
-        <IconButton onClick={handleDownloadClick}>
-          <Icon>file_download</Icon>
-        </IconButton>
-      </Stack>
+      <ResultTableToolbar data={data} />
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -74,10 +53,10 @@ function ResultTable({ data }: ResultTableProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {paginatedData.map((row, rowIndex) => (
-            <TableRow key={`table-row-${rowIndex}`}>
+          {pageData.map((row, index) => (
+            <TableRow key={`table-row-${index}`}>
               {headers.map((key) => (
-                <TableCell key={`table-cell-${rowIndex}-${key}`}>
+                <TableCell key={`table-cell-${index}-${key}`}>
                   {row[key]}
                 </TableCell>
               ))}
