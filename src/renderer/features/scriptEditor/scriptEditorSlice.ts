@@ -5,6 +5,7 @@ import {
   LargeInput,
   LargeOperation
 } from "../../../common/types/largeOperation";
+import { StoreRootState } from "../../types/store";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "./constants";
 import {
   AppendOperationActionPayload,
@@ -138,6 +139,7 @@ const scriptEditorSlice = createSlice({
   }
 });
 
+// ScriptEditor actions
 export const {
   updateState,
   updateInformation,
@@ -153,4 +155,15 @@ export const {
   hideVariableSelector
 } = scriptEditorSlice.actions;
 
-export default scriptEditorSlice.reducer;
+// ScriptEditor reducer
+export const scriptEditorReducer = scriptEditorSlice.reducer;
+
+// ScriptEditor selectors
+export const selectInformation = (state: StoreRootState) =>
+  state.scriptEditor.information;
+export const selectOperationSelector = (state: StoreRootState) =>
+  state.scriptEditor.operationSelector;
+export const selectVariableSelectorAndVariables = (state: StoreRootState) => ({
+  selector: state.scriptEditor.variableSelector,
+  variables: state.scriptEditor.variables
+});

@@ -14,14 +14,13 @@ import { LargeOperation } from "../../../../../common/types/largeOperation";
 import { useAppDispatch, useAppSelector } from "../../../../hooks";
 import {
   appendOperation,
-  hideOperationSelector
+  hideOperationSelector,
+  selectOperationSelector
 } from "../../scriptEditorSlice";
 
 function OperationSelectorDialog() {
   const dispatch = useAppDispatch();
-  const selector = useAppSelector(
-    (state) => state.scriptEditor.operationSelector
-  );
+  const selector = useAppSelector(selectOperationSelector);
 
   const handleModalClose = () => dispatch(hideOperationSelector());
 

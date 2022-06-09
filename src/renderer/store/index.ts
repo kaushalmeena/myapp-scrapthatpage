@@ -10,9 +10,9 @@ import {
   REHYDRATE
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import notificationReducer from "../features/notification/notificationSlice";
-import scriptEditorReducer from "../features/scriptEditor/scriptEditorSlice";
-import settingsReducer from "../features/settings/settingsSlice";
+import { notificationReducer } from "../features/notification/notificationSlice";
+import { scriptEditorReducer } from "../features/scriptEditor/scriptEditorSlice";
+import { settingsReducer } from "../features/settings/settingsSlice";
 
 const rootReducer = combineReducers({
   notification: notificationReducer,

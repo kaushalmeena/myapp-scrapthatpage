@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { StoreRootState } from "../../types/store";
 import { INITIAL_NOTIFICATION_STATE } from "./constants";
 import { ShowNotificationActionPayload } from "./types";
 
@@ -21,6 +22,11 @@ const notificationSlice = createSlice({
   }
 });
 
+// Notification reducer
+export const notificationReducer = notificationSlice.reducer;
+
+// Notification actions
 export const { showNotification, hideNotification } = notificationSlice.actions;
 
-export default notificationSlice.reducer;
+// Notification selectors
+export const selectNotification = (state: StoreRootState) => state.notification;

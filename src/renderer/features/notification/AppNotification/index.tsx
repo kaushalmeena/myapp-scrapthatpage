@@ -1,11 +1,11 @@
 import { Alert, Snackbar } from "@mui/material";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { hideNotification } from "../notificationSlice";
+import { hideNotification, selectNotification } from "../notificationSlice";
 
 function AppNotification() {
   const dispatch = useAppDispatch();
-  const notification = useAppSelector((state) => state.notification);
+  const notification = useAppSelector(selectNotification);
 
   const handleSnackbarClose = () => dispatch(hideNotification());
 
