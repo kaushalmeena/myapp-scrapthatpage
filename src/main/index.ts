@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from "electron";
+import isDev from "electron-is-dev";
 import Scraper from "./lib/Scraper";
 import { connectScraperProxy, disconnectScraperProxy } from "./proxy/scraper";
 
@@ -23,7 +24,9 @@ const createWindow = (): void => {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // mainWindow.webContents.openDevTools();
+  if (isDev) {
+    mainWindow.webContents.openDevTools();
+  }
 
   const scraper = new Scraper(mainWindow);
 

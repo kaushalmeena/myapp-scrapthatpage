@@ -15,15 +15,15 @@ import EmptyText from "../../../../components/EmptyText";
 import { useAppDispatch, useAppSelector } from "../../../../hooks";
 import {
   hideVariableSelector,
+  selectVariableSelectorAndVariables,
   updateInputWithVariable
 } from "../../scriptEditorSlice";
 
 function VariableSelectorDialog() {
   const dispatch = useAppDispatch();
-  const { selector, variables } = useAppSelector((state) => ({
-    selector: state.scriptEditor.variableSelector,
-    variables: state.scriptEditor.variables
-  }));
+  const { selector, variables } = useAppSelector(
+    selectVariableSelectorAndVariables
+  );
 
   const handleModalClose = () => dispatch(hideVariableSelector());
 

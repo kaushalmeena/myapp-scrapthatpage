@@ -12,11 +12,11 @@ import {
 import React from "react";
 import { THEMES, ThemeTypes } from "../../../constants/themes";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { updateTheme } from "../settingsSlice";
+import { selectSettings, updateTheme } from "../settingsSlice";
 
 function AppSettings() {
   const dispatch = useAppDispatch();
-  const settings = useAppSelector((state) => state.settings);
+  const settings = useAppSelector(selectSettings);
 
   const handleThemeChange = (event: SelectChangeEvent<ThemeTypes>) =>
     dispatch(updateTheme({ theme: event.target.value as ThemeTypes }));
