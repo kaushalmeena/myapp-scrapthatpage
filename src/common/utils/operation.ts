@@ -1,4 +1,4 @@
-import { wrap } from "object-path-immutable";
+import { chain, find } from "lodash";
 import { InputTypes } from "../constants/input";
 import { LARGE_OPERATIONS } from "../constants/largeOperations";
 import { OperationTypes } from "../constants/operation";
@@ -23,18 +23,22 @@ export const getOperationSubheader = (
 export const convertToLargeOperation = (
   operation: SmallOperation
 ): LargeOperation => {
-  let wrappedOperation = wrap(LARGE_OPERATIONS[operation.type]);
+  const baseLargeOperation = find(LARGE_OPERATIONS, ["type", operation.type]);
+  if (!baseLargeOperation) {
+    throw new Error(`Operation type of ${operation.type} not found.`);
+  }
+  let chainedOperation = chain(baseLargeOperation).cloneDeep();
   switch (operation.type) {
     case OperationTypes.OPEN:
     case OperationTypes.CLICK:
-      wrappedOperation = wrappedOperation.set(
+      chainedOperation = chainedOperation.set(
         "inputs.0.value",
         operation.inputs[0].value
       );
       break;
     case OperationTypes.EXTRACT:
     case OperationTypes.SET:
-      wrappedOperation = wrappedOperation
+      chainedOperation = chainedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set("inputs.1.value", operation.inputs[1].value)
         .set("inputs.2.value", operation.inputs[2].value);
@@ -42,13 +46,13 @@ export const convertToLargeOperation = (
     case OperationTypes.TYPE:
     case OperationTypes.INCREASE:
     case OperationTypes.DECREASE:
-      wrappedOperation = wrappedOperation
+      chainedOperation = chainedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set("inputs.1.value", operation.inputs[1].value);
       break;
     case OperationTypes.IF:
     case OperationTypes.WHILE:
-      wrappedOperation = wrappedOperation
+      chainedOperation = chainedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set(
           "inputs.1.operations",
@@ -57,7 +61,7 @@ export const convertToLargeOperation = (
       break;
     default:
   }
-  return wrappedOperation.value();
+  return chainedOperation.value();
 };
 
 export const convertToSmallOperation = (

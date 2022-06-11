@@ -1,5 +1,5 @@
-import { Draft } from "@reduxjs/toolkit";
-import { get, set, wrap } from "object-path-immutable";
+import produce, { Draft } from "immer";
+import { get, set, chain } from "lodash";
 import { InputTypes } from "../../../common/constants/input";
 import {
   VariablePickerModes,
@@ -10,6 +10,7 @@ import {
   LargeOperation,
   LargeTextInput
 } from "../../../common/types/largeOperation";
+import { ValidationRule } from "../../../common/types/validation";
 import { Variable } from "../../../common/types/variable";
 import {
   convertToLargeOperation,
@@ -21,7 +22,7 @@ import { INITIAL_SCRIPT_EDITOR_STATE } from "./constants";
 import {
   OperationsPathAndIndex,
   ScriptEditorState,
-  ValidatedData
+  ValidatedScriptEditorData
 } from "./types";
 
 export const getUpdatedInputValueWithVariable = (
@@ -39,20 +40,22 @@ export const getUpdatedInputValueWithVariable = (
   return "";
 };
 
-export const getUpdatedVariables = (
+export const updateDraftScriptEditorVariables = (
+  draftState: Draft<ScriptEditorState>,
   path: string,
   value: string,
-  mode: VariableSetterModes,
-  variables: Variable[]
-): Variable[] => {
-  const newVariables = variables;
-  const foundIndex = variables.findIndex((item) => item.path === path);
+  mode: VariableSetterModes
+) => {
+  const foundIndex = draftState.variables.findIndex(
+    (item) => item.path === path
+  );
+
   switch (mode) {
     case VariableSetterModes.NAME:
       if (foundIndex > -1) {
-        newVariables[foundIndex].name = value;
+        draftState.variables[foundIndex].name = value;
       } else {
-        newVariables.push({
+        draftState.variables.push({
           path,
           name: value,
           type: VariableTypes.NUMBER
@@ -61,32 +64,30 @@ export const getUpdatedVariables = (
       break;
     case VariableSetterModes.TYPE:
       if (foundIndex > -1) {
-        newVariables[foundIndex].type = value;
+        draftState.variables[foundIndex].type = value;
       }
       break;
     default:
   }
-  return newVariables;
 };
 
 export const updateDraftScriptEditorField = (
-  state: Draft<ScriptEditorState>,
+  draftState: Draft<ScriptEditorState>,
   path: string,
   value: string
 ): void => {
-  const field = get(state, path) as LargeTextInput;
+  const field = get(draftState, path) as LargeTextInput;
   field.error = validateValueWithRules(value, field.rules);
   field.value = value;
+
   if (field.variableSetter) {
-    const oldVariables = state.variables;
     const operationPath = path.split(".").slice(0, -2).join(".");
-    const newVariables = getUpdatedVariables(
+    updateDraftScriptEditorVariables(
+      draftState,
       operationPath,
       value,
-      field.variableSetter.mode,
-      oldVariables
+      field.variableSetter.mode
     );
-    state.variables = newVariables;
   }
 };
 
@@ -120,7 +121,8 @@ export const getScriptFromScriptEditorState = (
 export const getScriptEditorStateFromScript = (
   script: Script
 ): ScriptEditorState =>
-  wrap(INITIAL_SCRIPT_EDITOR_STATE)
+  chain(INITIAL_SCRIPT_EDITOR_STATE)
+    .cloneDeep()
     .set("id", script.id)
     .set("favorite", script.favorite)
     .set("information.name.value", script.name)
@@ -128,117 +130,79 @@ export const getScriptEditorStateFromScript = (
     .set("operations", script.operations.map(convertToLargeOperation))
     .value();
 
-const validateScriptEditorField = (
-  state: ScriptEditorState,
-  path: string
-): ValidatedData => {
-  let newState = state;
-  const errors: string[] = [];
-
+const validateDraftScriptEditorField = (
+  draftState: Draft<ScriptEditorState>,
+  path: string,
+  errors: string[]
+) => {
   const valuePath = `${path}.value`;
   const errorPath = `${path}.error`;
   const rulesPath = `${path}.rules`;
-  const value = get(state, valuePath);
-  const rules = get(state, rulesPath);
+
+  const value = get(draftState, valuePath) as string;
+  const rules = get(draftState, rulesPath) as ValidationRule[];
   const error = validateValueWithRules(value, rules);
 
   if (error) {
+    set(draftState, errorPath, error);
     errors.push(error);
-    newState = set(state, errorPath, error);
   }
-
-  return { errors, newState };
 };
 
-const validateScriptEditorOperations = (
-  state: ScriptEditorState,
-  path: string
-): ValidatedData => {
-  let newState = state;
-  const newErrors: string[] = [];
-
-  const operations = get(state, path) as LargeOperation[];
+const validateDraftScriptEditorOperations = (
+  draftState: Draft<ScriptEditorState>,
+  path: string,
+  errors: string[]
+) => {
+  const operations = get(draftState, path) as LargeOperation[];
 
   for (let i = 0; i < operations.length; i += 1) {
     const operation = operations[i];
-    const inputErrors: string[] = [];
     const operationPath = `${path}.${i}`;
+
+    const inputErrors: string[] = [];
 
     for (let j = 0; j < operation.inputs.length; j += 1) {
       const input = operation.inputs[j];
-
       switch (input.type) {
         case InputTypes.TEXT:
         case InputTypes.SELECT:
           {
             const inputPath = `${operationPath}.inputs.${j}`;
-            const validatedFieldData = validateScriptEditorField(
-              newState,
-              inputPath
-            );
-            if (validatedFieldData.errors.length > 0) {
-              inputErrors.push(...validatedFieldData.errors);
-              newState = validatedFieldData.newState;
-            }
+            validateDraftScriptEditorField(draftState, inputPath, inputErrors);
           }
           break;
         case InputTypes.OPERATION_BOX:
           {
             const operationsPath = `${operationPath}.inputs.${j}.operations`;
-            const validatedOperationsData = validateScriptEditorOperations(
-              newState,
-              operationsPath
+            validateDraftScriptEditorOperations(
+              draftState,
+              operationsPath,
+              errors
             );
-            if (validatedOperationsData.errors.length > 0) {
-              newErrors.push(...validatedOperationsData.errors);
-              newState = validatedOperationsData.newState;
-            }
           }
           break;
         default:
       }
     }
+
     if (inputErrors.length > 0) {
       const operationNumber = getOperationNumber(operationPath);
-      newErrors.push(`Please fix error in operation ${operationNumber}`);
+      errors.push(`Please fix error in operation ${operationNumber}`);
     }
   }
-
-  return { newState, errors: newErrors };
 };
 
 export const validateScriptEditorState = (
   state: ScriptEditorState
-): ValidatedData => {
-  let newState = state;
+): ValidatedScriptEditorData => {
   const errors: string[] = [];
 
-  const validatedNameData = validateScriptEditorField(
-    newState,
-    "information.name"
-  );
-  if (validatedNameData.errors.length > 0) {
-    errors.push(...validatedNameData.errors);
-    newState = validatedNameData.newState;
-  }
+  const validatedState = produce(state, (draftState) => {
+    validateDraftScriptEditorField(draftState, "information.name", errors);
+    validateDraftScriptEditorField(draftState, "information.name", errors);
+    validateDraftScriptEditorOperations(draftState, "operations", errors);
+  });
 
-  const validatedDescriptionData = validateScriptEditorField(
-    newState,
-    "information.description"
-  );
-  if (validatedDescriptionData.errors.length > 0) {
-    errors.push(...validatedDescriptionData.errors);
-    newState = validatedDescriptionData.newState;
-  }
-
-  const validatedOperationsData = validateScriptEditorOperations(
-    newState,
-    "operations"
-  );
-  if (validatedOperationsData.errors) {
-    errors.push(...validatedOperationsData.errors);
-    newState = validatedOperationsData.newState;
-  }
-
-  return { errors, newState };
+  return { errors, validatedState };
 };

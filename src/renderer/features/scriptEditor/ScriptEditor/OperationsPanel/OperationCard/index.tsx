@@ -9,7 +9,7 @@ import {
   IconButton,
   Stack
 } from "@mui/material";
-import { get } from "object-path-immutable";
+import { get } from "lodash";
 import React, { useState } from "react";
 import { LargeOperation } from "../../../../../../common/types/largeOperation";
 import {
@@ -31,8 +31,11 @@ type OperationCardProps = {
 
 function OperationCard({ path }: OperationCardProps) {
   const dispatch = useAppDispatch();
-  const operation = useAppSelector(
-    (state) => get(state.scriptEditor, path) as LargeOperation
+  const operation = useAppSelector<LargeOperation>(
+    (state) => get(state.scriptEditor, path),
+    (prevOperation, nextOperation) =>
+      prevOperation.inputs.length === nextOperation.inputs.length &&
+      isOperationValid(prevOperation) === isOperationValid(nextOperation)
   );
 
   const [expanded, setExpanded] = useState(false);

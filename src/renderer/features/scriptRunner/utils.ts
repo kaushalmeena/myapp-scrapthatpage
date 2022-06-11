@@ -1,3 +1,4 @@
+import { keys } from "lodash";
 import { evaluate } from "mathjs";
 import { OperationTypes } from "../../../common/constants/operation";
 import { VariableTypes } from "../../../common/constants/variable";
@@ -147,7 +148,7 @@ export const appendExtractResultInTableData = (
   const newTableData: TableData = [];
   const { name, data } = result;
 
-  const headers = tableData.length ? Object.keys(tableData[0]) : [];
+  const headers = keys(tableData[0]);
   headers.push(name);
 
   for (let i = 0; i < tableData.length; i += 1) {
@@ -262,11 +263,11 @@ export const getIconAndColorForStatus = (
 
 export const convertToCSV = (tableData: TableData): string => {
   let result = "";
-  const headers = Object.keys(tableData[0]);
+  const headers = keys(tableData[0]);
   result += `${headers.join(",")}\r\n`;
   for (let i = 0; i < tableData.length; i += 1) {
     let line = "";
-    Object.keys(tableData[i]).forEach((key) => {
+    keys(tableData[i]).forEach((key) => {
       if (line !== "") {
         line += ",";
       }
