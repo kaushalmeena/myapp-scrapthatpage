@@ -32,23 +32,23 @@ function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
   };
 
   const handleSubmitClick = (): void => {
-    const state = store.getState().scriptEditor;
-    const { errors, newState } = validateScriptEditorState(state);
+    const currentState = store.getState().scriptEditor;
+    const { errors, validatedState } = validateScriptEditorState(currentState);
     if (errors.length > 0) {
       const [message] = errors;
       batch(() => {
-        dispatch(updateState({ state: newState }));
+        dispatch(updateState({ state: validatedState }));
         dispatch(showNotification({ message, severity: "error" }));
       });
     } else {
-      const resultantScript = getScriptFromScriptEditorState(state);
-      onSubmit(resultantScript);
+      const finalScript = getScriptFromScriptEditorState(currentState);
+      onSubmit(finalScript);
     }
   };
 
   useLayoutEffect(() => {
-    const resultantState = getScriptEditorStateFromScript(script);
-    dispatch(updateState({ state: resultantState }));
+    const editorState = getScriptEditorStateFromScript(script);
+    dispatch(updateState({ state: editorState }));
   }, []);
 
   return (

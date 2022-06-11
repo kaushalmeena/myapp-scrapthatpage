@@ -1,5 +1,5 @@
 import { Box, Button, Stack } from "@mui/material";
-import { get } from "object-path-immutable";
+import { get } from "lodash";
 import React from "react";
 import { LargeOperation } from "../../../../../common/types/largeOperation";
 import EmptyText from "../../../../components/EmptyText";
@@ -13,8 +13,10 @@ type OperationalPaneProps = {
 
 function OperationsPanel({ path }: OperationalPaneProps) {
   const dispatch = useAppDispatch();
-  const operations = useAppSelector(
-    (state) => get(state.scriptEditor, path) as LargeOperation[]
+  const operations = useAppSelector<LargeOperation[]>(
+    (state) => get(state.scriptEditor, path),
+    (prevOperations, nextOperations) =>
+      prevOperations.length === nextOperations.length
   );
 
   const handleAddClick = () => dispatch(showOperationSelector({ path }));

@@ -89,7 +89,7 @@ export type OperationsPathAndIndex = {
   index: number;
 };
 
-export type ValidatedData = {
+export type ValidatedScriptEditorData = {
   errors: string[];
-  newState: ScriptEditorState;
+  validatedState: ScriptEditorState;
 };

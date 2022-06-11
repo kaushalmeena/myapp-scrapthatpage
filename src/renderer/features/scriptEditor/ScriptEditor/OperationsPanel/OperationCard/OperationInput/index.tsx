@@ -1,5 +1,5 @@
 import { MenuItem, TextField } from "@mui/material";
-import { get } from "object-path-immutable";
+import { get } from "lodash";
 import React from "react";
 import OperationsPanel from "../..";
 import { InputTypes } from "../../../../../../../common/constants/input";
