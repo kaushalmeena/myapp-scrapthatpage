@@ -10,7 +10,7 @@ import {
   SelectChangeEvent
 } from "@mui/material";
 import React from "react";
-import { THEMES, ThemeTypes } from "../../../constants/themes";
+import { THEMES } from "../../../constants/themes";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 import { selectSettings, updateTheme } from "../settingsSlice";
 
@@ -18,8 +18,8 @@ function AppSettings() {
   const dispatch = useAppDispatch();
   const settings = useAppSelector(selectSettings);
 
-  const handleThemeChange = (event: SelectChangeEvent<ThemeTypes>) =>
-    dispatch(updateTheme({ theme: event.target.value as ThemeTypes }));
+  const handleThemeChange = (event: SelectChangeEvent) =>
+    dispatch(updateTheme(event.target.value));
 
   return (
     <List>

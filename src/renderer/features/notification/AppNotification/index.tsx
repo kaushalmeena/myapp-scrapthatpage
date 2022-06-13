@@ -16,7 +16,13 @@ function AppNotification() {
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       onClose={handleSnackbarClose}
     >
-      <Alert variant="filled" severity={notification.severity}>
+      <Alert
+        variant="filled"
+        severity={notification.severity}
+        sx={{
+          whiteSpace: "pre-line"
+        }}
+      >
         {notification.message}
       </Alert>
     </Snackbar>

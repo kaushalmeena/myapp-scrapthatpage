@@ -19,7 +19,7 @@ function OperationsPanel({ path }: OperationalPaneProps) {
       prevOperations.length === nextOperations.length
   );
 
-  const handleAddClick = () => dispatch(showOperationSelector({ path }));
+  const handleAddClick = () => dispatch(showOperationSelector(path));
 
   return (
     <Box display="flex" flexDirection="column">

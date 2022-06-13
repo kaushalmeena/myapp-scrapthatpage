@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
-import React, { SyntheticEvent, useLayoutEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { batch } from "react-redux";
 import TabPanel from "../../../components/TabPanel";
 import { useAppDispatch } from "../../../hooks";
@@ -35,9 +35,9 @@ function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
     const currentState = store.getState().scriptEditor;
     const { errors, validatedState } = validateScriptEditorState(currentState);
     if (errors.length > 0) {
-      const [message] = errors;
+      const message = errors.slice(0, 5).join("\n");
       batch(() => {
-        dispatch(updateState({ state: validatedState }));
+        dispatch(updateState(validatedState));
         dispatch(showNotification({ message, severity: "error" }));
       });
     } else {
@@ -46,9 +46,9 @@ function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
     }
   };
 
-  useLayoutEffect(() => {
-    const editorState = getScriptEditorStateFromScript(script);
-    dispatch(updateState({ state: editorState }));
+  useEffect(() => {
+    const initialState = getScriptEditorStateFromScript(script);
+    dispatch(updateState(initialState));
   }, []);
 
   return (
