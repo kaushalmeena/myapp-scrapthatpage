@@ -5,19 +5,13 @@ import {
   LargeInput,
   LargeOperation
 } from "../../../common/types/largeOperation";
+import { Variable } from "../../../common/types/variable";
 import { StoreRootState } from "../../types/store";
 import { INITIAL_SCRIPT_EDITOR_STATE } from "./constants";
 import {
-  AppendOperationActionPayload,
-  DeleteOperationActionPayload,
-  MoveDownOperationActionPayload,
-  MoveUpOperationActionPayload,
-  ShowOperationSelectorActionPayload,
-  ShowVariableSelectorActionPayload,
+  ScriptEditorState,
   UpdateInformationActionPayload,
-  UpdateInputActionPayload,
-  UpdateInputWithVariableActionPayload,
-  UpdateStateActionPayload
+  UpdateInputActionPayload
 } from "./types";
 import {
   getOperationsPathAndIndex,
@@ -29,8 +23,9 @@ const scriptEditorSlice = createSlice({
   name: "scriptEditor",
   initialState: INITIAL_SCRIPT_EDITOR_STATE,
   reducers: {
-    updateState(_, action: PayloadAction<UpdateStateActionPayload>) {
-      return action.payload.state;
+    updateState(_, action: PayloadAction<ScriptEditorState>) {
+      const state = action.payload;
+      return state;
     },
     updateInformation(
       draftState,
@@ -40,20 +35,14 @@ const scriptEditorSlice = createSlice({
       const fieldPath = `information.${key}`;
       updateDraftScriptEditorField(draftState, fieldPath, value);
     },
-    appendOperation(
-      draftState,
-      action: PayloadAction<AppendOperationActionPayload>
-    ) {
-      const { operation } = action.payload;
+    appendOperation(draftState, action: PayloadAction<LargeOperation>) {
+      const operation = action.payload;
       const { activePath } = draftState.operationSelector;
       const operations = get(draftState, activePath) as LargeOperation[];
       operations.push(operation);
     },
-    deleteOperation(
-      draftState,
-      action: PayloadAction<DeleteOperationActionPayload>
-    ) {
-      const { path } = action.payload;
+    deleteOperation(draftState, action: PayloadAction<string>) {
+      const path = action.payload;
       const { operationsPath, index } = getOperationsPathAndIndex(path);
       const operations = get(draftState, operationsPath) as LargeOperation[];
       const [deletedOperation] = operations.splice(index, 1);
@@ -63,11 +52,8 @@ const scriptEditorSlice = createSlice({
         draftState.variables = newVariables;
       }
     },
-    moveUpOperation(
-      draftState,
-      action: PayloadAction<MoveUpOperationActionPayload>
-    ) {
-      const { path } = action.payload;
+    moveUpOperation(draftState, action: PayloadAction<string>) {
+      const path = action.payload;
       const { operationsPath, index } = getOperationsPathAndIndex(path);
       const operations = get(draftState, operationsPath) as LargeOperation[];
       if (index > 0) {
@@ -76,11 +62,8 @@ const scriptEditorSlice = createSlice({
         operations[index - 1] = tempOperation;
       }
     },
-    moveDownOperation(
-      draftState,
-      action: PayloadAction<MoveDownOperationActionPayload>
-    ) {
-      const { path } = action.payload;
+    moveDownOperation(draftState, action: PayloadAction<string>) {
+      const path = action.payload;
       const { operationsPath, index } = getOperationsPathAndIndex(path);
       const operations = get(draftState, operationsPath) as LargeOperation[];
       if (index < operations.length - 1) {
@@ -93,11 +76,8 @@ const scriptEditorSlice = createSlice({
       const { path, value } = action.payload;
       updateDraftScriptEditorField(draftState, path, value);
     },
-    updateInputWithVariable(
-      draftState,
-      action: PayloadAction<UpdateInputWithVariableActionPayload>
-    ) {
-      const { variable } = action.payload;
+    updateInputWithVariable(draftState, action: PayloadAction<Variable>) {
+      const variable = action.payload;
       const { activePath, updateMode } = draftState.variableSelector;
       const valuePath = `${activePath}.value`;
       const value = get(draftState, valuePath) as string;
@@ -108,22 +88,16 @@ const scriptEditorSlice = createSlice({
       );
       updateDraftScriptEditorField(draftState, activePath, newValue);
     },
-    showOperationSelector(
-      draftState,
-      action: PayloadAction<ShowOperationSelectorActionPayload>
-    ) {
-      const { path } = action.payload;
+    showOperationSelector(draftState, action: PayloadAction<string>) {
+      const path = action.payload;
       draftState.operationSelector.visible = true;
       draftState.operationSelector.activePath = path;
     },
     hideOperationSelector(draftState) {
       draftState.operationSelector.visible = false;
     },
-    showVariableSelector(
-      draftState,
-      action: PayloadAction<ShowVariableSelectorActionPayload>
-    ) {
-      const { path } = action.payload;
+    showVariableSelector(draftState, action: PayloadAction<string>) {
+      const path = action.payload;
       const field = get(draftState, path) as LargeInput;
       if ("variablePicker" in field && field.variablePicker) {
         const { variablePicker } = field;

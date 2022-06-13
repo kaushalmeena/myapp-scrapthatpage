@@ -24,7 +24,7 @@ function OperationInput({ path }: OperationInputProps) {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     dispatch(updateInput({ path, value: event.target.value }));
 
-  const handlePickerOpen = () => dispatch(showVariableSelector({ path }));
+  const handlePickerOpen = () => dispatch(showVariableSelector(path));
 
   switch (input.type) {
     case InputTypes.TEXT:

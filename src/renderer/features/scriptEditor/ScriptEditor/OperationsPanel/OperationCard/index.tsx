@@ -44,11 +44,11 @@ function OperationCard({ path }: OperationCardProps) {
     setExpanded((value) => !value);
   };
 
-  const handleMoveUpClick = () => dispatch(moveUpOperation({ path }));
+  const handleMoveUpClick = () => dispatch(moveUpOperation(path));
 
-  const handleMoveDownClick = () => dispatch(moveDownOperation({ path }));
+  const handleMoveDownClick = () => dispatch(moveDownOperation(path));
 
-  const handleDeleteClick = () => dispatch(deleteOperation({ path }));
+  const handleDeleteClick = () => dispatch(deleteOperation(path));
 
   const operationNumber = getOperationNumber(path);
   const operationSubheader = getOperationSubheader(

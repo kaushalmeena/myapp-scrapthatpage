@@ -27,16 +27,16 @@ function VariableSelectorDialog() {
 
   const handleModalClose = () => dispatch(hideVariableSelector());
 
-  const handleSelect = (item: Variable) =>
+  const handleSelect = (variable: Variable) =>
     batch(() => {
-      dispatch(updateInputWithVariable({ variable: item }));
+      dispatch(updateInputWithVariable(variable));
       dispatch(hideVariableSelector());
     });
 
   let filteredVariables = variables;
   if (selector.filterType !== VariableTypes.ANY) {
     filteredVariables = filteredVariables.filter(
-      (item) => item.type === selector.filterType
+      (variable) => variable.type === selector.filterType
     );
   }
 
@@ -51,14 +51,17 @@ function VariableSelectorDialog() {
       <Box overflow="scroll">
         {filteredVariables.length > 0 ? (
           <List disablePadding>
-            {filteredVariables.map((item) => (
+            {filteredVariables.map((variable) => (
               <ListItemButton
-                key={`list-item-${item.name}`}
+                key={`list-item-${variable.name}`}
                 onClick={() => {
-                  handleSelect(item);
+                  handleSelect(variable);
                 }}
               >
-                <ListItemText primary={item.name} secondary={item.type} />
+                <ListItemText
+                  primary={variable.name}
+                  secondary={variable.type}
+                />
               </ListItemButton>
             ))}
           </List>

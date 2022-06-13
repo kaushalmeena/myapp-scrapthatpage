@@ -200,7 +200,11 @@ export const validateScriptEditorState = (
 
   const validatedState = produce(state, (draftState) => {
     validateDraftScriptEditorField(draftState, "information.name", errors);
-    validateDraftScriptEditorField(draftState, "information.name", errors);
+    validateDraftScriptEditorField(
+      draftState,
+      "information.description",
+      errors
+    );
     validateDraftScriptEditorOperations(draftState, "operations", errors);
   });
 

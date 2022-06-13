@@ -41,46 +41,14 @@ export type ScriptEditorState = {
 };
 
 // ScriptEditor payload types
-export type UpdateStateActionPayload = {
-  state: ScriptEditorState;
-};
-
 export type UpdateInformationActionPayload = {
   key: string;
   value: string;
 };
 
-export type AppendOperationActionPayload = {
-  operation: LargeOperation;
-};
-
-export type DeleteOperationActionPayload = {
-  path: string;
-};
-
-export type MoveUpOperationActionPayload = {
-  path: string;
-};
-
-export type MoveDownOperationActionPayload = {
-  path: string;
-};
-
 export type UpdateInputActionPayload = {
   path: string;
   value: string;
-};
-
-export type UpdateInputWithVariableActionPayload = {
-  variable: Variable;
-};
-
-export type ShowOperationSelectorActionPayload = {
-  path: string;
-};
-
-export type ShowVariableSelectorActionPayload = {
-  path: string;
 };
 
 // ScriptEditor utils types

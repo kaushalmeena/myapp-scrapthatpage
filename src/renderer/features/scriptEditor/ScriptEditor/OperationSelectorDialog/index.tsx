@@ -24,9 +24,9 @@ function OperationSelectorDialog() {
 
   const handleModalClose = () => dispatch(hideOperationSelector());
 
-  const handleSelect = (item: LargeOperation) =>
+  const handleSelect = (operation: LargeOperation) =>
     batch(() => {
-      dispatch(appendOperation({ operation: item }));
+      dispatch(appendOperation(operation));
       dispatch(hideOperationSelector());
     });
 
@@ -40,14 +40,17 @@ function OperationSelectorDialog() {
       <DialogTitle>Select Operation</DialogTitle>
       <Box overflow="scroll">
         <List disablePadding>
-          {LARGE_OPERATIONS.map((item) => (
+          {LARGE_OPERATIONS.map((operation) => (
             <ListItemButton
-              key={`list-item-${item.type}`}
+              key={`list-item-${operation.type}`}
               onClick={() => {
-                handleSelect(item);
+                handleSelect(operation);
               }}
             >
-              <ListItemText primary={item.name} secondary={item.description} />
+              <ListItemText
+                primary={operation.name}
+                secondary={operation.description}
+              />
             </ListItemButton>
           ))}
         </List>
