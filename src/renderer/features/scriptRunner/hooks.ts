@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { OperationTypes } from "../../../common/constants/operation";
+import { ExecuteResult } from "../../../common/types/scraper";
 import { Script } from "../../types/script";
 import {
   RunnerExecution,
@@ -23,39 +24,56 @@ export const useScriptRunner = (script: Script): ScriptRunnerHook => {
   const execution = useRef<RunnerExecution>("stopped");
   const generator = useRef<RunnerGenerator>(null);
 
-  const handleRunnerStop = () => {
+  const stopExecution = () => {
     execution.current = "stopped";
     setStatus("STOPPED");
     setHeading("STOPPED");
     setMessage("Execution is stopped");
   };
 
-  const handleRunnerFinish = () => {
+  const finishExecution = () => {
     execution.current = "stopped";
     setStatus("FINISHED");
     setHeading("FINISHED");
     setMessage("Execution is finished");
   };
 
-  const handleRunnerError = (errorMessage: string) => {
+  const showRunnerError = (error: string) => {
     execution.current = "stopped";
     setStatus("ERROR");
     setHeading("ERROR");
-    setMessage(errorMessage);
+    setMessage(error);
   };
 
-  const handleNextOperation = () => {
+  const processResponse = (response: ExecuteResult) => {
+    if ("result" in response && response.result) {
+      switch (response.result.type) {
+        case OperationTypes.EXTRACT:
+          {
+            const newTableData = appendExtractResultInTableData(
+              response.result,
+              tableData
+            );
+            setTableData(newTableData);
+          }
+          break;
+        default:
+      }
+    }
+  };
+
+  const executeNextOperation = () => {
     if (execution.current !== "started") {
       return;
     }
 
     const operationData = generator.current?.next();
     if (!operationData) {
-      handleRunnerError("Didn't found any operation to execute");
+      showRunnerError("Didn't found any operation to execute");
       return;
     }
     if (operationData.done) {
-      handleRunnerFinish();
+      finishExecution();
       window.scraper.closeWindow();
       return;
     }
@@ -69,39 +87,26 @@ export const useScriptRunner = (script: Script): ScriptRunnerHook => {
 
     window.scraper
       .runOperation(operation)
-      .then((response) => {
-        if (response.status === "success") {
-          if ("result" in response && response.result) {
-            switch (response.result.type) {
-              case OperationTypes.EXTRACT:
-                {
-                  const newTableData = appendExtractResultInTableData(
-                    response.result,
-                    tableData
-                  );
-                  setTableData(newTableData);
-                }
-                break;
-              default:
-            }
-          }
-          handleNextOperation();
+      .then((res) => {
+        if (res.status === "success") {
+          processResponse(res);
+          executeNextOperation();
         } else {
-          handleRunnerError(response.message);
+          showRunnerError(res.message);
         }
       })
       .catch(() => {
-        handleRunnerError("Error occurred in executing operation");
+        showRunnerError("Error occurred in executing operation");
       });
   };
 
-  const handleRunnerStart = () => {
+  const startRunner = () => {
     execution.current = "started";
     generator.current = getOperationGenerator(script.operations);
     setStatus("STARTED");
     setHeading("STARTED");
     setMessage("Execution is running");
-    handleNextOperation();
+    executeNextOperation();
   };
 
   return {
@@ -109,7 +114,7 @@ export const useScriptRunner = (script: Script): ScriptRunnerHook => {
     heading,
     message,
     tableData,
-    start: handleRunnerStart,
-    stop: handleRunnerStop
+    start: startRunner,
+    stop: stopExecution
   };
 };

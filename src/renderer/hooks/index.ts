@@ -23,13 +23,11 @@ export const useDatabaseFetch = <T>({
 
   useEffect(() => {
     fetcher
-      .then((response) => {
-        if (response) {
-          setResult(response);
+      .then((res) => {
+        if (res) {
+          setResult(res);
           setStatus("loaded");
-          if (onSuccess) {
-            onSuccess(response);
-          }
+          onSuccess?.(res);
         } else {
           throw new Error("Record not found in database");
         }
@@ -37,9 +35,7 @@ export const useDatabaseFetch = <T>({
       .catch((err) => {
         setError("Error occurred while fetching.");
         setStatus("error");
-        if (onError) {
-          onError(err);
-        }
+        onError?.(err);
       });
   }, []);
 
