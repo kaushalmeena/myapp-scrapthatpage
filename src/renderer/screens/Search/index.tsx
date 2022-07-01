@@ -7,7 +7,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useMemo, useState } from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
@@ -26,13 +26,17 @@ function Search() {
     defaultValue: []
   });
 
+  const filteredScripts = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (query) {
+      return scripts.filter((item) => item.name.toLowerCase().includes(query));
+    }
+    return scripts;
+  }, [search]);
+
   const handleQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
-
-  const filteredScripts = scripts.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
-  );
 
   return (
     <>

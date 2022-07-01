@@ -284,10 +284,12 @@ export const saveFile = (
   type = "text/plain"
 ): void => {
   const blob = new Blob([data], { type });
-  const a = document.createElement("a");
-  a.download = `output.${extension}`;
-  a.href = window.URL.createObjectURL(blob);
-  a.click();
+  const href = window.URL.createObjectURL(blob);
+  const anchorEl = document.createElement("a");
+  anchorEl.download = `output.${extension}`;
+  anchorEl.href = href;
+  anchorEl.click();
+  window.URL.revokeObjectURL(href);
 };
 
 export const downloadAsCSV = (tableData: TableData): void => {
