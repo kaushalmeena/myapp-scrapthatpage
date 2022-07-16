@@ -7,9 +7,10 @@ import {
   TablePagination,
   TableRow
 } from "@mui/material";
+import { keys } from "lodash";
 import React from "react";
-import { TableData } from "../../types";
-import ResultTableToolbar from "./ResultTableToolbar";
+import { TableData } from "../types";
+import TableToolbar from "./TableToolbar";
 
 type ResultTableProps = {
   data: TableData;
@@ -30,7 +31,7 @@ function ResultTable({ data }: ResultTableProps) {
     setPage(0);
   };
 
-  const headers = data.length > 0 ? Object.keys(data[0]) : [];
+  const headers = keys(data[0]);
   const pageData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
   return (
@@ -43,7 +44,7 @@ function ResultTable({ data }: ResultTableProps) {
         backgroundColor: "background.paper"
       }}
     >
-      <ResultTableToolbar data={data} />
+      <TableToolbar data={data} />
       <Table size="small">
         <TableHead>
           <TableRow>

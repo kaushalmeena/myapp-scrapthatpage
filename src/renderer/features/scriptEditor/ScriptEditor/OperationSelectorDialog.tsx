@@ -9,14 +9,14 @@ import {
 } from "@mui/material";
 import React from "react";
 import { batch } from "react-redux";
-import { LARGE_OPERATIONS } from "../../../../../common/constants/largeOperations";
-import { LargeOperation } from "../../../../../common/types/largeOperation";
-import { useAppDispatch, useAppSelector } from "../../../../hooks";
+import { LARGE_OPERATIONS } from "../../../../common/constants/largeOperations";
+import { LargeOperation } from "../../../../common/types/largeOperation";
+import { useAppDispatch, useAppSelector } from "../../../hooks";
 import {
   appendOperation,
   hideOperationSelector,
   selectOperationSelector
-} from "../../scriptEditorSlice";
+} from "../scriptEditorSlice";
 
 function OperationSelectorDialog() {
   const dispatch = useAppDispatch();

@@ -1,6 +1,6 @@
 import { Box, Button, CircularProgress, Icon } from "@mui/material";
 import React from "react";
-import { ActionButtonColor } from "../../types";
+import { ActionButtonColor } from "../types";
 
 type ActionButtonProps = {
   spinning: boolean;
