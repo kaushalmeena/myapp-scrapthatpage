@@ -1,10 +1,10 @@
 import { Box, Button, Stack } from "@mui/material";
 import { get } from "lodash";
 import React from "react";
-import { LargeOperation } from "../../../../../common/types/largeOperation";
-import EmptyText from "../../../../components/EmptyText";
-import { useAppDispatch, useAppSelector } from "../../../../hooks";
-import { showOperationSelector } from "../../scriptEditorSlice";
+import { LargeOperation } from "../../../../common/types/largeOperation";
+import EmptyText from "../../../components/EmptyText";
+import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { showOperationSelector } from "../scriptEditorSlice";
 import OperationCard from "./OperationCard";
 
 type OperationalPaneProps = {

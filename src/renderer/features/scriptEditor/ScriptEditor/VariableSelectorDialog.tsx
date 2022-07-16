@@ -9,15 +9,15 @@ import {
 } from "@mui/material";
 import React from "react";
 import { batch } from "react-redux";
-import { VariableTypes } from "../../../../../common/constants/variable";
-import { Variable } from "../../../../../common/types/variable";
-import EmptyText from "../../../../components/EmptyText";
-import { useAppDispatch, useAppSelector } from "../../../../hooks";
+import { VariableTypes } from "../../../../common/constants/variable";
+import { Variable } from "../../../../common/types/variable";
+import EmptyText from "../../../components/EmptyText";
+import { useAppDispatch, useAppSelector } from "../../../hooks";
 import {
   hideVariableSelector,
   selectVariableSelectorAndVariables,
   updateInputWithVariable
-} from "../../scriptEditorSlice";
+} from "../scriptEditorSlice";
 
 function VariableSelectorDialog() {
   const dispatch = useAppDispatch();

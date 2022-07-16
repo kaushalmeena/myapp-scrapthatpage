@@ -1,15 +1,17 @@
-import { MenuItem, TextField } from "@mui/material";
+import {
+  Icon,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  TextField
+} from "@mui/material";
 import { get } from "lodash";
 import React from "react";
-import OperationsPanel from "../..";
-import { InputTypes } from "../../../../../../../common/constants/input";
-import { LargeInput } from "../../../../../../../common/types/largeOperation";
-import VariablePickerAdornment from "../../../../../../components/VariablePickerAdornment";
-import { useAppDispatch, useAppSelector } from "../../../../../../hooks";
-import {
-  showVariableSelector,
-  updateInput
-} from "../../../../scriptEditorSlice";
+import OperationsPanel from "./OperationsPanel";
+import { InputTypes } from "../../../../common/constants/input";
+import { LargeInput } from "../../../../common/types/largeOperation";
+import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { showVariableSelector, updateInput } from "../scriptEditorSlice";
 
 type OperationInputProps = {
   path: string;
@@ -40,11 +42,16 @@ function OperationInput({ path }: OperationInputProps) {
           onChange={handleInputChange}
           InputProps={{
             ...input.inputProps,
-            endAdornment: (
-              <VariablePickerAdornment
-                visible={Boolean(input.variablePicker)}
-                onClick={handlePickerOpen}
-              />
+            endAdornment: input.variablePicker && (
+              <InputAdornment position="end">
+                <IconButton
+                  title="Show variable picker"
+                  size="small"
+                  onClick={handlePickerOpen}
+                >
+                  <Icon fontSize="small">control_point_duplicate</Icon>
+                </IconButton>
+              </InputAdornment>
             )
           }}
         />

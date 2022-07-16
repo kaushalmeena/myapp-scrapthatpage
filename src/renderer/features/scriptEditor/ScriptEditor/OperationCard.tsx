@@ -11,18 +11,18 @@ import {
 } from "@mui/material";
 import { get } from "lodash";
 import React, { useState } from "react";
-import { LargeOperation } from "../../../../../../common/types/largeOperation";
+import { LargeOperation } from "../../../../common/types/largeOperation";
 import {
   getOperationSubheader,
   isOperationValid
-} from "../../../../../../common/utils/operation";
-import { useAppDispatch, useAppSelector } from "../../../../../hooks";
+} from "../../../../common/utils/operation";
+import { useAppDispatch, useAppSelector } from "../../../hooks";
 import {
   deleteOperation,
   moveDownOperation,
   moveUpOperation
-} from "../../../scriptEditorSlice";
-import { getOperationNumber } from "../../../utils";
+} from "../scriptEditorSlice";
+import { getOperationNumber } from "../utils";
 import OperationInput from "./OperationInput";
 
 type OperationCardProps = {

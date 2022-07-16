@@ -32,7 +32,7 @@ function Search() {
       return scripts.filter((item) => item.name.toLowerCase().includes(query));
     }
     return scripts;
-  }, [search]);
+  }, [search, scripts]);
 
   const handleQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);

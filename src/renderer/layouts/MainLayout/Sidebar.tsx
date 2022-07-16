@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router";
-import { DRAWER_WIDTH, PAGE_LINKS } from "../../../constants/layout";
+import { DRAWER_WIDTH, PAGE_LINKS } from "../../constants/layout";
 
 function Sidebar() {
   const navigate = useNavigate();

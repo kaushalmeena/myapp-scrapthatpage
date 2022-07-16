@@ -1,13 +1,13 @@
 import { Button, Icon, Menu, MenuItem, Stack } from "@mui/material";
 import React from "react";
-import { TableData } from "../../../types";
-import { downloadAsCSV, downloadAsJSON } from "../../../utils";
+import { TableData } from "../types";
+import { downloadAsCSV, downloadAsJSON } from "../utils";
 
-type ResultTableToolbarProps = {
+type TableToolbarProps = {
   data: TableData;
 };
 
-function ResultTableToolbar({ data }: ResultTableToolbarProps) {
+function TableToolbar({ data }: TableToolbarProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handledMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -48,4 +48,4 @@ function ResultTableToolbar({ data }: ResultTableToolbarProps) {
   );
 }
 
-export default ResultTableToolbar;
+export default TableToolbar;
