@@ -1,3 +1,8 @@
+# Dependency directories
 node_modules
-webpack.main.config.js
-webpack.renderer.config.js
+
+# Electron Forge
+forge.config.ts
+
+# Webpack
+webpack.*
