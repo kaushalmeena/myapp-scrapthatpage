@@ -1,24 +1,27 @@
 {
   "env": {
     "browser": true,
-    "es2021": true
+    "es6": true,
+    "node": true
   },
   "extends": [
-      "airbnb",
-      "airbnb-typescript",
-      "plugin:prettier/recommended"
+    "airbnb",
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/electron",
+    "plugin:import/typescript",
+    "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "settings": {},
-  "plugins": [],
   "rules": {
     "no-param-reassign": "off",
     "react/no-array-index-key": "off",
     "import/no-cycle": "off",
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "import/prefer-default-export": "off"
   }
 }

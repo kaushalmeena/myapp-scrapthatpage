@@ -8,16 +8,16 @@ const notificationSlice = createSlice({
   initialState: INITIAL_NOTIFICATION_STATE,
   reducers: {
     showNotification(
-      draftState,
+      state,
       action: PayloadAction<ShowNotificationActionPayload>
     ) {
       const { message, severity } = action.payload;
-      draftState.visible = true;
-      draftState.message = message;
-      draftState.severity = severity;
+      state.visible = true;
+      state.message = message;
+      state.severity = severity;
     },
-    hideNotification(draftState) {
-      draftState.visible = false;
+    hideNotification(state) {
+      state.visible = false;
     }
   }
 });

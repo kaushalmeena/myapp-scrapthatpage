@@ -24,10 +24,10 @@ $ git clone https://github.com/kaushalmeena/myapp-scrapthatpage.git
 $ cd myapp-scrapthatpage
 ```
 
-2. Install project dependencies using npm:
+2. Install project dependencies using yarn:
 
 ```bash
-$ npm install
+$ yarn install
 ```
 
 ### Running
@@ -35,20 +35,20 @@ $ npm install
 To run the project simply run:
 
 ```bash
-$ npm run start
+$ yarn run start
 ```
 
 ## Screenshots
 
-<img src="./screenshots/Dashboard.png" width="700"> 
-<img src="./screenshots/Create.png" width="700">
-<img src="./screenshots/Favorites.png" width="700">
-<img src="./screenshots/Search.png" width="700">
-<img src="./screenshots/Settings.png" width="700">
-<img src="./screenshots/UpdateInformation.png" width="700">
-<img src="./screenshots/UpdateOperations.png" width="700">
-<img src="./screenshots/Execute.png" width="700">
-<img src="./screenshots/Delete.png" width="700">
+<img src="./.screenshots/Dashboard.png" width="700"> 
+<img src="./.screenshots/Create.png" width="700">
+<img src="./.screenshots/Favorites.png" width="700">
+<img src="./.screenshots/Search.png" width="700">
+<img src="./.screenshots/Settings.png" width="700">
+<img src="./.screenshots/UpdateInformation.png" width="700">
+<img src="./.screenshots/UpdateOperations.png" width="700">
+<img src="./.screenshots/Execute.png" width="700">
+<img src="./.screenshots/Delete.png" width="700">
 
 ## Built With
 

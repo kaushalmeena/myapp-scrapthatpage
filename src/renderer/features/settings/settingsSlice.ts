@@ -6,9 +6,9 @@ const settingsSlice = createSlice({
   name: "settings",
   initialState: INITIAL_SETTINGS_STATE,
   reducers: {
-    updateTheme(draftState, action: PayloadAction<string>) {
+    updateTheme(state, action: PayloadAction<string>) {
       const theme = action.payload;
-      draftState.theme = theme;
+      state.theme = theme;
     }
   }
 });

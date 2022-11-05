@@ -41,21 +41,19 @@ export const getUpdatedInputValueWithVariable = (
 };
 
 export const updateDraftScriptEditorVariables = (
-  draftState: Draft<ScriptEditorState>,
+  state: Draft<ScriptEditorState>,
   path: string,
   value: string,
   mode: VariableSetterModes
 ) => {
-  const foundIndex = draftState.variables.findIndex(
-    (item) => item.path === path
-  );
+  const foundIndex = state.variables.findIndex((item) => item.path === path);
 
   switch (mode) {
     case VariableSetterModes.NAME:
       if (foundIndex > -1) {
-        draftState.variables[foundIndex].name = value;
+        state.variables[foundIndex].name = value;
       } else {
-        draftState.variables.push({
+        state.variables.push({
           path,
           name: value,
           type: VariableTypes.NUMBER
@@ -64,7 +62,7 @@ export const updateDraftScriptEditorVariables = (
       break;
     case VariableSetterModes.TYPE:
       if (foundIndex > -1) {
-        draftState.variables[foundIndex].type = value;
+        state.variables[foundIndex].type = value;
       }
       break;
     default:
@@ -72,18 +70,18 @@ export const updateDraftScriptEditorVariables = (
 };
 
 export const updateDraftScriptEditorField = (
-  draftState: Draft<ScriptEditorState>,
+  state: Draft<ScriptEditorState>,
   path: string,
   value: string
 ): void => {
-  const field = get(draftState, path) as LargeTextInput;
+  const field = get(state, path) as LargeTextInput;
   field.error = validateValueWithRules(value, field.rules);
   field.value = value;
 
   if (field.variableSetter) {
     const operationPath = path.split(".").slice(0, -2).join(".");
     updateDraftScriptEditorVariables(
-      draftState,
+      state,
       operationPath,
       value,
       field.variableSetter.mode
@@ -131,7 +129,7 @@ export const getScriptEditorStateFromScript = (
     .value();
 
 const validateDraftScriptEditorField = (
-  draftState: Draft<ScriptEditorState>,
+  state: Draft<ScriptEditorState>,
   path: string,
   errors: string[]
 ) => {
@@ -139,22 +137,22 @@ const validateDraftScriptEditorField = (
   const errorPath = `${path}.error`;
   const rulesPath = `${path}.rules`;
 
-  const value = get(draftState, valuePath) as string;
-  const rules = get(draftState, rulesPath) as ValidationRule[];
+  const value = get(state, valuePath) as string;
+  const rules = get(state, rulesPath) as ValidationRule[];
   const error = validateValueWithRules(value, rules);
 
   if (error) {
-    set(draftState, errorPath, error);
+    set(state, errorPath, error);
     errors.push(error);
   }
 };
 
 const validateDraftScriptEditorOperations = (
-  draftState: Draft<ScriptEditorState>,
+  state: Draft<ScriptEditorState>,
   path: string,
   errors: string[]
 ) => {
-  const operations = get(draftState, path) as LargeOperation[];
+  const operations = get(state, path) as LargeOperation[];
 
   for (let i = 0; i < operations.length; i += 1) {
     const operation = operations[i];
@@ -169,17 +167,13 @@ const validateDraftScriptEditorOperations = (
         case InputTypes.SELECT:
           {
             const inputPath = `${operationPath}.inputs.${j}`;
-            validateDraftScriptEditorField(draftState, inputPath, inputErrors);
+            validateDraftScriptEditorField(state, inputPath, inputErrors);
           }
           break;
         case InputTypes.OPERATION_BOX:
           {
             const operationsPath = `${operationPath}.inputs.${j}.operations`;
-            validateDraftScriptEditorOperations(
-              draftState,
-              operationsPath,
-              errors
-            );
+            validateDraftScriptEditorOperations(state, operationsPath, errors);
           }
           break;
         default:
@@ -198,14 +192,10 @@ export const validateScriptEditorState = (
 ): ValidatedScriptEditorData => {
   const errors: string[] = [];
 
-  const validatedState = produce(state, (draftState) => {
-    validateDraftScriptEditorField(draftState, "information.name", errors);
-    validateDraftScriptEditorField(
-      draftState,
-      "information.description",
-      errors
-    );
-    validateDraftScriptEditorOperations(draftState, "operations", errors);
+  const validatedState = produce(state, (draft) => {
+    validateDraftScriptEditorField(draft, "information.name", errors);
+    validateDraftScriptEditorField(draft, "information.description", errors);
+    validateDraftScriptEditorOperations(draft, "operations", errors);
   });
 
   return { errors, validatedState };
