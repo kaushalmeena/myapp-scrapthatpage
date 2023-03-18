@@ -1,6 +1,6 @@
 import Dexie, { PromiseExtended, Table } from "dexie";
 import { Script } from "../types/script";
-import { topYoutubeVideosScript } from "./dummyData";
+import { topYoutubeVideosScript } from "./dummyScripts";
 
 class ScriptDatabase extends Dexie {
   public scripts: Table<Script, number>;
