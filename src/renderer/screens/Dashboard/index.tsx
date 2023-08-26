@@ -7,7 +7,6 @@ import {
   Stack,
   Typography
 } from "@mui/material";
-import React from "react";
 import { useNavigate } from "react-router";
 import PageName from "../../components/PageName";
 import { PAGE_LINKS } from "../../constants/layout";

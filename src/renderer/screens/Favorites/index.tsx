@@ -1,10 +1,9 @@
 import { Box, CircularProgress, Stack, Typography } from "@mui/material";
-import React from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
 import db from "../../database";
-import { useDatabaseFetch } from "../../hooks";
+import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
 
 function Favorites() {
@@ -12,7 +11,7 @@ function Favorites() {
     result: scripts,
     status,
     error
-  } = useDatabaseFetch<Script[]>({
+  } = useDexieFetch<Script[]>({
     fetcher: db.fetchAllFavoriteScripts(),
     defaultValue: []
   });

@@ -1,7 +1,7 @@
 export const enum ScraperChannels {
-  OPEN_WINDOW = "OPEN_WINDOW",
-  CLOSE_WINDOW = "CLOSE_WINDOW",
-  LOAD_URL = "LOAD_URL",
-  RUN_JAVASCRIPT = "RUN_JAVASCRIPT",
-  RUN_OPERATION = "RUN_OPERATION"
+  OPEN_WINDOW = "open_window",
+  CLOSE_WINDOW = "close_window",
+  LOAD_URL = "load_url",
+  RUN_JAVASCRIPT = "run_javascript",
+  RUN_OPERATION = "run_operation"
 }

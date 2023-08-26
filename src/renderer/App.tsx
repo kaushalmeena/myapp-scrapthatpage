@@ -1,6 +1,5 @@
-import React from "react";
 import { Provider } from "react-redux";
-import { MemoryRouter, Route, Routes, Navigate } from "react-router-dom";
+import { MemoryRouter, Navigate, Route, Routes } from "react-router-dom";
 import { PersistGate } from "redux-persist/es/integration/react";
 import MainLayout from "./layouts/MainLayout";
 import Create from "./screens/Create";

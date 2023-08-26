@@ -1,9 +1,9 @@
 import { Box, Button, Stack } from "@mui/material";
 import { get } from "lodash";
-import React from "react";
 import { LargeOperation } from "../../../../common/types/largeOperation";
 import EmptyText from "../../../components/EmptyText";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import { showOperationSelector } from "../scriptEditorSlice";
 import OperationCard from "./OperationCard";
 

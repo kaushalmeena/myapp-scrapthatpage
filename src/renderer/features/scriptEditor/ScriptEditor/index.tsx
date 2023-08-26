@@ -1,8 +1,8 @@
 import { Box, Button, Stack, Tab, Tabs } from "@mui/material";
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { batch } from "react-redux";
 import TabPanel from "../../../components/TabPanel";
-import { useAppDispatch } from "../../../hooks";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import store from "../../../store";
 import { Script } from "../../../types/script";
 import { showNotification } from "../../notification/notificationSlice";

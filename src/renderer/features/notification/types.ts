@@ -12,8 +12,3 @@ export type ShowNotificationActionPayload = {
   message: string;
   severity: AlertColor;
 };
-
-// Notification hook types
-export type NotificationHook = {
-  show: (message: string, severity: AlertColor) => void;
-};

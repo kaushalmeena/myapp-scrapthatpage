@@ -5,20 +5,18 @@ import {
   Stack,
   Typography
 } from "@mui/material";
-import React from "react";
 import { useNavigate, useParams } from "react-router";
 import PageName from "../../components/PageName";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
-import { useNotification } from "../../features/notification/hooks";
-import { useDatabaseFetch } from "../../hooks";
-import { Params } from "../../types/router";
+import { useNotification } from "../../features/notification/useNotification";
+import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
 
 function Delete() {
   const notification = useNotification();
   const navigate = useNavigate();
-  const params = useParams<Params>();
+  const params = useParams();
 
   const scriptId = Number(params.scriptId);
 
@@ -26,7 +24,7 @@ function Delete() {
     result: script,
     status,
     error
-  } = useDatabaseFetch<Script>({
+  } = useDexieFetch<Script>({
     fetcher: db.fetchScriptById(scriptId),
     defaultValue: INITIAL_SCRIPT
   });
