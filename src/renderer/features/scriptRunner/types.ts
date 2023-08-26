@@ -6,8 +6,9 @@ export type ActionButtonColor =
   | "info"
   | "warning";
 
-export type TableRow = {
-  [key: string]: string;
-};
+export type ActionButtonData = { icon: string; color: ActionButtonColor };
 
-export type TableData = TableRow[];
+export type TableData = {
+  headers: string[];
+  rows: string[][];
+};

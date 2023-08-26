@@ -10,9 +10,15 @@ import {
 import { useNavigate } from "react-router";
 import PageName from "../../components/PageName";
 import { PAGE_LINKS } from "../../constants/layout";
+import { useEffect, useState } from "react";
 
 function Dashboard() {
   const navigate = useNavigate();
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    window.scraper.getVersion().then((version) => setVersion(`v${version}`));
+  }, []);
 
   return (
     <>
@@ -36,9 +42,7 @@ function Dashboard() {
           <Icon sx={{ color: "primary.main", fontSize: 84 }}>find_in_page</Icon>
           <Stack>
             <Typography variant="h5">ScrapThatPage!</Typography>
-            <Typography variant="subtitle1">
-              v{window.scraper.version}
-            </Typography>
+            <Typography variant="subtitle1">{version}</Typography>
           </Stack>
         </Box>
       </Box>

@@ -7,15 +7,15 @@ import {
   TablePagination,
   TableRow
 } from "@mui/material";
-import React, { useState } from "react";
+import { ChangeEvent, useState } from "react";
+import { TableData } from "../types";
 import TableToolbar from "./TableToolbar";
 
 type ResultTableProps = {
-  headers: string[];
-  rows: Record<string, string>[];
+  data: TableData;
 };
 
-function ResultTable({ headers, rows }: ResultTableProps) {
+function ResultTable({ data }: ResultTableProps) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -23,14 +23,15 @@ function ResultTable({ headers, rows }: ResultTableProps) {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
 
-  const pageData = rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+  const pageRows = data.rows.slice(
+    page * rowsPerPage,
+    (page + 1) * rowsPerPage
+  );
 
   return (
     <TableContainer
@@ -42,21 +43,21 @@ function ResultTable({ headers, rows }: ResultTableProps) {
         backgroundColor: "background.paper"
       }}
     >
-      <TableToolbar headers={headers} rows={rows} />
+      <TableToolbar data={data} />
       <Table size="small">
         <TableHead>
           <TableRow>
-            {headers.map((key) => (
+            {data.headers.map((key) => (
               <TableCell key={`table-head-${key}`}>{key}</TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {pageData.map((row, index) => (
-            <TableRow key={`table-row-${index}`}>
-              {headers.map((key) => (
-                <TableCell key={`table-cell-${index}-${key}`}>
-                  {row[key]}
+          {pageRows.map((row, rowIdx) => (
+            <TableRow key={`row-${rowIdx}`}>
+              {row.map((item, colIdx) => (
+                <TableCell key={`cell-${rowIdx}-${colIdx}`}>
+                  {item || ""}
                 </TableCell>
               ))}
             </TableRow>
@@ -64,9 +65,8 @@ function ResultTable({ headers, rows }: ResultTableProps) {
         </TableBody>
       </Table>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={rows.length}
+        count={data.rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

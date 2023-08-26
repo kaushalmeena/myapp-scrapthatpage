@@ -1,4 +1,4 @@
-import { keys } from "lodash";
+import { produce } from "immer";
 import { evaluate } from "mathjs";
 import { useRef, useState } from "react";
 import { OperationTypes } from "../../../common/constants/operation";
@@ -11,7 +11,8 @@ import {
 import { SmallOperation } from "../../../common/types/smallOperation";
 import { VariableMapping } from "../../../common/types/variable";
 import { Script } from "../../types/script";
-import { TableData, TableRow } from "./types";
+import { INTIAL_TABLE_DATA } from "./constants";
+import { TableData } from "./types";
 
 export type RunnerStatus =
   | "ready"
@@ -142,58 +143,46 @@ function* getOperationGenerator(
   }
 }
 
-const replaceTextWithVariables = (
-  text: string,
-  variables: VariableMapping
-): string =>
+const replaceTextWithVariables = (text: string, variables: VariableMapping) =>
   text.replace(/{{[\w-]+}}/g, (match: string) => {
     const name = match.slice(2, -2);
     const value = variables[name];
     return String(value);
   });
 
-const appendExtractResultInRunnerResults = (
+const processExtractResult = (
   result: ExtractOperationResult,
-  runnerResults: TableData
-): TableData => {
-  const newRunnerResults: TableData = [];
-  const { name, data } = result;
+  tableData: TableData
+): TableData =>
+  produce(tableData, (draft) => {
+    const headerIdx = draft.headers.findIndex(
+      (header) => header === result.name
+    );
 
-  const headers = keys(runnerResults[0]);
-  headers.push(name);
+    let rowIdx = 0;
+    let colIdx = 0;
 
-  for (let i = 0; i < runnerResults.length; i += 1) {
-    const row: TableRow = {};
-    for (let j = 0; j < headers.length; j += 1) {
-      const header = headers[j];
-      if (runnerResults[i][header]) {
-        row[header] = runnerResults[i][header];
-      } else if (header === name) {
-        row[header] = data.shift() || "";
-      }
+    if (headerIdx === -1) {
+      draft.headers.push(result.name);
+      colIdx = draft.headers.length - 1;
+    } else {
+      colIdx = headerIdx;
     }
-    newRunnerResults.push(row);
-  }
 
-  if (data.length > 0) {
-    for (let i = 0; i < data.length; i += 1) {
-      const row: TableRow = {};
-      for (let j = 0; j < headers.length; j += 1) {
-        const header = headers[j];
-        if (header === name) {
-          row[header] = data.shift() || "";
-        } else {
-          row[header] = "";
-        }
-      }
-      newRunnerResults.push(row);
+    while (rowIdx < draft.rows.length && rowIdx < result.data.length) {
+      draft.rows[rowIdx].splice(colIdx, 1, result.data[rowIdx]);
+      rowIdx += 1;
     }
-  }
 
-  return newRunnerResults;
-};
+    while (rowIdx < result.data.length) {
+      const row = [];
+      row[colIdx] = result.data[rowIdx];
+      draft.rows.push(row);
+      rowIdx += 1;
+    }
+  });
 
-const getHeadingAndMessageForOperation = (operation: ScraperOperation) => {
+const getHeaderInfo = (operation: ScraperOperation) => {
   switch (operation.type) {
     case OperationTypes.OPEN:
       return {
@@ -227,7 +216,7 @@ type HookReturnType = {
   status: RunnerStatus;
   heading: string;
   message: string;
-  results: TableData;
+  tableData: TableData;
   start: () => void;
   stop: () => void;
 };
@@ -236,7 +225,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   const [status, setStatus] = useState<RunnerStatus>("ready");
   const [heading, setHeading] = useState("READY");
   const [message, setMessage] = useState("Ready to start");
-  const [results, setResults] = useState<TableData>([]);
+  const [tableData, setTableData] = useState<TableData>(INTIAL_TABLE_DATA);
 
   const execution = useRef<RunnerExecution>("stopped");
   const generator = useRef<RunnerGenerator>(null);
@@ -267,11 +256,11 @@ export const useScriptRunner = (script: Script): HookReturnType => {
       switch (response.result.type) {
         case OperationTypes.EXTRACT:
           {
-            const newResults = appendExtractResultInRunnerResults(
+            const newTableData = processExtractResult(
               response.result,
-              results
+              tableData
             );
-            setResults(newResults);
+            setTableData(newTableData);
           }
           break;
         default:
@@ -279,7 +268,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     }
   };
 
-  const runNextOperation = () => {
+  const executeNextOperation = () => {
     if (execution.current !== "started") {
       return;
     }
@@ -298,7 +287,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
       return;
     }
 
-    const { heading, message } = getHeadingAndMessageForOperation(operation);
+    const { heading, message } = getHeaderInfo(operation);
     setHeading(heading);
     setMessage(message);
 
@@ -307,7 +296,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
       .then((res) => {
         if (res.status === "success") {
           processResponse(res);
-          runNextOperation();
+          executeNextOperation();
         } else {
           showRunnerError(res.message);
         }
@@ -323,14 +312,14 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     setStatus("started");
     setHeading("STARTED");
     setMessage("Execution is running");
-    runNextOperation();
+    executeNextOperation();
   };
 
   return {
     status,
     heading,
     message,
-    results,
+    tableData,
     start: startRunner,
     stop: stopRunner
   };

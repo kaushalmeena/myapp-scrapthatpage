@@ -16,8 +16,9 @@ import {
   getOperationSubheader,
   isOperationValid
 } from "../../../../common/utils/operation";
-import { useAppDispatch } from "../../..//hooks/useAppDispatch";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
+import { StoreRootState } from "../../../types/store";
 import {
   deleteOperation,
   moveDownOperation,
@@ -30,13 +31,21 @@ type OperationCardProps = {
   path: string;
 };
 
+const selectOperation = (state: StoreRootState, path: string) =>
+  get(state.scriptEditor, path);
+
+const operationEqualityFn = (
+  prevOperation: LargeOperation,
+  nextOperation: LargeOperation
+) =>
+  prevOperation.inputs.length === nextOperation.inputs.length &&
+  isOperationValid(prevOperation) === isOperationValid(nextOperation);
+
 function OperationCard({ path }: OperationCardProps) {
   const dispatch = useAppDispatch();
   const operation = useAppSelector<LargeOperation>(
-    (state) => get(state.scriptEditor, path),
-    (prevOperation, nextOperation) =>
-      prevOperation.inputs.length === nextOperation.inputs.length &&
-      isOperationValid(prevOperation) === isOperationValid(nextOperation)
+    (state) => selectOperation(state, path),
+    operationEqualityFn
   );
 
   const [expanded, setExpanded] = useState(false);

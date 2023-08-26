@@ -4,12 +4,10 @@ import { TableData } from "../types";
 import { downloadAsCSV, downloadAsJSON } from "../utils";
 
 type TableToolbarProps = {
-  headers: string[];
-  rows: TableData;
+  data: TableData;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function TableToolbar({ headers, rows }: TableToolbarProps) {
+function TableToolbar({ data }: TableToolbarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handledMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -20,11 +18,11 @@ function TableToolbar({ headers, rows }: TableToolbarProps) {
   };
 
   const handleDownloadAsCSV = () => {
-    downloadAsCSV(rows);
+    downloadAsCSV(data);
   };
 
   const handleDownloadAsJSON = () => {
-    downloadAsJSON(rows);
+    downloadAsJSON(data);
   };
 
   return (

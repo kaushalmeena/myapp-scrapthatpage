@@ -14,9 +14,9 @@ import {
   UpdateInputActionPayload
 } from "./types";
 import {
-  getOperationsPathAndIndex,
+  getOperationsPathInfo,
   getUpdatedInputValueWithVariable,
-  updateDraftScriptEditorField
+  updateScriptEditorField
 } from "./utils";
 
 const scriptEditorSlice = createSlice({
@@ -33,7 +33,7 @@ const scriptEditorSlice = createSlice({
     ) {
       const { key, value } = action.payload;
       const fieldPath = `information.${key}`;
-      updateDraftScriptEditorField(state, fieldPath, value);
+      updateScriptEditorField(state, fieldPath, value);
     },
     appendOperation(state, action: PayloadAction<LargeOperation>) {
       const operation = action.payload;
@@ -43,7 +43,7 @@ const scriptEditorSlice = createSlice({
     },
     deleteOperation(state, action: PayloadAction<string>) {
       const path = action.payload;
-      const { operationsPath, index } = getOperationsPathAndIndex(path);
+      const { operationsPath, index } = getOperationsPathInfo(path);
       const operations = get(state, operationsPath) as LargeOperation[];
       const [deletedOperation] = operations.splice(index, 1);
       if (deletedOperation?.type === OperationTypes.SET) {
@@ -54,7 +54,7 @@ const scriptEditorSlice = createSlice({
     },
     moveUpOperation(state, action: PayloadAction<string>) {
       const path = action.payload;
-      const { operationsPath, index } = getOperationsPathAndIndex(path);
+      const { operationsPath, index } = getOperationsPathInfo(path);
       const operations = get(state, operationsPath) as LargeOperation[];
       if (index > 0) {
         const temp = operations[index];
@@ -64,7 +64,7 @@ const scriptEditorSlice = createSlice({
     },
     moveDownOperation(state, action: PayloadAction<string>) {
       const path = action.payload;
-      const { operationsPath, index } = getOperationsPathAndIndex(path);
+      const { operationsPath, index } = getOperationsPathInfo(path);
       const operations = get(state, operationsPath) as LargeOperation[];
       if (index < operations.length - 1) {
         const temp = operations[index];
@@ -74,7 +74,7 @@ const scriptEditorSlice = createSlice({
     },
     updateInput(state, action: PayloadAction<UpdateInputActionPayload>) {
       const { path, value } = action.payload;
-      updateDraftScriptEditorField(state, path, value);
+      updateScriptEditorField(state, path, value);
     },
     updateInputWithVariable(state, action: PayloadAction<Variable>) {
       const variable = action.payload;
@@ -86,7 +86,7 @@ const scriptEditorSlice = createSlice({
         updateMode,
         variable
       );
-      updateDraftScriptEditorField(state, activePath, newValue);
+      updateScriptEditorField(state, activePath, newValue);
     },
     showOperationSelector(state, action: PayloadAction<string>) {
       const path = action.payload;
@@ -136,7 +136,7 @@ export const selectInformation = (state: StoreRootState) =>
   state.scriptEditor.information;
 export const selectOperationSelector = (state: StoreRootState) =>
   state.scriptEditor.operationSelector;
-export const selectVariableSelectorAndVariables = (state: StoreRootState) => ({
-  selector: state.scriptEditor.variableSelector,
-  variables: state.scriptEditor.variables
-});
+export const selectVariableSelector = (state: StoreRootState) =>
+  state.scriptEditor.variableSelector;
+export const selectVariables = (state: StoreRootState) =>
+  state.scriptEditor.variables;

@@ -15,15 +15,15 @@ import { useAppDispatch } from "../../../hooks/useAppDispatch";
 import { useAppSelector } from "../../../hooks/useAppSelector";
 import {
   hideVariableSelector,
-  selectVariableSelectorAndVariables,
+  selectVariableSelector,
+  selectVariables,
   updateInputWithVariable
 } from "../scriptEditorSlice";
 
 function VariableSelectorDialog() {
   const dispatch = useAppDispatch();
-  const { selector, variables } = useAppSelector(
-    selectVariableSelectorAndVariables
-  );
+  const selector = useAppSelector(selectVariableSelector);
+  const variables = useAppSelector(selectVariables);
 
   const handleModalClose = () => dispatch(hideVariableSelector());
 

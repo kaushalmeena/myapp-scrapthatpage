@@ -1,5 +1,4 @@
 import { Box, Card, CardHeader } from "@mui/material";
-import { keys } from "lodash";
 import { Script } from "../../../types/script";
 import { useScriptRunner } from "../useScriptRunner";
 import {
@@ -14,7 +13,7 @@ type ScriptRunnerProps = {
 };
 
 function ScriptRunner({ script }: ScriptRunnerProps) {
-  const { status, heading, message, results, start, stop } =
+  const { status, heading, message, tableData, start, stop } =
     useScriptRunner(script);
 
   const backgroundColor = getBackgroundColorForStatus(status);
@@ -36,9 +35,9 @@ function ScriptRunner({ script }: ScriptRunnerProps) {
           subheader={message}
         />
       </Card>
-      {results.length > 0 && (
+      {tableData.rows.length > 0 && (
         <Box marginTop={3}>
-          <ResultTable headers={keys(results[0])} rows={results} />
+          <ResultTable data={tableData} />
         </Box>
       )}
     </>

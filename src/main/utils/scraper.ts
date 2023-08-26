@@ -6,9 +6,9 @@ import {
 } from "../../common/types/scraper";
 import Scraper from "../lib/Scraper";
 
-const executeOperation = async (
-  scraper: Scraper,
-  operation: ScraperOperation
+const processOperation = async (
+  operation: ScraperOperation,
+  scraper: Scraper
 ): Promise<ScraperResult> => {
   let result = null;
 
@@ -49,12 +49,12 @@ const executeOperation = async (
   return result;
 };
 
-export const handleExecuteOperation = async (
-  scraper: Scraper,
-  operation: ScraperOperation
+export const executeOperation = async (
+  operation: ScraperOperation,
+  scraper: Scraper
 ): Promise<ExecuteResult> => {
   try {
-    const result = await executeOperation(scraper, operation);
+    const result = await processOperation(operation, scraper);
     return {
       status: "success",
       result

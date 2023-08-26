@@ -27,11 +27,11 @@ function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
 
   const [activeTab, setActiveTab] = useState(0);
 
-  const handleTabChange = (_: SyntheticEvent, value: number): void => {
+  const handleTabChange = (_: SyntheticEvent, value: number) => {
     setActiveTab(value);
   };
 
-  const handleSubmitClick = (): void => {
+  const handleSubmitClick = () => {
     const currentState = store.getState().scriptEditor;
     const { errors, validatedState } = validateScriptEditorState(currentState);
     if (errors.length > 0) {
