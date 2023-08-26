@@ -5,8 +5,7 @@
     "node": true
   },
   "extends": [
-    "airbnb",
-    "airbnb-typescript",
+    "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
@@ -14,14 +13,5 @@
     "plugin:import/typescript",
     "plugin:prettier/recommended"
   ],
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": "./tsconfig.json"
-  },
-  "rules": {
-    "no-param-reassign": "off",
-    "react/no-array-index-key": "off",
-    "import/no-cycle": "off",
-    "import/prefer-default-export": "off"
-  }
+  "parser": "@typescript-eslint/parser"
 }

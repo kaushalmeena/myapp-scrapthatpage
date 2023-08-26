@@ -1,3 +1,5 @@
+import { InputTypes } from "@/common/constants/input";
+import { LargeInput } from "@/common/types/largeOperation";
 import {
   Icon,
   IconButton,
@@ -7,11 +9,9 @@ import {
 } from "@mui/material";
 import { get } from "lodash";
 import React from "react";
-import OperationsPanel from "./OperationsPanel";
-import { InputTypes } from "../../../../common/constants/input";
-import { LargeInput } from "../../../../common/types/largeOperation";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { useAppDispatch, useAppSelector } from "@/renderer/hooks";
 import { showVariableSelector, updateInput } from "../scriptEditorSlice";
+import OperationsPanel from "./OperationsPanel";
 
 type OperationInputProps = {
   path: string;
