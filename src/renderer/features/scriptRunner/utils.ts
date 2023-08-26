@@ -1,5 +1,4 @@
-import { keys } from "lodash";
-import { ActionButtonColor, TableData } from "./types";
+import { ActionButtonData, TableData } from "./types";
 import { RunnerStatus } from "./useScriptRunner";
 
 export const getBackgroundColorForStatus = (status: RunnerStatus) => {
@@ -14,7 +13,7 @@ export const getBackgroundColorForStatus = (status: RunnerStatus) => {
 
 export const getActionButtonDataForStatus = (
   status: RunnerStatus
-): { icon: string; color: ActionButtonColor } => {
+): ActionButtonData => {
   switch (status) {
     case "ready":
       return {
@@ -49,28 +48,29 @@ export const getActionButtonDataForStatus = (
   }
 };
 
-export const convertToCSV = (tableData: TableData): string => {
-  let result = "";
-  const headers = keys(tableData[0]);
-  result += `${headers.join(",")}\r\n`;
-  for (let i = 0; i < tableData.length; i += 1) {
-    let line = "";
-    keys(tableData[i]).forEach((key) => {
-      if (line !== "") {
-        line += ",";
-      }
-      line += tableData[i][key];
-    });
+const convertToCSV = (data: TableData) => {
+  let result = `${data.headers.join(",")}\r\n`;
+  for (let i = 0; i < data.rows.length; i += 1) {
+    const line = data.rows[i].map((item) => JSON.stringify(item)).join(",");
     result += `${line}\r\n`;
   }
   return result;
 };
 
-export const saveFile = (
-  data: string,
-  extension = "txt",
-  type = "text/plain"
-): void => {
+const convertToJSON = (data: TableData) => {
+  const jsonArray = [];
+  for (let i = 0; i < data.rows.length; i += 1) {
+    const row: Record<string, string> = {};
+    for (let j = 0; j < data.headers.length; j += 1) {
+      row[data.headers[j]] = data.rows[i][j] || "";
+    }
+    jsonArray.push(row);
+  }
+  const result = JSON.stringify(jsonArray, null, 2);
+  return result;
+};
+
+const saveFile = (data: string, extension = "txt", type = "text/plain") => {
   const blob = new Blob([data], { type });
   const href = window.URL.createObjectURL(blob);
   const anchorEl = document.createElement("a");
@@ -80,12 +80,12 @@ export const saveFile = (
   window.URL.revokeObjectURL(href);
 };
 
-export const downloadAsCSV = (tableData: TableData): void => {
-  const csvString = convertToCSV(tableData);
+export const downloadAsCSV = (data: TableData) => {
+  const csvString = convertToCSV(data);
   saveFile(csvString, "csv", "text/csv");
 };
 
-export const downloadAsJSON = (tableData: TableData): void => {
-  const jsonString = JSON.stringify(tableData, null, 2);
+export const downloadAsJSON = (data: TableData) => {
+  const jsonString = convertToJSON(data);
   saveFile(jsonString, "json", "application/json");
 };

@@ -10,7 +10,7 @@ import { ValidationRule } from "../types/validation";
 export const getOperationSubheader = (
   format: string,
   inputs: LargeInput[] | SmallInput[]
-): string =>
+) =>
   format.replace(/{[\w-]+}/g, (match: string) => {
     const index = Number.parseInt(match.slice(1, -1), 10);
     const input = inputs[index];
@@ -161,13 +161,13 @@ export const convertToSmallOperation = (
   }
 };
 
-export const isOperationValid = (operation: LargeOperation): boolean =>
+export const isOperationValid = (operation: LargeOperation) =>
   operation.inputs.some((input) => "error" in input && !input.error);
 
 export const validateValueWithRules = (
   value: string,
   rules: ValidationRule[]
-): string => {
+) => {
   for (let i = 0; i < rules.length; i += 1) {
     const validate = VALIDATION_FUNCTION[rules[i].type];
     if (validate && !validate(value)) {

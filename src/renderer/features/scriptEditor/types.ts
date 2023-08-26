@@ -7,15 +7,15 @@ import { ValidationRule } from "../../../common/types/validation";
 import { Variable } from "../../../common/types/variable";
 
 // ScriptEditor state types
-export type InformationField = {
+export type EditorInputField = {
   value: string;
   error: string;
   rules: ValidationRule[];
 };
 
-export type Information = {
-  name: InformationField;
-  description: InformationField;
+export type InformationSection = {
+  name: EditorInputField;
+  description: EditorInputField;
 };
 
 export type OperationSelector = {
@@ -33,7 +33,7 @@ export type VariableSelector = {
 export type ScriptEditorState = {
   id?: number;
   favorite: number;
-  information: Information;
+  information: InformationSection;
   operations: LargeOperation[];
   variables: Variable[];
   variableSelector: VariableSelector;
@@ -49,15 +49,4 @@ export type UpdateInformationActionPayload = {
 export type UpdateInputActionPayload = {
   path: string;
   value: string;
-};
-
-// ScriptEditor utils types
-export type OperationsPathAndIndex = {
-  operationsPath: string;
-  index: number;
-};
-
-export type ValidatedScriptEditorData = {
-  errors: string[];
-  validatedState: ScriptEditorState;
 };

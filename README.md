@@ -40,15 +40,15 @@ $ yarn run start
 
 ## Screenshots
 
-<img src="./.screenshots/Dashboard.png" width="700"> 
-<img src="./.screenshots/Create.png" width="700">
-<img src="./.screenshots/Favorites.png" width="700">
-<img src="./.screenshots/Search.png" width="700">
-<img src="./.screenshots/Settings.png" width="700">
-<img src="./.screenshots/UpdateInformation.png" width="700">
-<img src="./.screenshots/UpdateOperations.png" width="700">
-<img src="./.screenshots/Execute.png" width="700">
-<img src="./.screenshots/Delete.png" width="700">
+<img src="./screenshots/Dashboard.png" width="700"> 
+<img src="./screenshots/Create.png" width="700">
+<img src="./screenshots/Favorites.png" width="700">
+<img src="./screenshots/Search.png" width="700">
+<img src="./screenshots/Settings.png" width="700">
+<img src="./screenshots/UpdateInformation.png" width="700">
+<img src="./screenshots/UpdateOperations.png" width="700">
+<img src="./screenshots/Execute.png" width="700">
+<img src="./screenshots/Delete.png" width="700">
 
 ## Built With
 
