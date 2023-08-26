@@ -1,4 +1,4 @@
-import produce, { Draft } from "immer";
+import { produce, Draft } from "immer";
 import { get, set, chain } from "lodash";
 import { InputTypes } from "../../../common/constants/input";
 import {
