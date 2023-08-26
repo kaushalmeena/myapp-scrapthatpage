@@ -1,9 +1,8 @@
-import React from "react";
 import { useNavigate } from "react-router";
 import PageName from "../../components/PageName";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
-import { useNotification } from "../../features/notification/hooks";
+import { useNotification } from "../../features/notification/useNotification";
 import ScriptEditor from "../../features/scriptEditor/ScriptEditor";
 import { Script } from "../../types/script";
 

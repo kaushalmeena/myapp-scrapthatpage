@@ -1,8 +1,8 @@
 import { ValidationFunction } from "../types/validation";
 
 export const enum ValidationTypes {
-  REQUIRED = "REQUIRED",
-  URL = "URL"
+  REQUIRED = "required",
+  URL = "url"
 }
 
 export const URL_RE =

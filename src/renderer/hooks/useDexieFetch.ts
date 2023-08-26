@@ -1,22 +1,27 @@
-import { useEffect, useState } from "react";
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
-import {
-  DatabaseFetchHook,
-  DatabaseFetchParams,
-  FetchStatus
-} from "../types/database";
-import { StoreRootDispatch, StoreRootState } from "../types/store";
+import { PromiseExtended } from "dexie";
+import { useState, useEffect } from "react";
 
-export const useAppDispatch = () => useDispatch<StoreRootDispatch>();
+type FetchStatus = "loading" | "loaded" | "error";
 
-export const useAppSelector: TypedUseSelectorHook<StoreRootState> = useSelector;
+type HookParams<T> = {
+  fetcher: PromiseExtended<T | undefined>;
+  defaultValue: T;
+  onSuccess?: (result: T) => void;
+  onError?: (error: Error) => void;
+};
 
-export const useDatabaseFetch = <T>({
+type HookReturnType<T> = {
+  status: FetchStatus;
+  error: string;
+  result: T;
+};
+
+export const useDexieFetch = <T>({
   fetcher,
   defaultValue,
   onSuccess,
   onError
-}: DatabaseFetchParams<T>): DatabaseFetchHook<T> => {
+}: HookParams<T>): HookReturnType<T> => {
   const [status, setStatus] = useState<FetchStatus>("loading");
   const [result, setResult] = useState<T>(defaultValue);
   const [error, setError] = useState("");

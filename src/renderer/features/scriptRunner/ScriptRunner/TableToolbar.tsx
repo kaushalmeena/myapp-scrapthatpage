@@ -1,14 +1,16 @@
 import { Button, Icon, Menu, MenuItem, Stack } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { TableData } from "../types";
 import { downloadAsCSV, downloadAsJSON } from "../utils";
 
 type TableToolbarProps = {
-  data: TableData;
+  headers: string[];
+  rows: TableData;
 };
 
-function TableToolbar({ data }: TableToolbarProps) {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function TableToolbar({ headers, rows }: TableToolbarProps) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handledMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -18,11 +20,11 @@ function TableToolbar({ data }: TableToolbarProps) {
   };
 
   const handleDownloadAsCSV = () => {
-    downloadAsCSV(data);
+    downloadAsCSV(rows);
   };
 
   const handleDownloadAsJSON = () => {
-    downloadAsJSON(data);
+    downloadAsJSON(rows);
   };
 
   return (

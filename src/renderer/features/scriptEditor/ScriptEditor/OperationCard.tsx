@@ -10,13 +10,14 @@ import {
   Stack
 } from "@mui/material";
 import { get } from "lodash";
-import React, { useState } from "react";
+import { useState } from "react";
 import { LargeOperation } from "../../../../common/types/largeOperation";
 import {
   getOperationSubheader,
   isOperationValid
 } from "../../../../common/utils/operation";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { useAppDispatch } from "../../..//hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import {
   deleteOperation,
   moveDownOperation,
@@ -112,7 +113,7 @@ function OperationCard({ path }: OperationCardProps) {
                 item
                 key={`${path}.inputs.${index}`}
                 xs={12}
-                md={"width" in input && input.width}
+                md={"width" in input ? input.width : undefined}
               >
                 <OperationInput path={`${path}.inputs.${index}`} />
               </Grid>

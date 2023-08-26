@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import React from "react";
 import PageName from "../../components/PageName";
 import AppSettings from "../../features/settings/AppSettings";
 

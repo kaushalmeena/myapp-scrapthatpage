@@ -7,12 +7,12 @@ import {
   ListItemButton,
   ListItemText
 } from "@mui/material";
-import React from "react";
 import { batch } from "react-redux";
 import { VariableTypes } from "../../../../common/constants/variable";
 import { Variable } from "../../../../common/types/variable";
 import EmptyText from "../../../components/EmptyText";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import {
   hideVariableSelector,
   selectVariableSelectorAndVariables,

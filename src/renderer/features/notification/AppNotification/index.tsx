@@ -1,6 +1,6 @@
 import { Alert, Snackbar } from "@mui/material";
-import React from "react";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import { hideNotification, selectNotification } from "../notificationSlice";
 
 function AppNotification() {

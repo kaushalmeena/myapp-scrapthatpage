@@ -4,8 +4,11 @@
     "es6": true,
     "node": true
   },
+  "parser": "@typescript-eslint/parser",
   "extends": [
     "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
@@ -13,5 +16,9 @@
     "plugin:import/typescript",
     "plugin:prettier/recommended"
   ],
-  "parser": "@typescript-eslint/parser"
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
 }

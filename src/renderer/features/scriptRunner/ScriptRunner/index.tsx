@@ -1,10 +1,10 @@
 import { Box, Card, CardHeader } from "@mui/material";
-import React from "react";
+import { keys } from "lodash";
 import { Script } from "../../../types/script";
-import { useScriptRunner } from "../hooks";
+import { useScriptRunner } from "../useScriptRunner";
 import {
-  getBackgroundColorForStatus,
-  getIconAndColorForStatus
+  getActionButtonDataForStatus,
+  getBackgroundColorForStatus
 } from "../utils";
 import ActionButton from "./ActionButton";
 import ResultTable from "./ResultTable";
@@ -14,11 +14,11 @@ type ScriptRunnerProps = {
 };
 
 function ScriptRunner({ script }: ScriptRunnerProps) {
-  const { status, heading, message, tableData, start, stop } =
+  const { status, heading, message, results, start, stop } =
     useScriptRunner(script);
 
   const backgroundColor = getBackgroundColorForStatus(status);
-  const { icon, color } = getIconAndColorForStatus(status);
+  const { icon, color } = getActionButtonDataForStatus(status);
 
   return (
     <>
@@ -29,16 +29,16 @@ function ScriptRunner({ script }: ScriptRunnerProps) {
               spinning={icon === "stop"}
               icon={icon}
               color={color}
-              onClick={status === "STARTED" ? stop : start}
+              onClick={status === "started" ? stop : start}
             />
           }
           title={heading}
           subheader={message}
         />
       </Card>
-      {tableData.length > 0 && (
+      {results.length > 0 && (
         <Box marginTop={3}>
-          <ResultTable data={tableData} />
+          <ResultTable headers={keys(results[0])} rows={results} />
         </Box>
       )}
     </>

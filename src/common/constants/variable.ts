@@ -5,11 +5,11 @@ export const enum VariableTypes {
 }
 
 export const enum VariablePickerModes {
-  SET,
-  APPEND
+  SET = "set",
+  APPEND = "append"
 }
 
 export const enum VariableSetterModes {
-  TYPE,
-  NAME
+  TYPE = "type",
+  NAME = "name"
 }

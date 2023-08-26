@@ -1,5 +1,5 @@
-import { produce, Draft } from "immer";
-import { get, set, chain } from "lodash";
+import { Draft, produce } from "immer";
+import { chain, get, set } from "lodash";
 import { InputTypes } from "../../../common/constants/input";
 import {
   VariablePickerModes,

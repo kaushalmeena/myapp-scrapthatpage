@@ -1,5 +1,5 @@
 export const enum InputTypes {
-  TEXT,
-  SELECT,
-  OPERATION_BOX
+  TEXT = "text",
+  SELECT = "select",
+  OPERATION_BOX = "operation-box"
 }

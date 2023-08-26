@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { get } from "lodash";
 import { OperationTypes } from "../../../common/constants/operation";
 import {
@@ -57,9 +57,9 @@ const scriptEditorSlice = createSlice({
       const { operationsPath, index } = getOperationsPathAndIndex(path);
       const operations = get(state, operationsPath) as LargeOperation[];
       if (index > 0) {
-        const tempOperation = operations[index];
+        const temp = operations[index];
         operations[index] = operations[index - 1];
-        operations[index - 1] = tempOperation;
+        operations[index - 1] = temp;
       }
     },
     moveDownOperation(state, action: PayloadAction<string>) {
@@ -67,9 +67,9 @@ const scriptEditorSlice = createSlice({
       const { operationsPath, index } = getOperationsPathAndIndex(path);
       const operations = get(state, operationsPath) as LargeOperation[];
       if (index < operations.length - 1) {
-        const tempOperation = operations[index];
+        const temp = operations[index];
         operations[index] = operations[index + 1];
-        operations[index + 1] = tempOperation;
+        operations[index + 1] = temp;
       }
     },
     updateInput(state, action: PayloadAction<UpdateInputActionPayload>) {
@@ -100,11 +100,10 @@ const scriptEditorSlice = createSlice({
       const path = action.payload;
       const field = get(state, path) as LargeInput;
       if ("variablePicker" in field && field.variablePicker) {
-        const { variablePicker } = field;
         state.variableSelector.visible = true;
         state.variableSelector.activePath = path;
-        state.variableSelector.filterType = variablePicker.type;
-        state.variableSelector.updateMode = variablePicker.mode;
+        state.variableSelector.filterType = field.variablePicker.type;
+        state.variableSelector.updateMode = field.variablePicker.mode;
       }
     },
     hideVariableSelector(state) {

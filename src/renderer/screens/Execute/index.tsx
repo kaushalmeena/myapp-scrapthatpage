@@ -7,20 +7,19 @@ import {
   Stack,
   Typography
 } from "@mui/material";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
-import { useNotification } from "../../features/notification/hooks";
+import { useNotification } from "../../features/notification/useNotification";
 import ScriptRunner from "../../features/scriptRunner/ScriptRunner";
-import { useDatabaseFetch } from "../../hooks";
-import { Params } from "../../types/router";
+import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
 
 function Execute() {
   const notification = useNotification();
   const navigate = useNavigate();
-  const params = useParams<Params>();
+  const params = useParams();
 
   const [favorite, setFavorite] = useState(0);
 
@@ -30,10 +29,10 @@ function Execute() {
     result: script,
     status,
     error
-  } = useDatabaseFetch<Script>({
+  } = useDexieFetch<Script>({
     fetcher: db.fetchScriptById(scriptId),
     defaultValue: INITIAL_SCRIPT,
-    onSuccess: (result) => setFavorite(result.favorite)
+    onSuccess: (data) => setFavorite(data.favorite)
   });
 
   const handleDeleteClick = () => {

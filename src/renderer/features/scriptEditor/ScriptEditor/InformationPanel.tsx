@@ -1,6 +1,7 @@
 import { Box, TextField } from "@mui/material";
-import React, { ChangeEvent } from "react";
-import { useAppDispatch, useAppSelector } from "@/renderer/hooks";
+import { ChangeEvent } from "react";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import { selectInformation, updateInformation } from "../scriptEditorSlice";
 
 function InformationPanel() {

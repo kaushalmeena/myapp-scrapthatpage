@@ -7,18 +7,17 @@ import {
   TablePagination,
   TableRow
 } from "@mui/material";
-import { keys } from "lodash";
-import React from "react";
-import { TableData } from "../types";
+import React, { useState } from "react";
 import TableToolbar from "./TableToolbar";
 
 type ResultTableProps = {
-  data: TableData;
+  headers: string[];
+  rows: Record<string, string>[];
 };
 
-function ResultTable({ data }: ResultTableProps) {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+function ResultTable({ headers, rows }: ResultTableProps) {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
@@ -31,8 +30,7 @@ function ResultTable({ data }: ResultTableProps) {
     setPage(0);
   };
 
-  const headers = keys(data[0]);
-  const pageData = data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+  const pageData = rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
   return (
     <TableContainer
@@ -44,7 +42,7 @@ function ResultTable({ data }: ResultTableProps) {
         backgroundColor: "background.paper"
       }}
     >
-      <TableToolbar data={data} />
+      <TableToolbar headers={headers} rows={rows} />
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -68,7 +66,7 @@ function ResultTable({ data }: ResultTableProps) {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={data.length}
+        count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

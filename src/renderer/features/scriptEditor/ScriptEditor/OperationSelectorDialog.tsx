@@ -7,11 +7,11 @@ import {
   ListItemButton,
   ListItemText
 } from "@mui/material";
-import React from "react";
 import { batch } from "react-redux";
 import { LARGE_OPERATIONS } from "../../../../common/constants/largeOperations";
 import { LargeOperation } from "../../../../common/types/largeOperation";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import {
   appendOperation,
   hideOperationSelector,

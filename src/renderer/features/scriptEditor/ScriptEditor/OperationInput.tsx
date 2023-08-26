@@ -1,5 +1,3 @@
-import { InputTypes } from "@/common/constants/input";
-import { LargeInput } from "@/common/types/largeOperation";
 import {
   Icon,
   IconButton,
@@ -9,7 +7,10 @@ import {
 } from "@mui/material";
 import { get } from "lodash";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "@/renderer/hooks";
+import { InputTypes } from "../../../../common/constants/input";
+import { LargeInput } from "../../../../common/types/largeOperation";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import { showVariableSelector, updateInput } from "../scriptEditorSlice";
 import OperationsPanel from "./OperationsPanel";
 

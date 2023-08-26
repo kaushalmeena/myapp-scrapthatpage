@@ -9,9 +9,9 @@ import {
   Select,
   SelectChangeEvent
 } from "@mui/material";
-import React from "react";
 import { THEMES } from "../../../constants/themes";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { useAppDispatch } from "../../../hooks/useAppDispatch";
+import { useAppSelector } from "../../../hooks/useAppSelector";
 import { selectSettings, updateTheme } from "../settingsSlice";
 
 function AppSettings() {

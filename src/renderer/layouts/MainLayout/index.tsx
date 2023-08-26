@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import { THEMES } from "../../constants/themes";
 import AppNotification from "../../features/notification/AppNotification";
 import { selectTheme } from "../../features/settings/settingsSlice";
-import { useAppSelector } from "../../hooks";
+import { useAppSelector } from "../../hooks/useAppSelector";
 import Sidebar from "./Sidebar";
 
 type MainLayoutProps = {

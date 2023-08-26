@@ -7,12 +7,12 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import React, { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
 import db from "../../database";
-import { useDatabaseFetch } from "../../hooks";
+import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
 
 function Search() {
@@ -21,7 +21,7 @@ function Search() {
     result: scripts,
     status,
     error
-  } = useDatabaseFetch<Script[]>({
+  } = useDexieFetch<Script[]>({
     fetcher: db.fetchAllScripts(),
     defaultValue: []
   });
