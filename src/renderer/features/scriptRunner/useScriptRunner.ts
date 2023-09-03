@@ -11,7 +11,7 @@ import {
 import { SmallOperation } from "../../../common/types/smallOperation";
 import { VariableMapping } from "../../../common/types/variable";
 import { Script } from "../../types/script";
-import { INTIAL_TABLE_DATA } from "./constants";
+import { INITIAL_TABLE_DATA } from "./constants";
 import { TableData } from "./types";
 
 export type RunnerStatus =
@@ -225,7 +225,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   const [status, setStatus] = useState<RunnerStatus>("ready");
   const [heading, setHeading] = useState("READY");
   const [message, setMessage] = useState("Ready to start");
-  const [tableData, setTableData] = useState<TableData>(INTIAL_TABLE_DATA);
+  const [tableData, setTableData] = useState<TableData>(INITIAL_TABLE_DATA);
 
   const execution = useRef<RunnerExecution>("stopped");
   const generator = useRef<RunnerGenerator>(null);

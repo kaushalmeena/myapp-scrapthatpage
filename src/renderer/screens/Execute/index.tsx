@@ -43,7 +43,7 @@ function Execute() {
     navigate(`/update/${scriptId}`);
   };
 
-  const handleFavouriteToggle = () => {
+  const handleFavoriteToggle = () => {
     const newFavoriteValue = 1 - favorite;
     db.updateScriptFavoriteField(scriptId, newFavoriteValue)
       .then(() => {
@@ -81,7 +81,7 @@ function Execute() {
         <Typography fontSize={28} fontWeight="400">
           Execute
         </Typography>
-        <IconButton color="primary" onClick={handleFavouriteToggle}>
+        <IconButton color="primary" onClick={handleFavoriteToggle}>
           <Icon>{favorite === 1 ? "favorite" : "favorite_border"}</Icon>
         </IconButton>
       </Box>

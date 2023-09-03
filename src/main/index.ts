@@ -30,7 +30,7 @@ const createWindow = () => {
     );
   }
 
-  // Initialize scaper instance
+  // Initialize scraper instance
   const scraper = new Scraper(mainWindow);
 
   // Connect scraper ipcMain handles
