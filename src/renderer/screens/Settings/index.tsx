@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import PageName from "../../components/PageName";
-import AppSettings from "../../features/settings/AppSettings";
+import AppSettings from "./AppSettings";
 
 function Settings() {
   return (

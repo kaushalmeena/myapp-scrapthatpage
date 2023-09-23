@@ -3,9 +3,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import { ReactNode } from "react";
 import { THEMES } from "../../constants/themes";
-import AppNotification from "../../features/notification/AppNotification";
-import { selectTheme } from "../../features/settings/settingsSlice";
 import { useAppSelector } from "../../hooks/useAppSelector";
+import { selectTheme } from "../../redux/slices/settingsSlice";
+import AppNotification from "./AppNotification";
 import Sidebar from "./Sidebar";
 
 type MainLayoutProps = {

@@ -11,8 +11,8 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
-import { useNotification } from "../../features/notification/useNotification";
-import ScriptRunner from "../../features/scriptRunner/ScriptRunner";
+import { useNotification } from "../../hooks/useNotification";
+import ScriptRunner from "../../components/ScriptRunner";
 import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
 

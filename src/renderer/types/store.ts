@@ -1,4 +1,4 @@
-import store from "../store";
+import store from "../redux/store";
 
 export type StoreRootState = ReturnType<typeof store.getState>;
 

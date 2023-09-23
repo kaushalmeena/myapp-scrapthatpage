@@ -10,7 +10,7 @@ import Favorites from "./screens/Favorites";
 import Search from "./screens/Search";
 import Settings from "./screens/Settings";
 import Update from "./screens/Update";
-import store, { persistor } from "./store";
+import store, { persistor } from "./redux/store";
 
 function App() {
   return (

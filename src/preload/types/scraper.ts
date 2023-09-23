@@ -1,4 +1,4 @@
-import { ExecuteResult, ScraperOperation } from "../../common/types/scraper";
+import { ScraperOperation, ExecuteResponse } from "../../common/types/scraper";
 
 export type ScraperAPI = {
   openWindow: () => void;
@@ -6,5 +6,5 @@ export type ScraperAPI = {
   getVersion: () => Promise<string>;
   loadURL: (url: string) => Promise<void>;
   runJavascript: (code: string) => Promise<unknown>;
-  runOperation: (operation: ScraperOperation) => Promise<ExecuteResult>;
+  runOperation: (operation: ScraperOperation) => Promise<ExecuteResponse>;
 };

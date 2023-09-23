@@ -1,10 +1,11 @@
-import { ValidationTypes } from "../constants/validation";
+export type ValidationType = "required" | "url";
 
 export type ValidationRule = {
-  type: ValidationTypes;
+  type: ValidationType;
   message: string;
 };
 
-export type ValidationFunction = {
-  [key: string]: (value: string) => boolean;
-};
+export type ValidationFunction = Record<
+  ValidationType,
+  (value: string) => boolean
+>;

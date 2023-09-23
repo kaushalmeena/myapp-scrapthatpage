@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router";
 import PageName from "../../components/PageName";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
-import { useNotification } from "../../features/notification/useNotification";
-import ScriptEditor from "../../features/scriptEditor/ScriptEditor";
+import { useNotification } from "../../hooks/useNotification";
+import ScriptEditor from "../../components/ScriptEditor";
 import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
 

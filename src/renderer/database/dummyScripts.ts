@@ -1,5 +1,3 @@
-import { InputTypes } from "../../common/constants/input";
-import { OperationTypes } from "../../common/constants/operation";
 import { Script } from "../types/script";
 
 export const topYoutubeVideosScript: Script = {
@@ -8,15 +6,15 @@ export const topYoutubeVideosScript: Script = {
   description: "Fetches list of top videos from YouTube",
   operations: [
     {
-      type: OperationTypes.OPEN,
-      inputs: [{ type: InputTypes.TEXT, value: "https://www.youtube.com/" }]
+      type: "open",
+      inputs: [{ type: "text", value: "https://www.youtube.com/" }]
     },
     {
-      type: OperationTypes.EXTRACT,
+      type: "extract",
       inputs: [
-        { type: InputTypes.TEXT, value: "Title" },
-        { type: InputTypes.TEXT, value: "yt-formatted-string#video-title" },
-        { type: InputTypes.SELECT, value: "textContent" }
+        { type: "text", value: "Title" },
+        { type: "text", value: "yt-formatted-string#video-title" },
+        { type: "select", value: "textContent" }
       ]
     }
   ]
