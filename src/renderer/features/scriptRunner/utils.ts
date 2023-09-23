@@ -40,11 +40,6 @@ export const getActionButtonDataForStatus = (
         icon: "refresh",
         color: "error"
       };
-    default:
-      return {
-        icon: "play_arrow",
-        color: "primary"
-      };
   }
 };
 

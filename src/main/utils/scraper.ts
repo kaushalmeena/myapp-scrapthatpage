@@ -43,7 +43,6 @@ const processOperation = async (
           document.querySelector("${operation.selector}").value = "${operation.text}";
         `);
       break;
-    default:
   }
 
   return result;

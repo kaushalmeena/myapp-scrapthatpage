@@ -31,7 +31,6 @@ export const getUpdatedInputValueWithVariable = (
       return variable.name;
     case VariablePickerModes.APPEND:
       return `${value}{{${variable.name}}}`;
-    default:
   }
   return "";
 };
@@ -61,7 +60,6 @@ export const updateScriptEditorVariables = (
         state.variables[foundIdx].type = value;
       }
       break;
-    default:
   }
 };
 
@@ -169,7 +167,6 @@ const validateScriptEditorOperations = (
             validateScriptEditorOperations(state, operationsPath, errors);
           }
           break;
-        default:
       }
     }
 
