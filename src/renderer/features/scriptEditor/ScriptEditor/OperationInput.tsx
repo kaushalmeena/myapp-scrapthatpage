@@ -79,7 +79,6 @@ function OperationInput({ path }: OperationInputProps) {
       );
     case InputTypes.OPERATION_BOX:
       return <OperationsPanel path={`${path}.operations`} />;
-    default:
   }
 
   return null;

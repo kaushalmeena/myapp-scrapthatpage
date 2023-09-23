@@ -59,7 +59,6 @@ export const convertToLargeOperation = (
           operation.inputs[1].operations.map(convertToLargeOperation)
         );
       break;
-    default:
   }
   return chainedOperation.value();
 };
@@ -145,16 +144,6 @@ export const convertToSmallOperation = (
             operations: operation.inputs[1].operations.map(
               convertToSmallOperation
             )
-          }
-        ]
-      };
-    default:
-      return {
-        type: OperationTypes.OPEN,
-        inputs: [
-          {
-            type: InputTypes.TEXT,
-            value: ""
           }
         ]
       };

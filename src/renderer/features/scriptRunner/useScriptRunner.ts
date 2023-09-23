@@ -90,7 +90,6 @@ function* getOperationGenerator(
             case VariableTypes.NUMBER:
               variables[name] = Number(value);
               break;
-            default:
           }
         }
         break;
@@ -138,7 +137,6 @@ function* getOperationGenerator(
           }
         }
         break;
-      default:
     }
   }
 }
@@ -204,11 +202,6 @@ const getHeaderInfo = (operation: ScraperOperation) => {
         heading: "TYPE",
         message: `[${operation.selector}] ${operation.text}`
       };
-    default:
-      return {
-        heading: "UNKNOWN",
-        message: ""
-      };
   }
 };
 
@@ -263,7 +256,6 @@ export const useScriptRunner = (script: Script): HookReturnType => {
             setTableData(newTableData);
           }
           break;
-        default:
       }
     }
   };
