@@ -1,63 +1,60 @@
-import { InputTypes } from "../constants/input";
-import { OperationTypes } from "../constants/operation";
-
 export type SmallTextInput = {
-  type: InputTypes.TEXT;
+  type: "text";
   value: string;
 };
 
 export type SmallSelectInput = {
-  type: InputTypes.SELECT;
+  type: "select";
   value: string;
 };
 
 export type SmallOperationBoxInput = {
-  type: InputTypes.OPERATION_BOX;
+  type: "operation_box";
   operations: SmallOperation[];
 };
 
 type SmallOpenOperation = {
-  type: OperationTypes.OPEN;
+  type: "open";
   inputs: [SmallTextInput];
 };
 
 type SmallExtractOperation = {
-  type: OperationTypes.EXTRACT;
+  type: "extract";
   inputs: [SmallTextInput, SmallTextInput, SmallSelectInput];
 };
 
 type SmallClickOperation = {
-  type: OperationTypes.CLICK;
+  type: "click";
   inputs: [SmallTextInput];
 };
 
 type SmallTypeOperation = {
-  type: OperationTypes.TYPE;
+  type: "type";
   inputs: [SmallTextInput, SmallTextInput];
 };
 
 type SmallSetOperation = {
-  type: OperationTypes.SET;
+  type: "set";
   inputs: [SmallTextInput, SmallSelectInput, SmallTextInput];
 };
 
 type SmallIncreaseOperation = {
-  type: OperationTypes.INCREASE;
+  type: "increase";
   inputs: [SmallTextInput, SmallTextInput];
 };
 
 type SmallDecreaseOperation = {
-  type: OperationTypes.DECREASE;
+  type: "decrease";
   inputs: [SmallTextInput, SmallTextInput];
 };
 
 type SmallIfOperation = {
-  type: OperationTypes.IF;
+  type: "if";
   inputs: [SmallTextInput, SmallOperationBoxInput];
 };
 
 type SmallWhileOperation = {
-  type: OperationTypes.WHILE;
+  type: "while";
   inputs: [SmallTextInput, SmallOperationBoxInput];
 };
 

@@ -1,24 +1,31 @@
-import { OperationTypes } from "../constants/operation";
+export const enum ScraperChannel {
+  OPEN_WINDOW = "open_window",
+  CLOSE_WINDOW = "close_window",
+  GET_VERSION = "get_version",
+  LOAD_URL = "load_url",
+  RUN_JAVASCRIPT = "run_javascript",
+  RUN_OPERATION = "run_operation"
+}
 
 type ScraperOpenOperation = {
-  type: OperationTypes.OPEN;
+  type: "open";
   url: string;
 };
 
 type ScraperExtractOperation = {
-  type: OperationTypes.EXTRACT;
+  type: "extract";
   name: string;
   selector: string;
   attribute: string;
 };
 
 type ScraperClickOperation = {
-  type: OperationTypes.CLICK;
+  type: "click";
   selector: string;
 };
 
 type ScraperTypeOperation = {
-  type: OperationTypes.TYPE;
+  type: "type";
   selector: string;
   text: string;
 };
@@ -30,7 +37,7 @@ export type ScraperOperation =
   | ScraperTypeOperation;
 
 export type ExtractOperationResult = {
-  type: OperationTypes.EXTRACT;
+  type: "extract";
   url: string;
   name: string;
   selector: string;
@@ -50,4 +57,4 @@ type ExecuteSuccess = {
   result: ScraperResult;
 };
 
-export type ExecuteResult = ExecuteError | ExecuteSuccess;
+export type ExecuteResponse = ExecuteError | ExecuteSuccess;

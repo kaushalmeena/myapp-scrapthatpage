@@ -1,7 +1,5 @@
-import { chain, find } from "lodash";
-import { InputTypes } from "../constants/input";
+import { chain } from "lodash";
 import { LARGE_OPERATIONS } from "../constants/largeOperations";
-import { OperationTypes } from "../constants/operation";
 import { VALIDATION_FUNCTION } from "../constants/validation";
 import { LargeInput, LargeOperation } from "../types/largeOperation";
 import { SmallInput, SmallOperation } from "../types/smallOperation";
@@ -23,35 +21,37 @@ export const getOperationSubheader = (
 export const convertToLargeOperation = (
   operation: SmallOperation
 ): LargeOperation => {
-  const baseLargeOperation = find(LARGE_OPERATIONS, ["type", operation.type]);
+  const baseLargeOperation = LARGE_OPERATIONS.find(
+    (item) => item.type === operation.type
+  );
   if (!baseLargeOperation) {
     throw new Error(`Operation type of ${operation.type} not found.`);
   }
   let chainedOperation = chain(baseLargeOperation).cloneDeep();
   switch (operation.type) {
-    case OperationTypes.OPEN:
-    case OperationTypes.CLICK:
+    case "open":
+    case "click":
       chainedOperation = chainedOperation.set(
         "inputs.0.value",
         operation.inputs[0].value
       );
       break;
-    case OperationTypes.EXTRACT:
-    case OperationTypes.SET:
+    case "extract":
+    case "set":
       chainedOperation = chainedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set("inputs.1.value", operation.inputs[1].value)
         .set("inputs.2.value", operation.inputs[2].value);
       break;
-    case OperationTypes.TYPE:
-    case OperationTypes.INCREASE:
-    case OperationTypes.DECREASE:
+    case "type":
+    case "increase":
+    case "decrease":
       chainedOperation = chainedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set("inputs.1.value", operation.inputs[1].value);
       break;
-    case OperationTypes.IF:
-    case OperationTypes.WHILE:
+    case "if":
+    case "while":
       chainedOperation = chainedOperation
         .set("inputs.0.value", operation.inputs[0].value)
         .set(
@@ -67,80 +67,80 @@ export const convertToSmallOperation = (
   operation: LargeOperation
 ): SmallOperation => {
   switch (operation.type) {
-    case OperationTypes.OPEN:
-    case OperationTypes.CLICK:
+    case "open":
+    case "click":
       return {
         type: operation.type,
         inputs: [
           {
-            type: InputTypes.TEXT,
+            type: "text",
             value: operation.inputs[0].value
           }
         ]
       };
-    case OperationTypes.EXTRACT:
+    case "extract":
       return {
         type: operation.type,
         inputs: [
           {
-            type: InputTypes.TEXT,
+            type: "text",
             value: operation.inputs[0].value
           },
           {
-            type: InputTypes.TEXT,
+            type: "text",
             value: operation.inputs[1].value
           },
           {
-            type: InputTypes.SELECT,
+            type: "select",
             value: operation.inputs[2].value
           }
         ]
       };
-    case OperationTypes.TYPE:
-    case OperationTypes.INCREASE:
-    case OperationTypes.DECREASE:
+    case "type":
+    case "increase":
+    case "decrease":
       return {
         type: operation.type,
         inputs: [
           {
-            type: InputTypes.TEXT,
+            type: "text",
             value: operation.inputs[0].value
           },
           {
-            type: InputTypes.TEXT,
+            type: "text",
             value: operation.inputs[1].value
           }
         ]
       };
-    case OperationTypes.SET:
+    case "set":
       return {
         type: operation.type,
         inputs: [
           {
-            type: InputTypes.TEXT,
+            type: "text",
             value: operation.inputs[0].value
           },
           {
-            type: InputTypes.SELECT,
+            type: "select",
             value: operation.inputs[1].value
           },
           {
-            type: InputTypes.TEXT,
+            type: "text",
             value: operation.inputs[2].value
           }
         ]
       };
-    case OperationTypes.IF:
-    case OperationTypes.WHILE:
+    case "if":
+    case "while":
       return {
         type: operation.type,
         inputs: [
           {
-            type: InputTypes.TEXT,
+            type: "text",
             value: operation.inputs[0].value
           },
           {
-            type: InputTypes.OPERATION_BOX,
+            type: "operation_box",
             operations: operation.inputs[1].operations.map(
               convertToSmallOperation
             )

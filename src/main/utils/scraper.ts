@@ -1,6 +1,5 @@
-import { OperationTypes } from "../../common/constants/operation";
 import {
-  ExecuteResult,
+  ExecuteResponse,
   ScraperOperation,
   ScraperResult
 } from "../../common/types/scraper";
@@ -13,32 +12,29 @@ const processOperation = async (
   let result = null;
 
   switch (operation.type) {
-    case OperationTypes.OPEN:
+    case "open":
       await scraper.loadURL(operation.url);
       break;
-    case OperationTypes.EXTRACT:
+    case "extract":
       {
-        const data = await scraper.executeJavascript(`
+        const rawData = await scraper.executeJavascript(`
           Array.from(document.querySelectorAll("${operation.selector}")).map(
             (query) => query["${operation.attribute}"]
           );
         `);
         result = {
-          type: operation.type,
+          ...operation,
           url: scraper.getActiveURL(),
-          name: operation.name,
-          selector: operation.selector,
-          attribute: operation.attribute,
-          data: data as string[]
+          data: (rawData as string[]).map((item) => JSON.stringify(item))
         };
       }
       break;
-    case OperationTypes.CLICK:
+    case "click":
       await scraper.executeJavascript(`
           document.querySelector("${operation.selector}").click();
         `);
       break;
-    case OperationTypes.TYPE:
+    case "type":
       await scraper.executeJavascript(`
           document.querySelector("${operation.selector}").value = "${operation.text}";
         `);
@@ -51,7 +47,7 @@ const processOperation = async (
 export const executeOperation = async (
   operation: ScraperOperation,
   scraper: Scraper
-): Promise<ExecuteResult> => {
+): Promise<ExecuteResponse> => {
   try {
     const result = await processOperation(operation, scraper);
     return {
