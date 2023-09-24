@@ -26,7 +26,7 @@ function Dashboard() {
       <Box display="flex" flexDirection="row">
         <Stack gap={1} flex={1}>
           {PAGE_LINKS.map((link) => (
-            <Card key={`link-${link.title}`} variant="outlined">
+            <Card key={`card-${link.title}`} variant="outlined">
               <CardActionArea onClick={() => navigate(link.route)}>
                 <CardHeader
                   avatar={<Icon fontSize="large">{link.icon}</Icon>}

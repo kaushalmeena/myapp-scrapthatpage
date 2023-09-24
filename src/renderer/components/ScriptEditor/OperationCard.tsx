@@ -13,7 +13,7 @@ import { get } from "lodash";
 import { useState } from "react";
 import { LargeOperation } from "../../../common/types/largeOperation";
 import {
-  getOperationSubheader,
+  replaceFormatWithInputs,
   isOperationValid
 } from "../../../common/utils/operation";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
@@ -49,7 +49,7 @@ function OperationCard({ path }: OperationCardProps) {
   const handleDeleteClick = () => dispatch(deleteOperation(path));
 
   const operationNumber = getOperationNumber(path);
-  const operationSubheader = getOperationSubheader(
+  const operationSubheader = replaceFormatWithInputs(
     operation.format,
     operation.inputs
   );

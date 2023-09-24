@@ -13,9 +13,9 @@ type MainLayoutProps = {
 };
 
 function MainLayout({ children }: MainLayoutProps) {
-  const theme = useAppSelector(selectTheme);
+  const themeType = useAppSelector(selectTheme);
 
-  const themeData = THEMES[theme].data;
+  const themeData = THEMES[themeType].data;
   const muiTheme = createTheme(themeData);
 
   return (

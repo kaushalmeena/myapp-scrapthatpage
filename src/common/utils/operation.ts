@@ -5,7 +5,7 @@ import { LargeInput, LargeOperation } from "../types/largeOperation";
 import { SmallInput, SmallOperation } from "../types/smallOperation";
 import { ValidationRule } from "../types/validation";
 
-export const getOperationSubheader = (
+export const replaceFormatWithInputs = (
   format: string,
   inputs: LargeInput[] | SmallInput[]
 ) =>
@@ -153,10 +153,7 @@ export const convertToSmallOperation = (
 export const isOperationValid = (operation: LargeOperation) =>
   operation.inputs.some((input) => "error" in input && !input.error);
 
-export const validateValueWithRules = (
-  value: string,
-  rules: ValidationRule[]
-) => {
+export const validateWithRules = (value: string, rules: ValidationRule[]) => {
   for (let i = 0; i < rules.length; i += 1) {
     const validate = VALIDATION_FUNCTION[rules[i].type];
     if (validate && !validate(value)) {

@@ -50,7 +50,7 @@ function VariableSelectorDialog() {
           <List disablePadding>
             {filteredVariables.map((variable) => (
               <ListItemButton
-                key={`list-item-${variable.name}`}
+                key={`li-${variable.name}`}
                 onClick={() => {
                   handleSelect(variable);
                 }}

@@ -12,15 +12,19 @@ import {
   ScraperOperation
 } from "../../../common/types/scraper";
 import { produce } from "immer";
+import { INITIAL_TABLE_DATA } from "./constants";
 
-const replaceWithVariables = (format: string, variables: VariableMapping) =>
+const replaceFormatWithVariables = (
+  format: string,
+  variables: VariableMapping
+) =>
   format.replace(/{{[\w-]+}}/g, (match: string) => {
     const name = match.slice(2, -2);
     const value = variables[name];
     return String(value);
   });
 
-export function* getOperationGenerator(
+export function* getRunnerGenerator(
   operations: SmallOperation[],
   variables: VariableMapping = {}
 ): RunnerGenerator {
@@ -32,7 +36,7 @@ export function* getOperationGenerator(
           const url = operation.inputs[0].value;
           yield {
             type: operation.type,
-            url: replaceWithVariables(url, variables)
+            url: replaceFormatWithVariables(url, variables)
           };
         }
         break;
@@ -44,7 +48,7 @@ export function* getOperationGenerator(
           yield {
             type: operation.type,
             name,
-            selector: replaceWithVariables(selector, variables),
+            selector: replaceFormatWithVariables(selector, variables),
             attribute
           };
         }
@@ -54,7 +58,7 @@ export function* getOperationGenerator(
           const selector = operation.inputs[0].value;
           yield {
             type: operation.type,
-            selector: replaceWithVariables(selector, variables)
+            selector: replaceFormatWithVariables(selector, variables)
           };
         }
         break;
@@ -64,7 +68,7 @@ export function* getOperationGenerator(
           const text = operation.inputs[1].value;
           yield {
             type: operation.type,
-            selector: replaceWithVariables(selector, variables),
+            selector: replaceFormatWithVariables(selector, variables),
             text
           };
         }
@@ -102,10 +106,13 @@ export function* getOperationGenerator(
         {
           const condition = operation.inputs[0].value;
           const { operations: nestedOperations } = operation.inputs[1];
-          const formattedCondition = replaceWithVariables(condition, variables);
+          const formattedCondition = replaceFormatWithVariables(
+            condition,
+            variables
+          );
           const evaluatedValue = evaluate(formattedCondition);
           if (evaluatedValue) {
-            yield* getOperationGenerator(nestedOperations, variables);
+            yield* getRunnerGenerator(nestedOperations, variables);
           }
         }
         break;
@@ -113,11 +120,17 @@ export function* getOperationGenerator(
         {
           const condition = operation.inputs[0].value;
           const { operations: nestedOperations } = operation.inputs[1];
-          let formattedCondition = replaceWithVariables(condition, variables);
+          let formattedCondition = replaceFormatWithVariables(
+            condition,
+            variables
+          );
           let evaluatedValue = evaluate(formattedCondition);
           while (evaluatedValue) {
-            yield* getOperationGenerator(nestedOperations, variables);
-            formattedCondition = replaceWithVariables(condition, variables);
+            yield* getRunnerGenerator(nestedOperations, variables);
+            formattedCondition = replaceFormatWithVariables(
+              condition,
+              variables
+            );
             evaluatedValue = evaluate(formattedCondition);
           }
         }
@@ -126,11 +139,11 @@ export function* getOperationGenerator(
   }
 }
 
-export const processExtractResult = (
+export const getRunnerTableData = (
   result: ExtractOperationResult,
-  tableData: TableData
+  oldTableData = INITIAL_TABLE_DATA
 ): TableData =>
-  produce(tableData, (draft) => {
+  produce(oldTableData, (draft) => {
     let rowIdx = 0;
     let colIdx = draft.cols.findIndex((col) => col === result.name);
 
@@ -151,7 +164,7 @@ export const processExtractResult = (
     }
   });
 
-export const getHeaderInfo = (operation: ScraperOperation) => {
+export const getRunnerHeaderInfo = (operation: ScraperOperation) => {
   switch (operation.type) {
     case "open":
       return {

@@ -7,7 +7,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useDeferredValue, useMemo, useState } from "react";
 import EmptyText from "../../components/EmptyText";
 import PageName from "../../components/PageName";
 import ScriptCard from "../../components/ScriptCard";
@@ -17,6 +17,8 @@ import { Script } from "../../types/script";
 
 function Search() {
   const [search, setSearch] = useState("");
+  const query = useDeferredValue(search);
+
   const {
     result: scripts,
     status,
@@ -27,14 +29,14 @@ function Search() {
   });
 
   const filteredScripts = useMemo(() => {
-    const query = search.trim().toLowerCase();
+    const regexp = new RegExp(query, "i");
     if (query) {
-      return scripts.filter((item) => item.name.toLowerCase().includes(query));
+      return scripts.filter((item) => regexp.test(item.name));
     }
     return scripts;
-  }, [search, scripts]);
+  }, [query, scripts]);
 
-  const handleQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearch(event.target.value);
   };
 
@@ -50,7 +52,7 @@ function Search() {
               variant="outlined"
               size="small"
               value={search}
-              onChange={handleQueryChange}
+              onChange={handleSearchChange}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">

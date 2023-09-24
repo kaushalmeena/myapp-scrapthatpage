@@ -44,7 +44,7 @@ function Sidebar() {
       >
         {PAGE_LINKS.map((link) => (
           <ListItemButton
-            key={`link-${link.title}`}
+            key={`li-${link.title}`}
             title={link.title}
             onClick={() => navigate(link.route)}
           >

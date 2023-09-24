@@ -42,7 +42,7 @@ function OperationSelectorDialog() {
         <List disablePadding>
           {LARGE_OPERATIONS.map((operation) => (
             <ListItemButton
-              key={`list-item-${operation.type}`}
+              key={`li-${operation.type}`}
               onClick={() => {
                 handleSelect(operation);
               }}
