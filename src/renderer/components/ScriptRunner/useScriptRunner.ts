@@ -3,9 +3,9 @@ import { Script } from "../../types/script";
 import { INITIAL_TABLE_DATA } from "./constants";
 import { RunnerGenerator, RunnerStatus, TableData } from "./types";
 import {
-  getHeaderInfo,
-  getOperationGenerator,
-  processExtractResult
+  getRunnerHeaderInfo,
+  getRunnerGenerator,
+  getRunnerTableData
 } from "./utils";
 import { ExecuteResponse } from "../../../common/types/scraper";
 
@@ -32,10 +32,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
       switch (response.result.type) {
         case "extract":
           {
-            const newTableData = processExtractResult(
-              response.result,
-              tableData
-            );
+            const newTableData = getRunnerTableData(response.result, tableData);
             setTableData(newTableData);
           }
           break;
@@ -62,18 +59,18 @@ export const useScriptRunner = (script: Script): HookReturnType => {
       return;
     }
 
-    const { heading, message } = getHeaderInfo(operation);
+    const { heading, message } = getRunnerHeaderInfo(operation);
     setHeading(heading);
     setMessage(message);
 
     window.scraper
       .runOperation(operation)
-      .then((response) => {
-        if (response.status === "success") {
-          processResponse(response);
+      .then((res) => {
+        if (res.status === "success") {
+          processResponse(res);
           executeNextOperation();
         } else {
-          showExecutionError(response.message);
+          showExecutionError(res.message);
         }
       })
       .catch(() => {
@@ -83,7 +80,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
 
   const startExecution = () => {
     statusRef.current = "started";
-    generatorRef.current = getOperationGenerator(script.operations);
+    generatorRef.current = getRunnerGenerator(script.operations);
     setStatus("started");
     setHeading("STARTED");
     setMessage("Execution is running");

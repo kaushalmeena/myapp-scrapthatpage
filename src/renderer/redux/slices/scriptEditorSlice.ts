@@ -13,7 +13,7 @@ import {
   VariablePickerMode,
   VariableSetterMode
 } from "../../../common/types/variable";
-import { validateValueWithRules } from "../../../common/utils/operation";
+import { validateWithRules } from "../../../common/utils/operation";
 
 export type ScriptEditorState = {
   id?: number;
@@ -136,7 +136,7 @@ export const updateScriptEditorField = (
   value: string
 ) => {
   const field = get(state, path) as LargeTextInput;
-  field.error = validateValueWithRules(value, field.rules);
+  field.error = validateWithRules(value, field.rules);
   field.value = value;
 
   if (field.variableSetter) {

@@ -5,7 +5,7 @@ import { ValidationRule } from "../../../common/types/validation";
 import {
   convertToLargeOperation,
   convertToSmallOperation,
-  validateValueWithRules
+  validateWithRules
 } from "../../../common/utils/operation";
 import { Script } from "../../types/script";
 import {
@@ -54,7 +54,7 @@ const validateScriptEditorField = (
 
   const value = get(state, valuePath) as string;
   const rules = get(state, rulesPath) as ValidationRule[];
-  const error = validateValueWithRules(value, rules);
+  const error = validateWithRules(value, rules);
 
   if (error) {
     set(state, errorPath, error);
