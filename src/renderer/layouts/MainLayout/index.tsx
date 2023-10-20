@@ -1,18 +1,14 @@
 import { Box, createTheme } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import ThemeProvider from "@mui/material/styles/ThemeProvider";
-import { ReactNode } from "react";
+import { Outlet } from "react-router-dom";
 import { THEMES } from "../../constants/themes";
 import { useAppSelector } from "../../hooks/useAppSelector";
 import { selectTheme } from "../../redux/slices/settingsSlice";
 import AppNotification from "./AppNotification";
 import Sidebar from "./Sidebar";
 
-type MainLayoutProps = {
-  children: ReactNode;
-};
-
-function MainLayout({ children }: MainLayoutProps) {
+function MainLayout() {
   const themeType = useAppSelector(selectTheme);
 
   const themeData = THEMES[themeType].data;
@@ -29,7 +25,7 @@ function MainLayout({ children }: MainLayoutProps) {
           bgcolor="background.default"
           component="main"
         >
-          {children}
+          <Outlet />
         </Box>
       </Box>
       <AppNotification />
