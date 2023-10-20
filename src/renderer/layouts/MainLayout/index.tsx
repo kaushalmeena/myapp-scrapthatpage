@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 import { THEMES } from "../../constants/themes";
 import { useAppSelector } from "../../hooks/useAppSelector";
 import { selectTheme } from "../../redux/slices/settingsSlice";
-import AppNotification from "./AppNotification";
+import Notification from "./Notification";
 import Sidebar from "./Sidebar";
 
 function MainLayout() {
@@ -28,7 +28,7 @@ function MainLayout() {
           <Outlet />
         </Box>
       </Box>
-      <AppNotification />
+      <Notification />
     </ThemeProvider>
   );
 }

@@ -6,7 +6,7 @@ import {
   selectNotification
 } from "../../redux/slices/notificationSlice";
 
-function AppNotification() {
+function Notification() {
   const dispatch = useAppDispatch();
   const notification = useAppSelector(selectNotification);
 
@@ -32,4 +32,4 @@ function AppNotification() {
   );
 }
 
-export default AppNotification;
+export default Notification;
