@@ -1,6 +1,8 @@
+import { PageLink } from "../types/layout";
+
 export const DRAWER_WIDTH = 70;
 
-export const PAGE_LINKS = [
+export const PAGE_LINKS: PageLink[] = [
   {
     title: "Create",
     subtitle: "Create a new script.",
