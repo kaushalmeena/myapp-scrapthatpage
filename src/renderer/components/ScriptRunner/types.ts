@@ -4,7 +4,7 @@ export type RunnerGenerator = Generator<
   ScraperOperation,
   void,
   ScraperOperation
-> | null;
+>;
 
 export type RunnerStatus =
   | "ready"
@@ -12,6 +12,11 @@ export type RunnerStatus =
   | "stopped"
   | "finished"
   | "error";
+
+export type RunnerHeaderInfo = {
+  heading: string;
+  message: string;
+};
 
 export type ActionButtonColor =
   | "primary"
@@ -21,7 +26,12 @@ export type ActionButtonColor =
   | "info"
   | "warning";
 
-export type ActionButtonData = { icon: string; color: ActionButtonColor };
+export type RunnerCardInfo = {
+  title: string;
+  icon: string;
+  color: ActionButtonColor;
+  backgroundColor?: string;
+};
 
 export type TableData = {
   cols: string[];

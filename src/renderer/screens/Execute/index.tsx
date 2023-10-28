@@ -21,7 +21,7 @@ function Execute() {
   const navigate = useNavigate();
   const params = useParams();
 
-  const [favorite, setFavorite] = useState(0);
+  const [favorite, setFavorite] = useState(false);
 
   const scriptId = Number(params.scriptId);
 
@@ -32,7 +32,7 @@ function Execute() {
   } = useDexieFetch<Script>({
     fetcher: db.fetchScriptById(scriptId),
     defaultValue: INITIAL_SCRIPT,
-    onSuccess: (data) => setFavorite(data.favorite)
+    onSuccess: (data) => setFavorite(Boolean(data.favorite))
   });
 
   const handleDeleteClick = () => {
@@ -44,10 +44,16 @@ function Execute() {
   };
 
   const handleFavoriteToggle = () => {
-    const newFavoriteValue = 1 - favorite;
-    db.updateScriptFavoriteField(scriptId, newFavoriteValue)
+    const nextFavorite = !favorite;
+    db.updateScriptFavoriteField(scriptId, Number(nextFavorite))
       .then(() => {
-        setFavorite(newFavoriteValue);
+        notification.show(
+          nextFavorite
+            ? "Script added to favorites."
+            : "Script removed from favorites.",
+          "info"
+        );
+        setFavorite(nextFavorite);
       })
       .catch(() => {
         notification.show("Error occurred while updating.", "error");
@@ -81,8 +87,16 @@ function Execute() {
         <Typography fontSize={28} fontWeight="400">
           Execute
         </Typography>
-        <IconButton color="primary" onClick={handleFavoriteToggle}>
-          <Icon>{favorite === 1 ? "favorite" : "favorite_border"}</Icon>
+        <IconButton
+          color="primary"
+          title={
+            favorite
+              ? "Add script to favorites"
+              : "Remove script from favorites"
+          }
+          onClick={handleFavoriteToggle}
+        >
+          <Icon>{favorite ? "favorite" : "favorite_border"}</Icon>
         </IconButton>
       </Box>
       <Stack

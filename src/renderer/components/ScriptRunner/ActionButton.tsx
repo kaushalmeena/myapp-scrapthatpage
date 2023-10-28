@@ -3,16 +3,24 @@ import { ActionButtonColor } from "./types";
 
 type ActionButtonProps = {
   spinning: boolean;
+  title: string;
   color: ActionButtonColor;
   icon: string;
   onClick: () => void;
 };
 
-function ActionButton({ spinning, color, icon, onClick }: ActionButtonProps) {
+function ActionButton({
+  spinning,
+  title,
+  color,
+  icon,
+  onClick
+}: ActionButtonProps) {
   return (
     <Box position="relative">
       <Button
         variant="contained"
+        title={title}
         color={color}
         onClick={onClick}
         sx={{

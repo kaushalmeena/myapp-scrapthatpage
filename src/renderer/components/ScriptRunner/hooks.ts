@@ -1,19 +1,19 @@
 import { useRef, useState } from "react";
+import { ScraperResult } from "../../../common/types/scraper";
 import { Script } from "../../types/script";
 import { INITIAL_TABLE_DATA } from "./constants";
 import { RunnerGenerator, RunnerStatus, TableData } from "./types";
 import {
-  getRunnerHeaderInfo,
   getRunnerGenerator,
+  getRunnerHeaderInfo,
   getRunnerTableData
 } from "./utils";
-import { ExecuteResponse } from "../../../common/types/scraper";
 
 type HookReturnType = {
   status: RunnerStatus;
   heading: string;
   message: string;
-  tableData: TableData;
+  data: TableData;
   start: () => void;
   stop: () => void;
 };
@@ -22,25 +22,26 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   const [status, setStatus] = useState<RunnerStatus>("ready");
   const [heading, setHeading] = useState("READY");
   const [message, setMessage] = useState("Ready to start");
-  const [tableData, setTableData] = useState<TableData>(INITIAL_TABLE_DATA);
+  const [data, setData] = useState<TableData>(INITIAL_TABLE_DATA);
 
   const statusRef = useRef<RunnerStatus>("stopped");
-  const generatorRef = useRef<RunnerGenerator>(null);
+  const generatorRef = useRef<RunnerGenerator>();
 
-  const processResponse = (response: ExecuteResponse) => {
-    if ("result" in response && response.result) {
-      switch (response.result.type) {
-        case "extract":
-          {
-            const newTableData = getRunnerTableData(response.result, tableData);
-            setTableData(newTableData);
-          }
-          break;
-      }
+  const processResult = (result: ScraperResult) => {
+    if (!result) {
+      return;
+    }
+    switch (result.type) {
+      case "extract":
+        {
+          const newData = getRunnerTableData(result, data);
+          setData(newData);
+        }
+        break;
     }
   };
 
-  const executeNextOperation = () => {
+  const executeNext = () => {
     if (statusRef.current !== "started") {
       return;
     }
@@ -48,14 +49,14 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     const operationData = generatorRef.current?.next();
 
     if (operationData.done) {
-      finishExecution();
+      finish();
       window.scraper.closeWindow();
       return;
     }
 
     const operation = operationData.value;
     if (!operation) {
-      showExecutionError("Didn't found any operation to execute");
+      showError("Didn't found any operation to execute");
       return;
     }
 
@@ -65,43 +66,45 @@ export const useScriptRunner = (script: Script): HookReturnType => {
 
     window.scraper
       .runOperation(operation)
-      .then((res) => {
-        if (res.status === "success") {
-          processResponse(res);
-          executeNextOperation();
+      .then((response) => {
+        if (response.status === "success") {
+          processResult(response.result);
+          executeNext();
         } else {
-          showExecutionError(res.message);
+          showError(response.message);
         }
       })
-      .catch(() => {
-        showExecutionError("Error occurred in executing operation");
+      .catch((err) => {
+        console.log(err);
+        showError("Error occurred in executing operation");
       });
   };
 
-  const startExecution = () => {
+  const start = () => {
     statusRef.current = "started";
     generatorRef.current = getRunnerGenerator(script.operations);
     setStatus("started");
     setHeading("STARTED");
     setMessage("Execution is running");
-    executeNextOperation();
+    executeNext();
   };
 
-  const stopExecution = () => {
+  const stop = () => {
     statusRef.current = "stopped";
     setStatus("stopped");
     setHeading("STOPPED");
     setMessage("Execution is stopped");
   };
 
-  const finishExecution = () => {
+  const finish = () => {
     statusRef.current = "stopped";
     setStatus("finished");
     setHeading("FINISHED");
     setMessage("Execution is finished");
   };
 
-  const showExecutionError = (error: string) => {
+  const showError = (error: string) => {
+    window.scraper.closeWindow();
     statusRef.current = "stopped";
     setStatus("error");
     setHeading("ERROR");
@@ -112,8 +115,8 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     status,
     heading,
     message,
-    tableData,
-    start: startExecution,
-    stop: stopExecution
+    data,
+    start,
+    stop
   };
 };

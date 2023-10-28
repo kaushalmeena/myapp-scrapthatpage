@@ -1,18 +1,19 @@
+import { produce } from "immer";
 import { evaluate } from "mathjs";
-import { SmallOperation } from "../../../common/types/smallOperation";
-import { VariableMapping } from "../../../common/types/variable";
-import {
-  ActionButtonData,
-  RunnerGenerator,
-  RunnerStatus,
-  TableData
-} from "./types";
 import {
   ExtractOperationResult,
   ScraperOperation
 } from "../../../common/types/scraper";
-import { produce } from "immer";
+import { SmallOperation } from "../../../common/types/smallOperation";
+import { VariableMapping } from "../../../common/types/variable";
 import { INITIAL_TABLE_DATA } from "./constants";
+import {
+  RunnerCardInfo,
+  RunnerGenerator,
+  RunnerHeaderInfo,
+  RunnerStatus,
+  TableData
+} from "./types";
 
 const replaceFormatWithVariables = (
   format: string,
@@ -164,7 +165,9 @@ export const getRunnerTableData = (
     }
   });
 
-export const getRunnerHeaderInfo = (operation: ScraperOperation) => {
+export const getRunnerHeaderInfo = (
+  operation: ScraperOperation
+): RunnerHeaderInfo => {
   switch (operation.type) {
     case "open":
       return {
@@ -189,42 +192,39 @@ export const getRunnerHeaderInfo = (operation: ScraperOperation) => {
   }
 };
 
-export const getBackgroundColor = (status: RunnerStatus) => {
-  if (status === "error") {
-    return "rgba(211, 47, 47, 0.1)";
-  }
-  if (status === "finished") {
-    return "rgba(46, 125, 50, 0.1)";
-  }
-  return "auto";
-};
-
-export const getActionButtonInfo = (status: RunnerStatus): ActionButtonData => {
+export const getRunnerCardInfo = (status: RunnerStatus): RunnerCardInfo => {
   switch (status) {
     case "ready":
       return {
+        title: "Start execution",
         icon: "play_arrow",
         color: "primary"
       };
     case "started":
       return {
+        title: "Stop execution",
         icon: "stop",
         color: "primary"
       };
     case "stopped":
       return {
+        title: "Restart execution",
         icon: "refresh",
         color: "primary"
       };
     case "finished":
       return {
+        title: "Restart execution",
         icon: "refresh",
-        color: "success"
+        color: "success",
+        backgroundColor: "rgba(46, 125, 50, 0.1)"
       };
     case "error":
       return {
+        title: "Restart execution",
         icon: "refresh",
-        color: "error"
+        color: "error",
+        backgroundColor: "rgba(46, 125, 50, 0.1)"
       };
   }
 };

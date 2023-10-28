@@ -40,12 +40,11 @@ function ResultTable({ data }: ResultTableProps) {
         borderStyle: "solid",
         borderColor: "action.disabledBackground",
         borderRadius: 1,
-        backgroundColor: "background.paper",
-        maxHeight: 440
+        backgroundColor: "background.paper"
       }}
     >
       <TableToolbar data={data} />
-      <Table size="small" stickyHeader>
+      <Table size="small">
         <TableHead>
           <TableRow>
             {data.cols.map((key) => (
