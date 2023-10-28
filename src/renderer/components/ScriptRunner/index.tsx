@@ -1,40 +1,40 @@
 import { Box, Card, CardHeader } from "@mui/material";
 import { Script } from "../../types/script";
-import { useScriptRunner } from "./useScriptRunner";
-import { getActionButtonInfo, getBackgroundColor } from "./utils";
 import ActionButton from "./ActionButton";
 import ResultTable from "./ResultTable";
+import { useScriptRunner } from "./hooks";
+import { getRunnerCardInfo } from "./utils";
 
 type ScriptRunnerProps = {
   script: Script;
 };
 
 function ScriptRunner({ script }: ScriptRunnerProps) {
-  const { status, heading, message, tableData, start, stop } =
+  const { status, heading, message, data, start, stop } =
     useScriptRunner(script);
 
-  const backgroundColor = getBackgroundColor(status);
-  const { icon, color } = getActionButtonInfo(status);
+  const { title, icon, color, backgroundColor } = getRunnerCardInfo(status);
 
   return (
     <>
       <Card variant="outlined" sx={{ backgroundColor }}>
         <CardHeader
+          title={heading}
+          subheader={message}
           avatar={
             <ActionButton
               spinning={icon === "stop"}
+              title={title}
               icon={icon}
               color={color}
               onClick={status === "started" ? stop : start}
             />
           }
-          title={heading}
-          subheader={message}
         />
       </Card>
-      {tableData.rows.length > 0 && (
+      {data.rows.length > 0 && (
         <Box marginTop={3}>
-          <ResultTable data={tableData} />
+          <ResultTable data={data} />
         </Box>
       )}
     </>
