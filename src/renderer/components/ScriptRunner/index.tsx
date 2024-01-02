@@ -10,7 +10,7 @@ type ScriptRunnerProps = {
 };
 
 function ScriptRunner({ script }: ScriptRunnerProps) {
-  const { status, heading, message, data, start, stop } =
+  const { status, heading, message, result, start, stop } =
     useScriptRunner(script);
 
   const { title, color, backgroundColor, Icon } = getRunnerCardInfo(status);
@@ -32,9 +32,9 @@ function ScriptRunner({ script }: ScriptRunnerProps) {
           }
         />
       </Card>
-      {data.rows.length > 0 && (
+      {result && (
         <Box marginTop={3}>
-          <ResultTable data={data} />
+          <ResultTable data={result} />
         </Box>
       )}
     </>

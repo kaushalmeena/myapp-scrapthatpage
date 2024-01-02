@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { ScraperResult } from "../../../common/types/scraper";
 import { Script } from "../../types/script";
-import { INITIAL_TABLE_DATA } from "./constants";
 import { RunnerGenerator, RunnerStatus, TableData } from "./types";
 import {
   getRunnerGenerator,
@@ -13,7 +12,7 @@ type HookReturnType = {
   status: RunnerStatus;
   heading: string;
   message: string;
-  data: TableData;
+  result: TableData | null;
   start: () => void;
   stop: () => void;
 };
@@ -22,26 +21,23 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   const [status, setStatus] = useState<RunnerStatus>("ready");
   const [heading, setHeading] = useState("READY");
   const [message, setMessage] = useState("Ready to start");
-  const [data, setData] = useState<TableData>(INITIAL_TABLE_DATA);
+  const [result, setResult] = useState<TableData | null>(null);
 
   const statusRef = useRef<RunnerStatus>("stopped");
   const generatorRef = useRef<RunnerGenerator>();
 
-  const processResult = (result: ScraperResult) => {
-    if (!result) {
+  const processScraperResult = (data: ScraperResult) => {
+    if (!data) {
       return;
     }
-    switch (result.type) {
+    switch (data.type) {
       case "extract":
-        {
-          const newData = getRunnerTableData(result, data);
-          setData(newData);
-        }
+        setResult((prev) => getRunnerTableData(data, prev));
         break;
     }
   };
 
-  const executeNext = () => {
+  const executeNextOperation = () => {
     if (statusRef.current !== "started") {
       return;
     }
@@ -66,16 +62,16 @@ export const useScriptRunner = (script: Script): HookReturnType => {
 
     window.scraper
       .runOperation(operation)
-      .then((response) => {
-        if (response.status === "success") {
-          processResult(response.result);
-          executeNext();
+      .then((res) => {
+        if (res.status === "success") {
+          processScraperResult(res.result);
+          executeNextOperation();
         } else {
-          showError(response.message);
+          showError(res.message);
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
         showError("Error occurred in executing operation");
       });
   };
@@ -83,10 +79,11 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   const start = () => {
     statusRef.current = "started";
     generatorRef.current = getRunnerGenerator(script.operations);
+    setResult(null);
     setStatus("started");
     setHeading("STARTED");
     setMessage("Execution is running");
-    executeNext();
+    executeNextOperation();
   };
 
   const stop = () => {
@@ -115,7 +112,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     status,
     heading,
     message,
-    data,
+    result,
     start,
     stop
   };

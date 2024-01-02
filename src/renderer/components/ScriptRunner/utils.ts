@@ -143,9 +143,9 @@ export function* getRunnerGenerator(
 
 export const getRunnerTableData = (
   result: ExtractOperationResult,
-  oldTableData = INITIAL_TABLE_DATA
+  oldTableData?: TableData
 ): TableData =>
-  produce(oldTableData, (draft) => {
+  produce(oldTableData || INITIAL_TABLE_DATA, (draft) => {
     let rowIdx = 0;
     let colIdx = draft.cols.findIndex((col) => col === result.name);
 

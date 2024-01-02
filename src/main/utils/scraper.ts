@@ -25,7 +25,7 @@ const processOperation = async (
         result = {
           ...operation,
           url: scraper.getActiveURL(),
-          data: (rawData as string[]).map((item) => JSON.stringify(item))
+          data: rawData as string[]
         };
       }
       break;

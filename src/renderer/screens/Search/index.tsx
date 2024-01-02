@@ -22,9 +22,10 @@ function SearchScreen() {
   const {
     result: scripts,
     status,
-    error
+    error,
+    reload
   } = useDexieFetch<Script[]>({
-    fetcher: db.fetchAllScripts(),
+    fetcher: () => db.fetchAllScripts(),
     defaultValue: []
   });
 
@@ -66,9 +67,8 @@ function SearchScreen() {
                 filteredScripts.map((item) => (
                   <ScriptCard
                     key={`script-${item.id}`}
-                    id={item.id as number}
-                    title={item.name}
-                    description={item.description}
+                    script={item}
+                    onReload={reload}
                   />
                 ))
               ) : (

@@ -49,7 +49,7 @@ function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
   useEffect(() => {
     const initialState = getScriptEditorStateFromScript(script);
     dispatch(updateState(initialState));
-  }, []);
+  }, [dispatch, script]);
 
   return (
     <>
