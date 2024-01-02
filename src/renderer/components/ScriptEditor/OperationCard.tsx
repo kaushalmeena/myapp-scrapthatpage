@@ -1,11 +1,17 @@
 import {
+  ArrowDownward,
+  ArrowUpward,
+  Clear,
+  Edit,
+  EditOff
+} from "@mui/icons-material";
+import {
   Card,
   CardContent,
   CardHeader,
   Chip,
   Collapse,
   Grid,
-  Icon,
   IconButton,
   Stack
 } from "@mui/material";
@@ -13,8 +19,8 @@ import { get } from "lodash";
 import { useState } from "react";
 import { LargeOperation } from "../../../common/types/largeOperation";
 import {
-  replaceFormatWithInputs,
-  isOperationValid
+  isOperationValid,
+  replaceFormatWithInputs
 } from "../../../common/utils/operation";
 import { useAppDispatch } from "../../hooks/useAppDispatch";
 import { useAppSelector } from "../../hooks/useAppSelector";
@@ -23,8 +29,8 @@ import {
   moveDownOperation,
   moveUpOperation
 } from "../../redux/slices/scriptEditorSlice";
-import { getOperationNumber } from "./utils";
 import OperationInput from "./OperationInput";
+import { getOperationNumber } from "./utils";
 
 type OperationCardProps = {
   path: string;
@@ -74,14 +80,14 @@ function OperationCard({ path }: OperationCardProps) {
               title="Move-up operation"
               onClick={handleMoveUpClick}
             >
-              <Icon fontSize="small">arrow_upward</Icon>
+              <ArrowUpward fontSize="small" />
             </IconButton>
             <IconButton
               size="small"
               title="Move-down operation"
               onClick={handleMoveDownClick}
             >
-              <Icon fontSize="small">arrow_downward</Icon>
+              <ArrowDownward fontSize="small" />
             </IconButton>
             <IconButton
               size="small"
@@ -89,7 +95,11 @@ function OperationCard({ path }: OperationCardProps) {
               color="primary"
               onClick={handleExpandToggle}
             >
-              <Icon fontSize="small">{expanded ? "edit_off" : "edit"}</Icon>
+              {expanded ? (
+                <EditOff fontSize="small" />
+              ) : (
+                <Edit fontSize="small" />
+              )}
             </IconButton>
             <IconButton
               size="small"
@@ -97,7 +107,7 @@ function OperationCard({ path }: OperationCardProps) {
               color="secondary"
               onClick={handleDeleteClick}
             >
-              <Icon fontSize="small">clear</Icon>
+              <Clear fontSize="small" />
             </IconButton>
           </Stack>
         }

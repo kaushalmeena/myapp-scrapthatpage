@@ -1,22 +1,23 @@
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import {
   Box,
   Button,
   CircularProgress,
-  Icon,
   IconButton,
   Stack,
   Typography
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { INITIAL_SCRIPT } from "../../constants/script";
-import db from "../../database";
-import { useNotification } from "../../hooks/useNotification";
 import ScriptRunner from "../../components/ScriptRunner";
+import { INITIAL_SCRIPT } from "../../constants/script";
+import { TOAST_MESSAGES } from "../../constants/toast";
+import db from "../../database";
 import { useDexieFetch } from "../../hooks/useDexieFetch";
+import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 
-function Execute() {
+function ExecuteScreen() {
   const notification = useNotification();
   const navigate = useNavigate();
   const params = useParams();
@@ -49,14 +50,14 @@ function Execute() {
       .then(() => {
         notification.show(
           nextFavorite
-            ? "Script added to favorites."
-            : "Script removed from favorites.",
+            ? TOAST_MESSAGES.SCRIPT_FAVORITE_ADD
+            : TOAST_MESSAGES.SCRIPT_FAVORITE_REMOVE,
           "info"
         );
         setFavorite(nextFavorite);
       })
       .catch(() => {
-        notification.show("Error occurred while updating.", "error");
+        notification.show(TOAST_MESSAGES.SCRIPT_UPDATE_FAILURE, "error");
       });
   };
 
@@ -87,17 +88,23 @@ function Execute() {
         <Typography fontSize={28} fontWeight="400">
           Execute
         </Typography>
-        <IconButton
-          color="primary"
-          title={
-            favorite
-              ? "Add script to favorites"
-              : "Remove script from favorites"
-          }
-          onClick={handleFavoriteToggle}
-        >
-          <Icon>{favorite ? "favorite" : "favorite_border"}</Icon>
-        </IconButton>
+        {favorite ? (
+          <IconButton
+            color="primary"
+            title="Remove script from favorites"
+            onClick={handleFavoriteToggle}
+          >
+            <Favorite />
+          </IconButton>
+        ) : (
+          <IconButton
+            color="primary"
+            title="Add script to favorites"
+            onClick={handleFavoriteToggle}
+          >
+            <FavoriteBorder />
+          </IconButton>
+        )}
       </Box>
       <Stack
         direction="row"
@@ -134,4 +141,4 @@ function Execute() {
   );
 }
 
-export default Execute;
+export default ExecuteScreen;

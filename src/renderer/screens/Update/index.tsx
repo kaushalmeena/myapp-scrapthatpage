@@ -1,14 +1,15 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import PageName from "../../components/PageName";
-import { INITIAL_SCRIPT } from "../../constants/script";
-import db from "../../database";
-import { useNotification } from "../../hooks/useNotification";
 import ScriptEditor from "../../components/ScriptEditor";
+import { INITIAL_SCRIPT } from "../../constants/script";
+import { TOAST_MESSAGES } from "../../constants/toast";
+import db from "../../database";
 import { useDexieFetch } from "../../hooks/useDexieFetch";
+import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 
-function Update() {
+function UpdateScreen() {
   const notification = useNotification();
   const navigate = useNavigate();
   const params = useParams();
@@ -27,11 +28,11 @@ function Update() {
   const handleSubmit = (script: Script) => {
     db.updateScript(script)
       .then(() => {
-        notification.show("Script successfully updated!", "success");
+        notification.show(TOAST_MESSAGES.SCRIPT_UPDATE_SUCCESS, "success");
         navigate("/search");
       })
       .catch(() => {
-        notification.show("Error occurred while updating.", "error");
+        notification.show(TOAST_MESSAGES.SCRIPT_UPDATE_FAILURE, "error");
       });
   };
 
@@ -56,4 +57,4 @@ function Update() {
   );
 }
 
-export default Update;
+export default UpdateScreen;

@@ -1,4 +1,4 @@
-import { Button, Icon, Menu, MenuItem, Stack } from "@mui/material";
+import { Button, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { TableData } from "./types";
 import { downloadAsCSV, downloadAsJSON } from "./utils";
@@ -31,12 +31,13 @@ function TableToolbar({ data }: TableToolbarProps) {
       direction="row"
       gap={1}
       paddingTop={1}
-      paddingX={1}
-      justifyContent="flex-end"
+      paddingLeft={2}
+      paddingRight={1}
+      justifyContent="space-between"
+      alignItems="center"
     >
-      <Button startIcon={<Icon>file_download</Icon>} onClick={handledMenuOpen}>
-        Export
-      </Button>
+      <Typography variant="h6">Results</Typography>
+      <Button onClick={handledMenuOpen}>Export</Button>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}

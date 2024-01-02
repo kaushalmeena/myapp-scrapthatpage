@@ -8,3 +8,10 @@ export type ScraperAPI = {
   runJavascript: (code: string) => Promise<unknown>;
   runOperation: (operation: ScraperOperation) => Promise<ExecuteResponse>;
 };
+
+// This allow TypeScript to pick types for ScraperAPI on window
+declare global {
+  interface Window {
+    scraper: ScraperAPI;
+  }
+}

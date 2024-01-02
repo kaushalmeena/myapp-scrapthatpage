@@ -1,7 +1,7 @@
+import { ColorLens } from "@mui/icons-material";
 import {
   Box,
   FormControl,
-  Icon,
   List,
   ListItem,
   ListItemIcon,
@@ -17,7 +17,7 @@ import { useAppSelector } from "../../hooks/useAppSelector";
 import { selectSettings, updateTheme } from "../../redux/slices/settingsSlice";
 import { ThemeType } from "../../types/theme";
 
-function Settings() {
+function SettingsScreen() {
   const dispatch = useAppDispatch();
   const settings = useAppSelector(selectSettings);
 
@@ -33,7 +33,7 @@ function Settings() {
         <List>
           <ListItem>
             <ListItemIcon>
-              <Icon>color_lens</Icon>
+              <ColorLens />
             </ListItemIcon>
             <ListItemText
               primary="Theme"
@@ -55,4 +55,4 @@ function Settings() {
   );
 }
 
-export default Settings;
+export default SettingsScreen;

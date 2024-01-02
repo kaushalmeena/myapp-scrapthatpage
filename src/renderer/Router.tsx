@@ -1,13 +1,13 @@
 import { createMemoryRouter } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
-import Create from "./screens/Create";
-import Dashboard from "./screens/Dashboard";
-import Delete from "./screens/Delete";
-import Execute from "./screens/Execute";
-import Favorites from "./screens/Favorites";
-import Search from "./screens/Search";
-import Settings from "./screens/Settings";
-import Update from "./screens/Update";
+import CreateScreen from "./screens/Create";
+import HomeScreen from "./screens/Home";
+import DeleteScreen from "./screens/Delete";
+import ExecuteScreen from "./screens/Execute";
+import FavoritesScreen from "./screens/Favorites";
+import SearchScreen from "./screens/Search";
+import SettingsScreen from "./screens/Settings";
+import UpdateScreen from "./screens/Update";
 
 const router = createMemoryRouter([
   {
@@ -15,39 +15,35 @@ const router = createMemoryRouter([
     children: [
       {
         index: true,
-        element: <Dashboard />
-      },
-      {
-        path: "/dashboard",
-        element: <Dashboard />
+        element: <HomeScreen />
       },
       {
         path: "/favorites",
-        element: <Favorites />
+        element: <FavoritesScreen />
       },
       {
         path: "/search",
-        element: <Search />
+        element: <SearchScreen />
       },
       {
         path: "/settings",
-        element: <Settings />
+        element: <SettingsScreen />
       },
       {
         path: "/create",
-        element: <Create />
+        element: <CreateScreen />
       },
       {
         path: "/update/:scriptId",
-        element: <Update />
+        element: <UpdateScreen />
       },
       {
         path: "/delete/:scriptId",
-        element: <Delete />
+        element: <DeleteScreen />
       },
       {
         path: "/execute/:scriptId",
-        element: <Execute />
+        element: <ExecuteScreen />
       }
     ]
   }

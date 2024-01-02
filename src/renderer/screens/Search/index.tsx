@@ -1,7 +1,7 @@
+import { Search } from "@mui/icons-material";
 import {
   Box,
   CircularProgress,
-  Icon,
   InputAdornment,
   Stack,
   TextField,
@@ -15,7 +15,7 @@ import db from "../../database";
 import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
 
-function Search() {
+function SearchScreen() {
   const [search, setSearch] = useState("");
   const query = useDeferredValue(search);
 
@@ -56,7 +56,7 @@ function Search() {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Icon>search</Icon>
+                    <Search />
                   </InputAdornment>
                 )
               }}
@@ -83,4 +83,4 @@ function Search() {
   );
 }
 
-export default Search;
+export default SearchScreen;

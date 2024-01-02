@@ -13,7 +13,7 @@ function ScriptRunner({ script }: ScriptRunnerProps) {
   const { status, heading, message, data, start, stop } =
     useScriptRunner(script);
 
-  const { title, icon, color, backgroundColor } = getRunnerCardInfo(status);
+  const { title, color, backgroundColor, Icon } = getRunnerCardInfo(status);
 
   return (
     <>
@@ -23,10 +23,10 @@ function ScriptRunner({ script }: ScriptRunnerProps) {
           subheader={message}
           avatar={
             <ActionButton
-              spinning={icon === "stop"}
+              spinning={title === "Stop execution"}
               title={title}
-              icon={icon}
               color={color}
+              Icon={Icon}
               onClick={status === "started" ? stop : start}
             />
           }

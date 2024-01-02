@@ -6,7 +6,7 @@ import db from "../../database";
 import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
 
-function Favorites() {
+function FavoritesScreen() {
   const {
     result: scripts,
     status,
@@ -43,4 +43,4 @@ function Favorites() {
   );
 }
 
-export default Favorites;
+export default FavoritesScreen;

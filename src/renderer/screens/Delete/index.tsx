@@ -8,12 +8,13 @@ import {
 import { useNavigate, useParams } from "react-router";
 import PageName from "../../components/PageName";
 import { INITIAL_SCRIPT } from "../../constants/script";
+import { TOAST_MESSAGES } from "../../constants/toast";
 import db from "../../database";
-import { useNotification } from "../../hooks/useNotification";
 import { useDexieFetch } from "../../hooks/useDexieFetch";
+import { useNotification } from "../../hooks/useNotification";
 import { Script } from "../../types/script";
 
-function Delete() {
+function DeleteScreen() {
   const notification = useNotification();
   const navigate = useNavigate();
   const params = useParams();
@@ -32,11 +33,11 @@ function Delete() {
   const handleYesClick = () => {
     db.deleteScriptById(scriptId)
       .then(() => {
-        notification.show("Script successfully deleted!", "success");
+        notification.show(TOAST_MESSAGES.SCRIPT_DELETE_SUCCESS, "success");
         navigate("/search");
       })
       .catch(() => {
-        notification.show("Error occurred while deleting.", "error");
+        notification.show(TOAST_MESSAGES.SCRIPT_DELETE_FAILURE, "error");
       });
   };
 
@@ -75,4 +76,4 @@ function Delete() {
   );
 }
 
-export default Delete;
+export default DeleteScreen;
