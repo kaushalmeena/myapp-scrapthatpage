@@ -1,18 +1,18 @@
+import { FindInPage } from "@mui/icons-material";
 import {
   Box,
   Card,
   CardActionArea,
   CardHeader,
-  Icon,
   Stack,
   Typography
 } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import PageName from "../../components/PageName";
 import { PAGE_LINKS } from "../../constants/layout";
-import { useEffect, useState } from "react";
 
-function Dashboard() {
+function HomeScreen() {
   const navigate = useNavigate();
   const [version, setVersion] = useState("");
 
@@ -22,24 +22,24 @@ function Dashboard() {
 
   return (
     <>
-      <PageName name="Dashboard" />
+      <PageName name="Home" />
       <Box display="flex" flexDirection="row">
         <Stack gap={1} flex={1}>
-          {PAGE_LINKS.map((link) => (
-            <Card key={`card-${link.title}`} variant="outlined">
-              <CardActionArea onClick={() => navigate(link.route)}>
+          {PAGE_LINKS.map(({ title, subtitle, route, Icon }) => (
+            <Card key={`card-${title}`} variant="outlined">
+              <CardActionArea onClick={() => navigate(route)}>
                 <CardHeader
-                  avatar={<Icon fontSize="large">{link.icon}</Icon>}
-                  title={link.title}
+                  avatar={<Icon fontSize="large" />}
+                  title={title}
                   titleTypographyProps={{ fontSize: 18, fontWeight: "400" }}
-                  subheader={link.subtitle}
+                  subheader={subtitle}
                 />
               </CardActionArea>
             </Card>
           ))}
         </Stack>
         <Box marginX={2} display="flex" flexDirection="row" flex={1}>
-          <Icon sx={{ color: "primary.main", fontSize: 84 }}>find_in_page</Icon>
+          <FindInPage sx={{ color: "primary.main", fontSize: 84 }} />
           <Stack>
             <Typography variant="h5">ScrapThatPage!</Typography>
             <Typography variant="subtitle1">{version}</Typography>
@@ -50,4 +50,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default HomeScreen;

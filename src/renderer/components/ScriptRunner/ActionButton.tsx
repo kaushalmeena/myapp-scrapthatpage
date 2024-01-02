@@ -1,11 +1,12 @@
-import { Box, Button, CircularProgress, Icon } from "@mui/material";
+import { SvgIconComponent } from "@mui/icons-material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { ActionButtonColor } from "./types";
 
 type ActionButtonProps = {
   spinning: boolean;
   title: string;
   color: ActionButtonColor;
-  icon: string;
+  Icon: SvgIconComponent;
   onClick: () => void;
 };
 
@@ -13,7 +14,7 @@ function ActionButton({
   spinning,
   title,
   color,
-  icon,
+  Icon,
   onClick
 }: ActionButtonProps) {
   return (
@@ -32,7 +33,7 @@ function ActionButton({
           zIndex: 1
         }}
       >
-        <Icon>{icon}</Icon>
+        <Icon />
       </Button>
       {spinning && (
         <CircularProgress

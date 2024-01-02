@@ -1,10 +1,5 @@
-import {
-  Icon,
-  IconButton,
-  InputAdornment,
-  MenuItem,
-  TextField
-} from "@mui/material";
+import { ControlPointDuplicate } from "@mui/icons-material";
+import { IconButton, InputAdornment, MenuItem, TextField } from "@mui/material";
 import { get } from "lodash";
 import { ChangeEvent } from "react";
 import { LargeInput } from "../../../common/types/largeOperation";
@@ -52,7 +47,7 @@ function OperationInput({ path }: OperationInputProps) {
                   size="small"
                   onClick={handlePickerOpen}
                 >
-                  <Icon fontSize="small">control_point_duplicate</Icon>
+                  <ControlPointDuplicate fontSize="small" />
                 </IconButton>
               </InputAdornment>
             )

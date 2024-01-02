@@ -1,17 +1,18 @@
+import { FindInPage } from "@mui/icons-material";
 import {
   Box,
   Divider,
   Drawer,
-  Icon,
   IconButton,
   List,
   ListItemButton,
   ListItemIcon
 } from "@mui/material";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { DRAWER_WIDTH, PAGE_LINKS } from "../../constants/layout";
 
 function Sidebar() {
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
   return (
@@ -28,10 +29,11 @@ function Sidebar() {
       }}
     >
       <Box marginY={1} display="flex" justifyContent="center">
-        <IconButton color="primary" onClick={() => navigate("/dashboard")}>
-          <Icon color="primary" fontSize="large">
-            find_in_page
-          </Icon>
+        <IconButton title="Home" onClick={() => navigate("/")}>
+          <FindInPage
+            color={pathname === "/" ? "primary" : "inherit"}
+            fontSize="large"
+          />
         </IconButton>
       </Box>
       <Divider />
@@ -42,14 +44,14 @@ function Sidebar() {
           }
         }}
       >
-        {PAGE_LINKS.map((link) => (
+        {PAGE_LINKS.map(({ title, route, Icon }) => (
           <ListItemButton
-            key={`li-${link.title}`}
-            title={link.title}
-            onClick={() => navigate(link.route)}
+            key={`li-${title}`}
+            title={title}
+            onClick={() => navigate(route)}
           >
             <ListItemIcon>
-              <Icon>{link.icon}</Icon>
+              <Icon color={pathname === route ? "primary" : "inherit"} />
             </ListItemIcon>
           </ListItemButton>
         ))}

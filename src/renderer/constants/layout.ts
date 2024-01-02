@@ -1,30 +1,36 @@
 import { PageLink } from "../types/layout";
+import {
+  DashboardCustomize,
+  Favorite,
+  Search,
+  Settings
+} from "@mui/icons-material";
 
 export const DRAWER_WIDTH = 70;
 
 export const PAGE_LINKS: PageLink[] = [
   {
     title: "Create",
-    subtitle: "Create a new script.",
+    subtitle: "Create a new script",
     route: "/create",
-    icon: "dashboard_customize"
+    Icon: DashboardCustomize
   },
   {
     title: "Favorites",
-    subtitle: "List your favorites scripts.",
+    subtitle: "List your favorites scripts",
     route: "/favorites",
-    icon: "favorite"
+    Icon: Favorite
   },
   {
     title: "Search",
-    subtitle: "Search scripts using a query.",
+    subtitle: "Search scripts using a query",
     route: "/search",
-    icon: "search"
+    Icon: Search
   },
   {
     title: "Settings",
-    subtitle: "Show app settings.",
+    subtitle: "Show app settings",
     route: "/settings",
-    icon: "settings"
+    Icon: Settings
   }
 ];

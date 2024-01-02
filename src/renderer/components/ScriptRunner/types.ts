@@ -1,3 +1,4 @@
+import { SvgIconComponent } from "@mui/icons-material";
 import { ScraperOperation } from "../../../common/types/scraper";
 
 export type RunnerGenerator = Generator<
@@ -28,9 +29,9 @@ export type ActionButtonColor =
 
 export type RunnerCardInfo = {
   title: string;
-  icon: string;
   color: ActionButtonColor;
   backgroundColor?: string;
+  Icon: SvgIconComponent;
 };
 
 export type TableData = {

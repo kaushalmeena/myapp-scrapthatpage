@@ -1,3 +1,4 @@
+import { PlayArrow, Refresh, Stop } from "@mui/icons-material";
 import { produce } from "immer";
 import { evaluate } from "mathjs";
 import {
@@ -197,34 +198,34 @@ export const getRunnerCardInfo = (status: RunnerStatus): RunnerCardInfo => {
     case "ready":
       return {
         title: "Start execution",
-        icon: "play_arrow",
-        color: "primary"
+        color: "primary",
+        Icon: PlayArrow
       };
     case "started":
       return {
         title: "Stop execution",
-        icon: "stop",
-        color: "primary"
+        color: "primary",
+        Icon: Stop
       };
     case "stopped":
       return {
         title: "Restart execution",
-        icon: "refresh",
-        color: "primary"
+        color: "primary",
+        Icon: Refresh
       };
     case "finished":
       return {
         title: "Restart execution",
-        icon: "refresh",
         color: "success",
-        backgroundColor: "rgba(46, 125, 50, 0.1)"
+        backgroundColor: "rgba(46, 125, 50, 0.1)",
+        Icon: Refresh
       };
     case "error":
       return {
         title: "Restart execution",
-        icon: "refresh",
         color: "error",
-        backgroundColor: "rgba(46, 125, 50, 0.1)"
+        backgroundColor: "rgba(46, 125, 50, 0.1)",
+        Icon: Refresh
       };
   }
 };

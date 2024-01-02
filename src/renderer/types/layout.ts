@@ -1,6 +1,8 @@
+import { SvgIconComponent } from "@mui/icons-material";
+
 export type PageLink = {
   title: string;
   subtitle: string;
   route: string;
-  icon: string;
+  Icon: SvgIconComponent;
 };

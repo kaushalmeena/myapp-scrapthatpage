@@ -41,7 +41,7 @@ $ yarn run start
 
 ## Screenshots
 
-<img src="./screenshots/Dashboard.png" width="700"> 
+<img src="./screenshots/Home.png" width="700"> 
 <img src="./screenshots/Create.png" width="700">
 <img src="./screenshots/Favorites.png" width="700">
 <img src="./screenshots/Search.png" width="700">

@@ -1,23 +1,24 @@
 import { useNavigate } from "react-router";
 import PageName from "../../components/PageName";
+import ScriptEditor from "../../components/ScriptEditor";
 import { INITIAL_SCRIPT } from "../../constants/script";
+import { TOAST_MESSAGES } from "../../constants/toast";
 import db from "../../database";
 import { useNotification } from "../../hooks/useNotification";
-import ScriptEditor from "../../components/ScriptEditor";
 import { Script } from "../../types/script";
 
-function Create() {
+function CreateScreen() {
   const notification = useNotification();
   const navigate = useNavigate();
 
   const handleSubmit = (script: Script) => {
     db.createScript(script)
       .then(() => {
-        notification.show("Script successfully created!", "success");
+        notification.show(TOAST_MESSAGES.SCRIPT_CREATE_SUCCESS, "success");
         navigate("/search");
       })
       .catch(() => {
-        notification.show("Error occurred while saving script.", "error");
+        notification.show(TOAST_MESSAGES.SCRIPT_CREATE_FAILURE, "error");
       });
   };
 
@@ -29,4 +30,4 @@ function Create() {
   );
 }
 
-export default Create;
+export default CreateScreen;
