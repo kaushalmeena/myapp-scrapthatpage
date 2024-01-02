@@ -10,9 +10,10 @@ function FavoritesScreen() {
   const {
     result: scripts,
     status,
-    error
+    error,
+    reload
   } = useDexieFetch<Script[]>({
-    fetcher: db.fetchAllFavoriteScripts(),
+    fetcher: () => db.fetchAllFavoriteScripts(),
     defaultValue: []
   });
 
@@ -27,9 +28,8 @@ function FavoritesScreen() {
               scripts.map((item) => (
                 <ScriptCard
                   key={`script-${item.id}`}
-                  id={item.id as number}
-                  title={item.name}
-                  description={item.description}
+                  script={item}
+                  onReload={reload}
                 />
               ))
             ) : (

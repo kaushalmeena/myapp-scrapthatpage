@@ -2,11 +2,13 @@ import {
   ArrowDownward,
   ArrowUpward,
   Clear,
-  Edit,
-  EditOff
+  Visibility,
+  VisibilityOff
 } from "@mui/icons-material";
 import {
   Card,
+  CardActionArea,
+  CardActions,
   CardContent,
   CardHeader,
   Chip,
@@ -44,9 +46,7 @@ function OperationCard({ path }: OperationCardProps) {
 
   const [expanded, setExpanded] = useState(false);
 
-  const handleExpandToggle = () => {
-    setExpanded((value) => !value);
-  };
+  const handleExpandToggle = () => setExpanded((prev) => !prev);
 
   const handleMoveUpClick = () => dispatch(moveUpOperation(path));
 
@@ -69,49 +69,51 @@ function OperationCard({ path }: OperationCardProps) {
           : "rgba(211, 47, 47, 0.1)"
       }}
     >
-      <CardHeader
-        avatar={<Chip variant="outlined" label={operationNumber} />}
-        title={operation.name}
-        subheader={operationSubheader}
-        action={
-          <Stack direction="row">
-            <IconButton
-              size="small"
-              title="Move-up operation"
-              onClick={handleMoveUpClick}
-            >
-              <ArrowUpward fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
-              title="Move-down operation"
-              onClick={handleMoveDownClick}
-            >
-              <ArrowDownward fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
-              title="Edit operation"
-              color="primary"
-              onClick={handleExpandToggle}
-            >
-              {expanded ? (
-                <EditOff fontSize="small" />
-              ) : (
-                <Edit fontSize="small" />
-              )}
-            </IconButton>
-            <IconButton
-              size="small"
-              title="Delete operation"
-              color="secondary"
-              onClick={handleDeleteClick}
-            >
-              <Clear fontSize="small" />
-            </IconButton>
-          </Stack>
-        }
-      />
+      <Stack direction="row">
+        <CardActionArea onClick={handleExpandToggle}>
+          <CardHeader
+            avatar={<Chip variant="outlined" label={operationNumber} />}
+            title={operation.name}
+            subheader={operationSubheader}
+          />
+        </CardActionArea>
+        <CardActions>
+          <IconButton
+            size="small"
+            title="Move operation up"
+            onClick={handleMoveUpClick}
+          >
+            <ArrowUpward fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            title="Move operation down"
+            onClick={handleMoveDownClick}
+          >
+            <ArrowDownward fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="primary"
+            title={expanded ? "Hide operation inputs" : "Show operation inputs"}
+            onClick={handleExpandToggle}
+          >
+            {expanded ? (
+              <Visibility fontSize="small" />
+            ) : (
+              <VisibilityOff fontSize="small" />
+            )}
+          </IconButton>
+          <IconButton
+            size="small"
+            title="Delete operation"
+            color="secondary"
+            onClick={handleDeleteClick}
+          >
+            <Clear fontSize="small" />
+          </IconButton>
+        </CardActions>
+      </Stack>
       <Collapse in={expanded} timeout="auto">
         <CardContent>
           <Grid container spacing={2}>

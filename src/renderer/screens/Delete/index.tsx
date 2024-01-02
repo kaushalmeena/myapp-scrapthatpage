@@ -26,7 +26,7 @@ function DeleteScreen() {
     status,
     error
   } = useDexieFetch<Script>({
-    fetcher: db.fetchScriptById(scriptId),
+    fetcher: () => db.fetchScriptById(scriptId),
     defaultValue: INITIAL_SCRIPT
   });
 

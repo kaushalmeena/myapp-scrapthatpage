@@ -41,15 +41,15 @@ $ yarn run start
 
 ## Screenshots
 
-<img src="./screenshots/Home.png" width="700"> 
-<img src="./screenshots/Create.png" width="700">
-<img src="./screenshots/Favorites.png" width="700">
-<img src="./screenshots/Search.png" width="700">
-<img src="./screenshots/Settings.png" width="700">
-<img src="./screenshots/UpdateInformation.png" width="700">
-<img src="./screenshots/UpdateOperations.png" width="700">
-<img src="./screenshots/Execute.png" width="700">
-<img src="./screenshots/Delete.png" width="700">
+<img src="./screenshots/Home.png"> 
+<img src="./screenshots/Create.png">
+<img src="./screenshots/Favorites.png">
+<img src="./screenshots/Search.png">
+<img src="./screenshots/Settings.png">
+<img src="./screenshots/UpdateInformation.png">
+<img src="./screenshots/UpdateOperations.png">
+<img src="./screenshots/Execute.png">
+<img src="./screenshots/Delete.png">
 
 ## Built With
 
