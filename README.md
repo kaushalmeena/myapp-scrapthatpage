@@ -21,14 +21,14 @@ To set up everything in your local machine, you need to follow these steps:
 1. Clone this repo and then change directory to the `myapp-scrapthatpage` folder:
 
 ```bash
-$ git clone https://github.com/kaushalmeena/myapp-scrapthatpage.git
-$ cd myapp-scrapthatpage
+git clone https://github.com/kaushalmeena/myapp-scrapthatpage.git
+cd myapp-scrapthatpage
 ```
 
 2. Install project dependencies using yarn:
 
 ```bash
-$ yarn install
+yarn install
 ```
 
 ### Running
@@ -36,7 +36,7 @@ $ yarn install
 To run the project simply run:
 
 ```bash
-$ yarn run start
+yarn run start
 ```
 
 ## Screenshots
