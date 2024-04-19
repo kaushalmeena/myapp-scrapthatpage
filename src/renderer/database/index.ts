@@ -1,6 +1,6 @@
 import Dexie, { PromiseExtended, Table } from "dexie";
 import { Script } from "../types/script";
-import { topYoutubeVideosScript } from "./dummyScripts";
+import { mostPopularMoviesScript } from "./dummyScripts";
 
 class ScriptDatabase extends Dexie {
   public scripts: Table<Script, number>;
@@ -10,7 +10,7 @@ class ScriptDatabase extends Dexie {
     this.version(1).stores({ scripts: "++id, name, favorite" });
     this.scripts = this.table("scripts");
     this.on("populate", () => {
-      this.scripts.add(topYoutubeVideosScript);
+      this.scripts.add(mostPopularMoviesScript);
     });
   }
 
