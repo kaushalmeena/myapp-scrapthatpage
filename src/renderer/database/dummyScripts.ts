@@ -1,19 +1,21 @@
 import { Script } from "../types/script";
 
-export const topYoutubeVideosScript: Script = {
+export const mostPopularMoviesScript: Script = {
   favorite: 0,
-  name: "Top YouTube videos",
-  description: "Fetches list of top videos from YouTube",
+  name: "Most Popular Movies",
+  description: "Fetches list of popular movies from IMDb",
   operations: [
     {
       type: "open",
-      inputs: [{ type: "text", value: "https://www.youtube.com/" }]
+      inputs: [
+        { type: "text", value: "https://www.imdb.com/chart/moviemeter/" }
+      ]
     },
     {
       type: "extract",
       inputs: [
         { type: "text", value: "Title" },
-        { type: "text", value: "yt-formatted-string#video-title" },
+        { type: "text", value: "li .ipc-title__text" },
         { type: "select", value: "textContent" }
       ]
     }
