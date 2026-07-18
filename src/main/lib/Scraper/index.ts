@@ -19,9 +19,16 @@ class Scraper {
           // locked down: no Node.js access, isolated context, sandboxed.
           nodeIntegration: false,
           contextIsolation: true,
-          sandbox: true
+          sandbox: true,
+          webSecurity: true,
+          allowRunningInsecureContent: false
         }
       });
+      // Scraped pages may try to open pop-ups; deny them. Navigation within the
+      // window is left unrestricted since following links is core to scraping.
+      this.scraperWindow.webContents.setWindowOpenHandler(() => ({
+        action: "deny"
+      }));
       this.scraperWindow.once("closed", () => {
         this.scraperWindow = undefined;
       });

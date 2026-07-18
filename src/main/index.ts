@@ -1,7 +1,26 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, shell } from "electron";
 import path from "path";
 import Scraper from "./lib/Scraper";
 import { connectScraperProxy, disconnectScraperProxy } from "./proxy/scraper";
+
+// Lock a window down: block navigation away from the app's own origin and never
+// let it spawn Electron windows (genuine external https links open in the user's
+// browser instead). Applied to the main window, which only loads local UI.
+const hardenWindow = (window: BrowserWindow) => {
+  window.webContents.on("will-navigate", (event, url) => {
+    const currentOrigin = new URL(window.webContents.getURL()).origin;
+    if (new URL(url).origin !== currentOrigin) {
+      event.preventDefault();
+    }
+  });
+
+  window.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith("https://")) {
+      shell.openExternal(url);
+    }
+    return { action: "deny" };
+  });
+};
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 // electron-squirrel-startup is a CJS-only package that ships no type
@@ -17,9 +36,18 @@ const createWindow = () => {
     width: 1200,
     height: 700,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js")
+      preload: path.join(__dirname, "preload.js"),
+      // Explicit secure defaults (see electron-development skill): keep the
+      // renderer isolated from Node and sandboxed.
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false
     }
   });
+
+  hardenWindow(mainWindow);
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
