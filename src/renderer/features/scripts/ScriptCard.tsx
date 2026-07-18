@@ -1,6 +1,17 @@
 import { Heart, Pencil, Play, X } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { TOAST_MESSAGES } from "@/lib/messages";
@@ -10,17 +21,28 @@ import { cn } from "@/lib/utils";
 
 type ScriptCardProps = {
   script: Script;
-  onReload: () => void;
 };
 
-function ScriptCard({ script, onReload }: ScriptCardProps) {
+function ScriptCard({ script }: ScriptCardProps) {
   const navigate = useNavigate();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleExecuteClick = () => navigate(`/execute/${script.id}`);
 
   const handleUpdateClick = () => navigate(`/update/${script.id}`);
 
-  const handleDeleteClick = () => navigate(`/delete/${script.id}`);
+  const handleDeleteConfirm = () => {
+    if (script.id === undefined) {
+      return;
+    }
+    db.deleteScriptById(script.id)
+      .then(() => {
+        toast.success(TOAST_MESSAGES.SCRIPT_DELETE_SUCCESS);
+      })
+      .catch(() => {
+        toast.error(TOAST_MESSAGES.SCRIPT_DELETE_FAILURE);
+      });
+  };
 
   const handleFavoriteToggle = () => {
     if (script.id === undefined) {
@@ -33,7 +55,6 @@ function ScriptCard({ script, onReload }: ScriptCardProps) {
     db.updateScriptFavoriteField(script.id, nextFavorite)
       .then(() => {
         toast.info(nextToastMessage);
-        onReload();
       })
       .catch(() => {
         toast.error(TOAST_MESSAGES.SCRIPT_UPDATE_FAILURE);
@@ -90,11 +111,30 @@ function ScriptCard({ script, onReload }: ScriptCardProps) {
           variant="ghost"
           size="icon"
           title="Delete script"
-          onClick={handleDeleteClick}
+          onClick={() => setDeleteDialogOpen(true)}
         >
           <X className="size-4 text-destructive" />
         </Button>
       </div>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete “{script.name}”?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes the script and cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleDeleteConfirm}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

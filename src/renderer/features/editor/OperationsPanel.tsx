@@ -1,26 +1,31 @@
-import { get } from "lodash";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import EmptyState from "@/components/EmptyState";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { LargeOperation } from "../../../common/types/largeOperation";
+import {
+  getListIds,
+  OperationListRef,
+  showOperationSelector
+} from "./scriptEditorSlice";
 import OperationCard from "./OperationCard";
-import { showOperationSelector } from "./scriptEditorSlice";
 
 type OperationsPanelProps = {
-  path: string;
+  listRef: OperationListRef;
+  // Display-number prefix for this list ("" at the root, "2.1." inside the
+  // first box of the second operation, and so on).
+  numberPrefix: string;
 };
 
-function OperationsPanel({ path }: OperationsPanelProps) {
+function OperationsPanel({ listRef, numberPrefix }: OperationsPanelProps) {
   const dispatch = useAppDispatch();
-  const operations = useAppSelector(
-    (state) => get(state.scriptEditor, path) as LargeOperation[],
-    (prevOperations, nextOperations) =>
-      prevOperations.length === nextOperations.length
+  // Immer keeps untouched arrays referentially stable, so the default
+  // reference equality only re-renders this list when it actually changes.
+  const ids = useAppSelector((state) =>
+    getListIds(state.scriptEditor, listRef)
   );
 
-  const handleAddClick = () => dispatch(showOperationSelector(path));
+  const handleAddClick = () => dispatch(showOperationSelector(listRef));
 
   return (
     <div className="flex flex-col gap-2">
@@ -36,9 +41,15 @@ function OperationsPanel({ path }: OperationsPanelProps) {
         </Button>
       </div>
       <div className="flex flex-col gap-2">
-        {operations.length > 0 ? (
-          operations.map((_, index) => (
-            <OperationCard key={`${path}.${index}`} path={`${path}.${index}`} />
+        {ids.length > 0 ? (
+          ids.map((id, index) => (
+            <OperationCard
+              key={id}
+              id={id}
+              listRef={listRef}
+              index={index}
+              number={`${numberPrefix}${index + 1}`}
+            />
           ))
         ) : (
           <EmptyState message="No operations added" />

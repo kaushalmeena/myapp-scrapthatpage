@@ -2,10 +2,9 @@ import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 import AsyncContent from "@/components/AsyncContent";
 import PageHeader from "@/components/PageHeader";
-import { INITIAL_SCRIPT } from "@/lib/constants";
 import { TOAST_MESSAGES } from "@/lib/messages";
 import db from "@/database";
-import { useDexieFetch } from "@/hooks/useDexieFetch";
+import { useScriptById } from "@/features/scripts/useScriptById";
 import { Script } from "@/types/script";
 import ScriptEditor from "./ScriptEditor";
 
@@ -13,19 +12,10 @@ function UpdateScreen() {
   const navigate = useNavigate();
   const params = useParams();
 
-  const scriptId = Number(params.scriptId);
+  const script = useScriptById(Number(params.scriptId));
 
-  const {
-    result: fetchedScript,
-    status,
-    error
-  } = useDexieFetch<Script>({
-    fetcher: () => db.fetchScriptById(scriptId),
-    defaultValue: INITIAL_SCRIPT
-  });
-
-  const handleSubmit = (script: Script) => {
-    db.updateScript(script)
+  const handleSubmit = (updatedScript: Script) => {
+    db.updateScript(updatedScript)
       .then(() => {
         toast.success(TOAST_MESSAGES.SCRIPT_UPDATE_SUCCESS);
         navigate("/search");
@@ -38,8 +28,11 @@ function UpdateScreen() {
   return (
     <>
       <PageHeader title="Update" />
-      <AsyncContent status={status} error={error}>
-        <ScriptEditor script={fetchedScript} onSubmit={handleSubmit} />
+      <AsyncContent
+        status={script === undefined ? "loading" : script ? "loaded" : "error"}
+        error="Script not found."
+      >
+        {script && <ScriptEditor script={script} onSubmit={handleSubmit} />}
       </AsyncContent>
     </>
   );

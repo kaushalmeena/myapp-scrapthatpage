@@ -1,112 +1,153 @@
-import { Draft, produce } from "immer";
-import { chain, get, set } from "lodash";
-import { LargeOperation } from "../../../common/types/largeOperation";
-import { ValidationRule } from "../../../common/types/validation";
+import { cloneDeep } from "lodash";
+import { produce } from "immer";
+import { LARGE_OPERATIONS } from "../../../common/constants/largeOperations";
 import {
-  convertToLargeOperation,
-  convertToSmallOperation,
-  validateWithRules
-} from "../../../common/utils/operation";
+  SmallInput,
+  SmallOperation
+} from "../../../common/types/smallOperation";
+import { validateWithRules } from "../../../common/utils/operation";
 import { Script } from "@/types/script";
 import {
-  ScriptEditorState,
-  initialScriptEditorState
+  createEditorOperation,
+  initialScriptEditorState,
+  ScriptEditorState
 } from "./scriptEditorSlice";
 
-export const getOperationNumber = (path: string) =>
-  path
-    .split(/\D+/g)
-    .filter(Boolean)
-    .filter((_, index) => index % 2 === 0)
-    .map((num) => Number(num) + 1)
-    .join(".");
-
-export const getScriptFromScriptEditorState = (
-  state: ScriptEditorState
-): Script => ({
-  id: state.id,
-  favorite: state.favorite,
-  name: state.information.name.value,
-  description: state.information.description.value,
-  operations: state.operations.map(convertToSmallOperation)
-});
-
-export const getScriptEditorStateFromScript = (
-  script: Script
-): ScriptEditorState =>
-  chain(initialScriptEditorState)
-    .cloneDeep()
-    .set("id", script.id)
-    .set("favorite", script.favorite)
-    .set("information.name.value", script.name)
-    .set("information.description.value", script.description)
-    .set("operations", script.operations.map(convertToLargeOperation))
-    .value();
-
-const validateScriptEditorField = (
-  state: Draft<ScriptEditorState>,
-  path: string,
-  errors: string[]
-) => {
-  const valuePath = `${path}.value`;
-  const errorPath = `${path}.error`;
-  const rulesPath = `${path}.rules`;
-
-  const value = get(state, valuePath) as string;
-  const rules = get(state, rulesPath) as ValidationRule[];
-  const error = validateWithRules(value, rules);
-
-  if (error) {
-    set(state, errorPath, error);
-    errors.push(error);
+const getOperationTemplate = (type: SmallOperation["type"]) => {
+  const template = LARGE_OPERATIONS.find((item) => item.type === type);
+  if (!template) {
+    throw new Error(`Operation type of ${type} not found.`);
   }
+  return template;
 };
 
-const validateScriptEditorOperations = (
-  state: Draft<ScriptEditorState>,
-  path: string,
-  errors: string[]
-) => {
-  const operations = get(state, path) as LargeOperation[];
+// Builds the normalized editor state from a stored script: every operation
+// gets an id and lands in the flat map, nesting becomes id lists, and
+// variables are derived from "set" operations.
+export const normalizeScript = (script: Script): ScriptEditorState => {
+  const state = cloneDeep(initialScriptEditorState);
 
-  for (let i = 0; i < operations.length; i += 1) {
-    const operation = operations[i];
-    const operationPath = `${path}.${i}`;
+  const addOperation = (small: SmallOperation): string => {
+    const operation = createEditorOperation(getOperationTemplate(small.type));
+    // Cast: calling forEach on a union of tuple types collapses the element
+    // type; SmallInput is the true union of all input shapes.
+    (small.inputs as SmallInput[]).forEach((smallInput, index) => {
+      const editorInput = operation.inputs[index];
+      if (smallInput.type === "operation_box") {
+        if (editorInput.type === "operation_box") {
+          editorInput.operationIds = smallInput.operations.map(addOperation);
+        }
+      } else if (editorInput.type !== "operation_box") {
+        editorInput.value = smallInput.value;
+      }
+    });
+    if (small.type === "set") {
+      state.variables.push({
+        ownerId: operation.id,
+        name: small.inputs[0].value,
+        type: small.inputs[1].value
+      });
+    }
+    state.operations[operation.id] = operation;
+    return operation.id;
+  };
 
-    const inputErrors: string[] = [];
+  state.id = script.id;
+  state.version = script.version;
+  state.favorite = script.favorite;
+  state.information.name.value = script.name;
+  state.information.description.value = script.description;
+  state.rootIds = script.operations.map(addOperation);
 
-    for (let j = 0; j < operation.inputs.length; j += 1) {
-      switch (operation.inputs[j].type) {
-        case "text":
-        case "select":
-          {
-            const inputPath = `${operationPath}.inputs.${j}`;
-            validateScriptEditorField(state, inputPath, inputErrors);
+  return state;
+};
+
+// Converts the normalized editor state back into the compact stored form.
+export const denormalizeState = (state: ScriptEditorState): Script => {
+  const toSmall = (id: string): SmallOperation => {
+    const operation = state.operations[id];
+    const inputs = operation.inputs.map((input) =>
+      input.type === "operation_box"
+        ? {
+            type: "operation_box" as const,
+            operations: input.operationIds.map(toSmall)
           }
-          break;
-        case "operation_box":
-          {
-            const operationsPath = `${operationPath}.inputs.${j}.operations`;
-            validateScriptEditorOperations(state, operationsPath, errors);
-          }
-          break;
+        : { type: input.type, value: input.value }
+    );
+    // The inputs are rebuilt in template order, so the tuple shape per
+    // operation type is guaranteed by construction (and re-checked by the
+    // zod schema when the script is written to the database).
+    return { type: operation.type, inputs } as SmallOperation;
+  };
+
+  return {
+    id: state.id,
+    version: state.version,
+    favorite: state.favorite,
+    name: state.information.name.value,
+    description: state.information.description.value,
+    operations: state.rootIds.map(toSmall)
+  };
+};
+
+// Computes the display number ("2.3" = third child of the second root
+// operation) for every operation in tree order.
+export const computeOperationNumbers = (
+  state: Pick<ScriptEditorState, "operations" | "rootIds">
+): Record<string, string> => {
+  const numbers: Record<string, string> = {};
+
+  const walk = (ids: string[], prefix: string) => {
+    ids.forEach((id, index) => {
+      const number = prefix ? `${prefix}.${index + 1}` : `${index + 1}`;
+      numbers[id] = number;
+      for (const input of state.operations[id]?.inputs ?? []) {
+        if (input.type === "operation_box") {
+          walk(input.operationIds, number);
+        }
+      }
+    });
+  };
+
+  walk(state.rootIds, "");
+  return numbers;
+};
+
+// Validates the whole editor state, returning the error messages plus a copy
+// of the state with per-field error strings filled in.
+export const validateEditorState = (state: ScriptEditorState) => {
+  const errors: string[] = [];
+  const numbers = computeOperationNumbers(state);
+
+  const validatedState = produce(state, (draft) => {
+    for (const key of ["name", "description"] as const) {
+      const field = draft.information[key];
+      field.error = validateWithRules(field.value, field.rules);
+      if (field.error) {
+        errors.push(field.error);
       }
     }
 
-    if (inputErrors.length > 0) {
-      const operationNumber = getOperationNumber(operationPath);
-      errors.push(`Please fix error in operation ${operationNumber}`);
+    // Tree order keeps error messages in the order the user sees the cards.
+    const orderedIds = Object.keys(numbers).sort((a, b) =>
+      numbers[a].localeCompare(numbers[b], undefined, { numeric: true })
+    );
+    for (const id of orderedIds) {
+      const operation = draft.operations[id];
+      let hasError = false;
+      for (const input of operation.inputs) {
+        if (input.type === "operation_box") {
+          continue;
+        }
+        input.error = validateWithRules(input.value, input.rules);
+        if (input.error) {
+          hasError = true;
+        }
+      }
+      if (hasError) {
+        errors.push(`Please fix error in operation ${numbers[id]}`);
+      }
     }
-  }
-};
-
-export const validateScriptEditorState = (state: ScriptEditorState) => {
-  const errors: string[] = [];
-
-  const validatedState = produce(state, (draft) => {
-    validateScriptEditorField(draft, "information.name", errors);
-    validateScriptEditorField(draft, "information.description", errors);
-    validateScriptEditorOperations(draft, "operations", errors);
   });
 
   return { errors, validatedState };

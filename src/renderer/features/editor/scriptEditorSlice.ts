@@ -1,46 +1,76 @@
-import { Draft, PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { get } from "lodash";
+import { createSlice, Draft, nanoid, PayloadAction } from "@reduxjs/toolkit";
+import { cloneDeep } from "lodash";
+import type { RootState } from "@/app/store";
 import {
-  LargeInput,
   LargeOperation,
+  LargeSelectInput,
   LargeTextInput
 } from "../../../common/types/largeOperation";
-import { RootState } from "@/app/store";
-import { ValidationRule } from "../../../common/types/validation";
+import { SmallOperation } from "../../../common/types/smallOperation";
 import {
   Variable,
-  VariableType,
   VariablePickerMode,
-  VariableSetterMode
+  VariableType
 } from "../../../common/types/variable";
+import { ValidationRule } from "../../../common/types/validation";
 import { validateWithRules } from "../../../common/utils/operation";
+
+// The editor holds operations NORMALIZED: a flat id -> operation map plus id
+// lists (the root list and one per operation_box input). Components address an
+// input as (operationId, inputIndex) instead of a fragile lodash path, and
+// moving/deleting an operation is list surgery instead of tree surgery.
+
+export type EditorTextInput = LargeTextInput;
+export type EditorSelectInput = LargeSelectInput;
+
+export type EditorBoxInput = {
+  label: string;
+  type: "operation_box";
+  operationIds: string[];
+};
+
+export type EditorInput = EditorTextInput | EditorSelectInput | EditorBoxInput;
+
+export type EditorOperation = {
+  id: string;
+  type: SmallOperation["type"];
+  name: string;
+  description: string;
+  format: string;
+  inputs: EditorInput[];
+};
+
+// Identifies one operation list: the root list (parentId null) or an
+// operation_box input of a parent operation.
+export type OperationListRef = {
+  parentId: string | null;
+  inputIndex?: number;
+};
+
+export type EditorField = {
+  value: string;
+  error: string;
+  rules: ValidationRule[];
+};
 
 export type ScriptEditorState = {
   id?: number;
+  version?: number;
   favorite: number;
   information: {
-    name: {
-      value: string;
-      error: string;
-      rules: ValidationRule[];
-    };
-    description: {
-      value: string;
-      error: string;
-      rules: ValidationRule[];
-    };
+    name: EditorField;
+    description: EditorField;
   };
-  operations: LargeOperation[];
+  operations: Record<string, EditorOperation>;
+  rootIds: string[];
   variables: Variable[];
+  operationSelector: {
+    target: OperationListRef | null;
+  };
   variableSelector: {
-    visible: boolean;
-    activePath: string;
+    target: { operationId: string; inputIndex: number } | null;
     filterType: VariableType;
     updateMode: VariablePickerMode;
-  };
-  operationSelector: {
-    visible: boolean;
-    activePath: string;
   };
 };
 
@@ -50,50 +80,61 @@ export const initialScriptEditorState: ScriptEditorState = {
     name: {
       value: "",
       error: "",
-      rules: [
-        {
-          type: "required",
-          message: "Please enter name."
-        }
-      ]
+      rules: [{ type: "required", message: "Please enter name." }]
     },
     description: {
       value: "",
       error: "",
-      rules: [
-        {
-          type: "required",
-          message: "Please enter description."
-        }
-      ]
+      rules: [{ type: "required", message: "Please enter description." }]
     }
   },
-  operations: [],
+  operations: {},
+  rootIds: [],
   variables: [],
   operationSelector: {
-    visible: false,
-    activePath: ""
+    target: null
   },
   variableSelector: {
-    visible: false,
-    activePath: "",
+    target: null,
     filterType: "any",
     updateMode: "set"
   }
 };
 
-// Operations can be nested arbitrarily deep (if/while contain operation boxes),
-// so the editor addresses any input or operation by its lodash path into the
-// state tree (e.g. "operations.0.inputs.1.operations.2"). Reducers receive that
-// path and use lodash `get` to reach the target, which lets one set of actions
-// operate at any depth. This splits a path into the parent operations array's
-// path and the index within it.
-export const getOperationsPathInfo = (path: string) => {
-  const splittedPath = path.split(".");
-  const operationsPath = splittedPath.slice(0, -1).join(".");
-  const index = Number.parseInt(splittedPath.at(-1) || "NaN", 10);
-  return { operationsPath, index };
+export const getListIds = (
+  state: ScriptEditorState | Draft<ScriptEditorState>,
+  ref: OperationListRef
+): string[] => {
+  if (ref.parentId === null) {
+    return state.rootIds;
+  }
+  const input = state.operations[ref.parentId]?.inputs[ref.inputIndex ?? -1];
+  if (!input || input.type !== "operation_box") {
+    throw new Error("Operation list ref does not point at an operation_box");
+  }
+  return input.operationIds;
 };
+
+// Builds a fresh editor operation from an operation template
+// (LARGE_OPERATIONS), assigning it a new id.
+export const createEditorOperation = (
+  template: LargeOperation
+): EditorOperation => ({
+  id: nanoid(),
+  type: template.type,
+  name: template.name,
+  description: template.description,
+  format: template.format,
+  inputs: template.inputs.map((input): EditorInput =>
+    input.type === "operation_box"
+      ? {
+          label: input.label,
+          type: "operation_box",
+          operationIds: [] as string[]
+        }
+      : cloneDeep(input)
+  )
+});
 
 export const getUpdatedInputValueWithVariable = (
   value: string,
@@ -108,51 +149,63 @@ export const getUpdatedInputValueWithVariable = (
   }
 };
 
-export const updateScriptEditorVariables = (
+// Keeps the variables list in sync when a "set" operation's name/type inputs
+// change. Variables are owned by the operation that declares them.
+const syncVariableForOperation = (
   state: Draft<ScriptEditorState>,
-  path: string,
-  value: string,
-  mode: VariableSetterMode
+  ownerId: string,
+  mode: "name" | "type",
+  value: string
 ) => {
-  const foundIdx = state.variables.findIndex((item) => item.path === path);
-
-  switch (mode) {
-    case "name":
-      if (foundIdx > -1) {
-        state.variables[foundIdx].name = value;
-      } else {
-        state.variables.push({
-          path,
-          name: value,
-          type: "number"
-        });
-      }
-      break;
-    case "type":
-      if (foundIdx > -1) {
-        state.variables[foundIdx].type = value;
-      }
-      break;
+  const existing = state.variables.find((item) => item.ownerId === ownerId);
+  if (mode === "name") {
+    if (existing) {
+      existing.name = value;
+    } else {
+      state.variables.push({ ownerId, name: value, type: "number" });
+    }
+  } else if (existing) {
+    existing.type = value;
   }
 };
 
-export const updateScriptEditorField = (
+const applyInputValue = (
   state: Draft<ScriptEditorState>,
-  path: string,
+  operationId: string,
+  inputIndex: number,
   value: string
 ) => {
-  const field = get(state, path) as LargeTextInput;
-  field.error = validateWithRules(value, field.rules);
-  field.value = value;
-
-  if (field.variableSetter) {
-    const operationPath = path.split(".").slice(0, -2).join(".");
-    updateScriptEditorVariables(
+  const operation = state.operations[operationId];
+  const input = operation?.inputs[inputIndex];
+  if (!input || input.type === "operation_box") {
+    return;
+  }
+  input.error = validateWithRules(value, input.rules);
+  input.value = value;
+  if ("variableSetter" in input && input.variableSetter) {
+    syncVariableForOperation(
       state,
-      operationPath,
-      value,
-      field.variableSetter.mode
+      operationId,
+      input.variableSetter.mode,
+      value
     );
+  }
+};
+
+// Collects an operation's id plus every descendant id (through its
+// operation_box inputs).
+const collectOperationIds = (
+  state: Draft<ScriptEditorState>,
+  id: string,
+  acc: string[]
+) => {
+  acc.push(id);
+  for (const input of state.operations[id]?.inputs ?? []) {
+    if (input.type === "operation_box") {
+      for (const childId of input.operationIds) {
+        collectOperationIds(state, childId, acc);
+      }
+    }
   }
 };
 
@@ -160,111 +213,121 @@ const scriptEditorSlice = createSlice({
   name: "scriptEditor",
   initialState: initialScriptEditorState,
   reducers: {
-    updateState(_, action: PayloadAction<ScriptEditorState>) {
-      const state = action.payload;
-      return state;
+    replaceState(_, action: PayloadAction<ScriptEditorState>) {
+      return action.payload;
     },
     updateInformation(
       state,
-      action: PayloadAction<{
-        key: string;
-        value: string;
-      }>
+      action: PayloadAction<{ key: "name" | "description"; value: string }>
     ) {
       const { key, value } = action.payload;
-      const fieldPath = `information.${key}`;
-      updateScriptEditorField(state, fieldPath, value);
+      const field = state.information[key];
+      field.error = validateWithRules(value, field.rules);
+      field.value = value;
     },
     appendOperation(state, action: PayloadAction<LargeOperation>) {
-      const operation = action.payload;
-      const { activePath } = state.operationSelector;
-      const operations = get(state, activePath) as LargeOperation[];
-      operations.push(operation);
-    },
-    deleteOperation(state, action: PayloadAction<string>) {
-      const path = action.payload;
-      const { operationsPath, index } = getOperationsPathInfo(path);
-      const operations = get(state, operationsPath) as LargeOperation[];
-      const [deletedOperation] = operations.splice(index, 1);
-      if (deletedOperation?.type === "set") {
-        const oldVariables = state.variables;
-        const newVariables = oldVariables.filter((item) => item.path !== path);
-        state.variables = newVariables;
+      const target = state.operationSelector.target;
+      if (!target) {
+        return;
       }
+      const operation = createEditorOperation(action.payload);
+      state.operations[operation.id] = operation;
+      getListIds(state, target).push(operation.id);
     },
-    moveUpOperation(state, action: PayloadAction<string>) {
-      const path = action.payload;
-      const { operationsPath, index } = getOperationsPathInfo(path);
-      const operations = get(state, operationsPath) as LargeOperation[];
-      if (index > 0) {
-        const temp = operations[index];
-        operations[index] = operations[index - 1];
-        operations[index - 1] = temp;
+    deleteOperation(
+      state,
+      action: PayloadAction<{ listRef: OperationListRef; id: string }>
+    ) {
+      const { listRef, id } = action.payload;
+      const ids = getListIds(state, listRef);
+      const index = ids.indexOf(id);
+      if (index === -1) {
+        return;
       }
+      ids.splice(index, 1);
+      const removedIds: string[] = [];
+      collectOperationIds(state, id, removedIds);
+      for (const removedId of removedIds) {
+        delete state.operations[removedId];
+      }
+      state.variables = state.variables.filter(
+        (item) => !removedIds.includes(item.ownerId)
+      );
     },
-    moveDownOperation(state, action: PayloadAction<string>) {
-      const path = action.payload;
-      const { operationsPath, index } = getOperationsPathInfo(path);
-      const operations = get(state, operationsPath) as LargeOperation[];
-      if (index < operations.length - 1) {
-        const temp = operations[index];
-        operations[index] = operations[index + 1];
-        operations[index + 1] = temp;
+    moveOperation(
+      state,
+      action: PayloadAction<{
+        listRef: OperationListRef;
+        index: number;
+        direction: "up" | "down";
+      }>
+    ) {
+      const { listRef, index, direction } = action.payload;
+      const ids = getListIds(state, listRef);
+      const targetIndex = direction === "up" ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= ids.length) {
+        return;
       }
+      [ids[index], ids[targetIndex]] = [ids[targetIndex], ids[index]];
     },
     updateInput(
       state,
       action: PayloadAction<{
-        path: string;
+        operationId: string;
+        inputIndex: number;
         value: string;
       }>
     ) {
-      const { path, value } = action.payload;
-      updateScriptEditorField(state, path, value);
+      const { operationId, inputIndex, value } = action.payload;
+      applyInputValue(state, operationId, inputIndex, value);
     },
     updateInputWithVariable(state, action: PayloadAction<Variable>) {
-      const variable = action.payload;
-      const { activePath, updateMode } = state.variableSelector;
-      const valuePath = `${activePath}.value`;
-      const value = get(state, valuePath) as string;
+      const target = state.variableSelector.target;
+      if (!target) {
+        return;
+      }
+      const input =
+        state.operations[target.operationId]?.inputs[target.inputIndex];
+      if (!input || input.type === "operation_box") {
+        return;
+      }
       const newValue = getUpdatedInputValueWithVariable(
-        value,
-        updateMode,
-        variable
+        input.value,
+        state.variableSelector.updateMode,
+        action.payload
       );
-      updateScriptEditorField(state, activePath, newValue);
+      applyInputValue(state, target.operationId, target.inputIndex, newValue);
     },
-    showOperationSelector(state, action: PayloadAction<string>) {
-      const path = action.payload;
-      state.operationSelector.visible = true;
-      state.operationSelector.activePath = path;
+    showOperationSelector(state, action: PayloadAction<OperationListRef>) {
+      state.operationSelector.target = action.payload;
     },
     hideOperationSelector(state) {
-      state.operationSelector.visible = false;
+      state.operationSelector.target = null;
     },
-    showVariableSelector(state, action: PayloadAction<string>) {
-      const path = action.payload;
-      const field = get(state, path) as LargeInput;
-      if ("variablePicker" in field && field.variablePicker) {
-        state.variableSelector.visible = true;
-        state.variableSelector.activePath = path;
-        state.variableSelector.filterType = field.variablePicker.type;
-        state.variableSelector.updateMode = field.variablePicker.mode;
+    showVariableSelector(
+      state,
+      action: PayloadAction<{ operationId: string; inputIndex: number }>
+    ) {
+      const { operationId, inputIndex } = action.payload;
+      const input = state.operations[operationId]?.inputs[inputIndex];
+      if (input && "variablePicker" in input && input.variablePicker) {
+        state.variableSelector.target = { operationId, inputIndex };
+        state.variableSelector.filterType = input.variablePicker.type;
+        state.variableSelector.updateMode = input.variablePicker.mode;
       }
     },
     hideVariableSelector(state) {
-      state.variableSelector.visible = false;
+      state.variableSelector.target = null;
     }
   }
 });
 
 export const {
-  updateState,
+  replaceState,
   updateInformation,
   appendOperation,
   deleteOperation,
-  moveUpOperation,
-  moveDownOperation,
+  moveOperation,
   updateInput,
   updateInputWithVariable,
   showOperationSelector,

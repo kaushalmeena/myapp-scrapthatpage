@@ -1,167 +1,32 @@
-import { chain } from "lodash";
-import { LARGE_OPERATIONS } from "../constants/largeOperations";
 import { VALIDATION_FUNCTION } from "../constants/validation";
-import { LargeInput, LargeOperation } from "../types/largeOperation";
-import { SmallInput, SmallOperation } from "../types/smallOperation";
 import { ValidationRule } from "../types/validation";
 
 // Builds an operation's human-readable subheader from its `format` string by
 // substituting single-brace, index-based tokens (e.g. "Open {0}") with the
 // corresponding input's value. Distinct from the runtime `{{name}}` variable
-// tokens resolved in the ScriptRunner.
+// tokens resolved in the ScriptRunner. Structurally typed so stored (Small),
+// template (Large) and editor input shapes all work.
 export const replaceFormatWithInputs = (
   format: string,
-  inputs: LargeInput[] | SmallInput[]
+  inputs: ReadonlyArray<unknown>
 ) =>
   format.replace(/{[\w-]+}/g, (match: string) => {
     const index = Number.parseInt(match.slice(1, -1), 10);
-    const input = inputs[index];
-    if ("value" in input) {
-      return input.value || "undefined";
+    const value = (inputs[index] as { value?: unknown } | undefined)?.value;
+    if (typeof value === "string") {
+      return value || "undefined";
     }
     return "";
   });
 
-// Rehydrates a stored Small operation into its editable Large form by cloning
-// the operation's template from LARGE_OPERATIONS and copying the saved values
-// into it. Nested operations (if/while) are converted recursively.
-export const convertToLargeOperation = (
-  operation: SmallOperation
-): LargeOperation => {
-  const baseLargeOperation = LARGE_OPERATIONS.find(
-    (item) => item.type === operation.type
+// An operation is valid when none of its value-carrying inputs hold a
+// validation error (operation_box inputs have no error field and are skipped).
+export const isOperationValid = (operation: {
+  inputs: ReadonlyArray<unknown>;
+}) =>
+  operation.inputs.every(
+    (input) => !(input as { error?: unknown } | undefined)?.error
   );
-  if (!baseLargeOperation) {
-    throw new Error(`Operation type of ${operation.type} not found.`);
-  }
-  let chainedOperation = chain(baseLargeOperation).cloneDeep();
-  switch (operation.type) {
-    case "open":
-    case "click":
-      chainedOperation = chainedOperation.set(
-        "inputs.0.value",
-        operation.inputs[0].value
-      );
-      break;
-    case "extract":
-    case "set":
-      chainedOperation = chainedOperation
-        .set("inputs.0.value", operation.inputs[0].value)
-        .set("inputs.1.value", operation.inputs[1].value)
-        .set("inputs.2.value", operation.inputs[2].value);
-      break;
-    case "type":
-    case "increase":
-    case "decrease":
-      chainedOperation = chainedOperation
-        .set("inputs.0.value", operation.inputs[0].value)
-        .set("inputs.1.value", operation.inputs[1].value);
-      break;
-    case "if":
-    case "while":
-      chainedOperation = chainedOperation
-        .set("inputs.0.value", operation.inputs[0].value)
-        .set(
-          "inputs.1.operations",
-          operation.inputs[1].operations.map(convertToLargeOperation)
-        );
-      break;
-  }
-  return chainedOperation.value();
-};
-
-// Strips a Large operation down to the compact Small form for storage/execution,
-// keeping only each input's type and value. Nested operations are converted
-// recursively.
-export const convertToSmallOperation = (
-  operation: LargeOperation
-): SmallOperation => {
-  switch (operation.type) {
-    case "open":
-    case "click":
-      return {
-        type: operation.type,
-        inputs: [
-          {
-            type: "text",
-            value: operation.inputs[0].value
-          }
-        ]
-      };
-    case "extract":
-      return {
-        type: operation.type,
-        inputs: [
-          {
-            type: "text",
-            value: operation.inputs[0].value
-          },
-          {
-            type: "text",
-            value: operation.inputs[1].value
-          },
-          {
-            type: "select",
-            value: operation.inputs[2].value
-          }
-        ]
-      };
-    case "type":
-    case "increase":
-    case "decrease":
-      return {
-        type: operation.type,
-        inputs: [
-          {
-            type: "text",
-            value: operation.inputs[0].value
-          },
-          {
-            type: "text",
-            value: operation.inputs[1].value
-          }
-        ]
-      };
-    case "set":
-      return {
-        type: operation.type,
-        inputs: [
-          {
-            type: "text",
-            value: operation.inputs[0].value
-          },
-          {
-            type: "select",
-            value: operation.inputs[1].value
-          },
-          {
-            type: "text",
-            value: operation.inputs[2].value
-          }
-        ]
-      };
-    case "if":
-    case "while":
-      return {
-        type: operation.type,
-        inputs: [
-          {
-            type: "text",
-            value: operation.inputs[0].value
-          },
-          {
-            type: "operation_box",
-            operations: operation.inputs[1].operations.map(
-              convertToSmallOperation
-            )
-          }
-        ]
-      };
-  }
-};
-
-export const isOperationValid = (operation: LargeOperation) =>
-  operation.inputs.every((input) => !("error" in input) || !input.error);
 
 export const validateWithRules = (value: string, rules: ValidationRule[]) => {
   for (let i = 0; i < rules.length; i += 1) {

@@ -30,7 +30,7 @@ function OperationSelectorDialog() {
   };
 
   return (
-    <Dialog open={selector.visible} onOpenChange={handleOpenChange}>
+    <Dialog open={selector.target !== null} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Select Operation</DialogTitle>

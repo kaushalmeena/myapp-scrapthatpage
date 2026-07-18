@@ -38,7 +38,7 @@ function VariableSelectorDialog() {
       : variables.filter((item: Variable) => item.type === selector.filterType);
 
   return (
-    <Dialog open={selector.visible} onOpenChange={handleOpenChange}>
+    <Dialog open={selector.target !== null} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Select Variable</DialogTitle>

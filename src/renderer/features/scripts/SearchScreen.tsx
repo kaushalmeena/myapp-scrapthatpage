@@ -1,11 +1,10 @@
+import { useLiveQuery } from "dexie-react-hooks";
 import { Search } from "lucide-react";
 import { ChangeEvent, useDeferredValue, useMemo, useState } from "react";
 import AsyncContent from "@/components/AsyncContent";
 import PageHeader from "@/components/PageHeader";
 import { Input } from "@/components/ui/input";
 import db from "@/database";
-import { useDexieFetch } from "@/hooks/useDexieFetch";
-import { Script } from "@/types/script";
 import ScriptList from "./ScriptList";
 
 function SearchScreen() {
@@ -13,17 +12,12 @@ function SearchScreen() {
   // Defer the query so filtering doesn't block typing on large script lists.
   const query = useDeferredValue(search);
 
-  const {
-    result: scripts,
-    status,
-    error,
-    reload
-  } = useDexieFetch<Script[]>({
-    fetcher: () => db.fetchAllScripts(),
-    defaultValue: []
-  });
+  const scripts = useLiveQuery(() => db.fetchAllScripts(), []);
 
   const filteredScripts = useMemo(() => {
+    if (!scripts) {
+      return [];
+    }
     if (!query) {
       return scripts;
     }
@@ -40,7 +34,10 @@ function SearchScreen() {
   return (
     <>
       <PageHeader title="Search" />
-      <AsyncContent status={status} error={error}>
+      <AsyncContent
+        status={scripts === undefined ? "loading" : "loaded"}
+        error=""
+      >
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -51,7 +48,7 @@ function SearchScreen() {
           />
         </div>
         <div className="mt-4">
-          <ScriptList scripts={filteredScripts} onReload={reload} />
+          <ScriptList scripts={filteredScripts} />
         </div>
       </AsyncContent>
     </>

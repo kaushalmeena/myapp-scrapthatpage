@@ -14,7 +14,11 @@ function InformationPanel() {
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) =>
     dispatch(
-      updateInformation({ key: event.target.name, value: event.target.value })
+      updateInformation({
+        // The two fields render with name="name" / name="description".
+        key: event.target.name as "name" | "description",
+        value: event.target.value
+      })
     );
 
   return (

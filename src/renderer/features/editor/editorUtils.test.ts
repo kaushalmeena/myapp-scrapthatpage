@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { Script } from "@/types/script";
 import {
-  getOperationNumber,
-  getScriptEditorStateFromScript,
-  getScriptFromScriptEditorState,
-  validateScriptEditorState
+  computeOperationNumbers,
+  denormalizeState,
+  normalizeScript,
+  validateEditorState
 } from "./editorUtils";
 
 const script: Script = {
@@ -13,49 +13,112 @@ const script: Script = {
   name: "Movies",
   description: "Scrape movie titles",
   operations: [
-    { type: "open", inputs: [{ type: "text", value: "https://example.com" }] }
+    {
+      type: "set",
+      inputs: [
+        { type: "text", value: "page" },
+        { type: "select", value: "number" },
+        { type: "text", value: "1" }
+      ]
+    },
+    {
+      type: "while",
+      inputs: [
+        { type: "text", value: "{{page}} < 3" },
+        {
+          type: "operation_box",
+          operations: [
+            {
+              type: "open",
+              inputs: [{ type: "text", value: "https://example.com" }]
+            },
+            {
+              type: "increase",
+              inputs: [
+                { type: "text", value: "page" },
+                { type: "text", value: "1" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   ]
 };
 
-describe("getOperationNumber", () => {
-  it("numbers top-level operations from 1", () => {
-    expect(getOperationNumber("operations.0")).toBe("1");
-    expect(getOperationNumber("operations.4")).toBe("5");
+describe("normalizeScript / denormalizeState", () => {
+  it("round-trips a nested script through the normalized editor state", () => {
+    expect(denormalizeState(normalizeScript(script))).toEqual(script);
   });
 
-  it("numbers nested operations with dotted segments", () => {
-    expect(getOperationNumber("operations.1.inputs.1.operations.2")).toBe(
-      "2.3"
-    );
+  it("normalizes nesting into id lists", () => {
+    const state = normalizeScript(script);
+    expect(state.rootIds).toHaveLength(2);
+    expect(Object.keys(state.operations)).toHaveLength(4);
+    const whileOp = state.operations[state.rootIds[1]];
+    const box = whileOp.inputs[1];
+    expect(box.type === "operation_box" && box.operationIds).toHaveLength(2);
+  });
+
+  it("derives variables from set operations", () => {
+    const state = normalizeScript(script);
+    expect(state.variables).toEqual([
+      { ownerId: state.rootIds[0], name: "page", type: "number" }
+    ]);
   });
 });
 
-describe("script <-> editor state conversion", () => {
-  it("round-trips a script through the editor state", () => {
-    const state = getScriptEditorStateFromScript(script);
-    expect(state.information.name.value).toBe("Movies");
-    expect(getScriptFromScriptEditorState(state)).toEqual(script);
+describe("computeOperationNumbers", () => {
+  it("numbers operations in tree order", () => {
+    const state = normalizeScript(script);
+    const numbers = computeOperationNumbers(state);
+    const whileOp = state.operations[state.rootIds[1]];
+    const box = whileOp.inputs[1];
+    const childIds = box.type === "operation_box" ? box.operationIds : [];
+
+    expect(numbers[state.rootIds[0]]).toBe("1");
+    expect(numbers[state.rootIds[1]]).toBe("2");
+    expect(numbers[childIds[0]]).toBe("2.1");
+    expect(numbers[childIds[1]]).toBe("2.2");
   });
 });
 
-describe("validateScriptEditorState", () => {
-  it("returns errors for missing required fields", () => {
-    const state = getScriptEditorStateFromScript({
+describe("validateEditorState", () => {
+  it("returns errors for missing required fields, numbered by position", () => {
+    const state = normalizeScript({
       favorite: 0,
       name: "",
       description: "",
-      operations: [{ type: "open", inputs: [{ type: "text", value: "" }] }]
+      operations: [
+        { type: "open", inputs: [{ type: "text", value: "" }] },
+        {
+          type: "if",
+          inputs: [
+            { type: "text", value: "1 == 1" },
+            {
+              type: "operation_box",
+              operations: [
+                { type: "click", inputs: [{ type: "text", value: "" }] }
+              ]
+            }
+          ]
+        }
+      ]
     });
-    const { errors, validatedState } = validateScriptEditorState(state);
-    expect(errors.length).toBeGreaterThanOrEqual(3);
+
+    const { errors, validatedState } = validateEditorState(state);
+    expect(errors).toContain("Please enter name.");
+    expect(errors).toContain("Please fix error in operation 1");
+    expect(errors).toContain("Please fix error in operation 2.1");
     expect(validatedState.information.name.error).not.toBe("");
-    const input = validatedState.operations[0].inputs[0];
-    expect(input.type === "text" && input.error).not.toBe("");
+    const firstOp = validatedState.operations[validatedState.rootIds[0]];
+    expect(
+      firstOp.inputs[0].type === "text" && firstOp.inputs[0].error
+    ).not.toBe("");
   });
 
   it("returns no errors for a valid state", () => {
-    const state = getScriptEditorStateFromScript(script);
-    const { errors } = validateScriptEditorState(state);
+    const { errors } = validateEditorState(normalizeScript(script));
     expect(errors).toEqual([]);
   });
 });

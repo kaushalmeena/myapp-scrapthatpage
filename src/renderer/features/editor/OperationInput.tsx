@@ -1,4 +1,3 @@
-import { get } from "lodash";
 import { CopyPlus } from "lucide-react";
 import { ChangeEvent, useId } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,28 +12,41 @@ import {
 } from "@/components/ui/select";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { LargeInput } from "../../../common/types/largeOperation";
 import OperationsPanel from "./OperationsPanel";
 import { showVariableSelector, updateInput } from "./scriptEditorSlice";
 
 type OperationInputProps = {
-  path: string;
+  operationId: string;
+  inputIndex: number;
+  // Number prefix for nested operation lists rendered by box inputs.
+  numberPrefix: string;
 };
 
-function OperationInput({ path }: OperationInputProps) {
+function OperationInput({
+  operationId,
+  inputIndex,
+  numberPrefix
+}: OperationInputProps) {
   const dispatch = useAppDispatch();
   const inputId = useId();
   const input = useAppSelector(
-    (state) => get(state.scriptEditor, path) as LargeInput
+    (state) => state.scriptEditor.operations[operationId]?.inputs[inputIndex]
   );
 
+  if (!input) {
+    return null;
+  }
+
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) =>
-    dispatch(updateInput({ path, value: event.target.value }));
+    dispatch(
+      updateInput({ operationId, inputIndex, value: event.target.value })
+    );
 
   const handleSelectChange = (value: string) =>
-    dispatch(updateInput({ path, value }));
+    dispatch(updateInput({ operationId, inputIndex, value }));
 
-  const handlePickerOpen = () => dispatch(showVariableSelector(path));
+  const handlePickerOpen = () =>
+    dispatch(showVariableSelector({ operationId, inputIndex }));
 
   switch (input.type) {
     case "text":
@@ -48,6 +60,7 @@ function OperationInput({ path }: OperationInputProps) {
               value={input.value}
               readOnly={input.inputProps?.readOnly}
               placeholder={input.inputProps?.placeholder}
+              type={input.inputProps?.type}
               aria-invalid={Boolean(input.error)}
               onChange={handleInputChange}
             />
@@ -85,7 +98,7 @@ function OperationInput({ path }: OperationInputProps) {
             <SelectContent>
               {input.options.map((option) => (
                 <SelectItem
-                  key={`${path}-option-${option.value}`}
+                  key={`${operationId}-${inputIndex}-${option.value}`}
                   value={option.value}
                 >
                   {option.label}
@@ -99,10 +112,13 @@ function OperationInput({ path }: OperationInputProps) {
         </div>
       );
     case "operation_box":
-      return <OperationsPanel path={`${path}.operations`} />;
+      return (
+        <OperationsPanel
+          listRef={{ parentId: operationId, inputIndex }}
+          numberPrefix={numberPrefix}
+        />
+      );
   }
-
-  return null;
 }
 
 export default OperationInput;

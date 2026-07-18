@@ -6,14 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { Script } from "@/types/script";
 import {
-  getScriptEditorStateFromScript,
-  getScriptFromScriptEditorState,
-  validateScriptEditorState
+  denormalizeState,
+  normalizeScript,
+  validateEditorState
 } from "./editorUtils";
 import InformationPanel from "./InformationPanel";
 import OperationSelectorDialog from "./OperationSelectorDialog";
 import OperationsPanel from "./OperationsPanel";
-import { updateState } from "./scriptEditorSlice";
+import { replaceState } from "./scriptEditorSlice";
 import VariableSelectorDialog from "./VariableSelectorDialog";
 
 type ScriptEditorProps = {
@@ -26,18 +26,17 @@ function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
 
   const handleSubmitClick = () => {
     const currentState = store.getState().scriptEditor;
-    const { errors, validatedState } = validateScriptEditorState(currentState);
+    const { errors, validatedState } = validateEditorState(currentState);
     if (errors.length > 0) {
-      dispatch(updateState(validatedState));
+      dispatch(replaceState(validatedState));
       toast.error(errors.slice(0, 5).join("\n"));
     } else {
-      onSubmit(getScriptFromScriptEditorState(currentState));
+      onSubmit(denormalizeState(currentState));
     }
   };
 
   useEffect(() => {
-    const initialState = getScriptEditorStateFromScript(script);
-    dispatch(updateState(initialState));
+    dispatch(replaceState(normalizeScript(script)));
   }, [dispatch, script]);
 
   return (
@@ -55,7 +54,7 @@ function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
             <InformationPanel />
           </TabsContent>
           <TabsContent value="operations" className="p-4">
-            <OperationsPanel path="operations" />
+            <OperationsPanel listRef={{ parentId: null }} numberPrefix="" />
           </TabsContent>
         </Tabs>
       </div>

@@ -1,4 +1,3 @@
-import { get } from "lodash";
 import { ArrowDown, ArrowUp, Eye, EyeOff, X } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -7,17 +6,15 @@ import { Card } from "@/components/ui/card";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { cn } from "@/lib/utils";
-import { LargeOperation } from "../../../common/types/largeOperation";
 import {
   isOperationValid,
   replaceFormatWithInputs
 } from "../../../common/utils/operation";
-import { getOperationNumber } from "./editorUtils";
 import OperationInput from "./OperationInput";
 import {
   deleteOperation,
-  moveDownOperation,
-  moveUpOperation
+  moveOperation,
+  OperationListRef
 } from "./scriptEditorSlice";
 
 const INPUT_WIDTH_CLASSES: Record<number, string> = {
@@ -27,26 +24,35 @@ const INPUT_WIDTH_CLASSES: Record<number, string> = {
 };
 
 type OperationCardProps = {
-  path: string;
+  id: string;
+  listRef: OperationListRef;
+  index: number;
+  // Display number like "2" or "2.3" (position within nested lists).
+  number: string;
 };
 
-function OperationCard({ path }: OperationCardProps) {
+function OperationCard({ id, listRef, index, number }: OperationCardProps) {
   const dispatch = useAppDispatch();
   const operation = useAppSelector(
-    (state) => get(state.scriptEditor, path) as LargeOperation
+    (state) => state.scriptEditor.operations[id]
   );
 
   const [expanded, setExpanded] = useState(false);
 
+  if (!operation) {
+    return null;
+  }
+
   const handleExpandToggle = () => setExpanded((prev) => !prev);
 
-  const handleMoveUpClick = () => dispatch(moveUpOperation(path));
+  const handleMoveUpClick = () =>
+    dispatch(moveOperation({ listRef, index, direction: "up" }));
 
-  const handleMoveDownClick = () => dispatch(moveDownOperation(path));
+  const handleMoveDownClick = () =>
+    dispatch(moveOperation({ listRef, index, direction: "down" }));
 
-  const handleDeleteClick = () => dispatch(deleteOperation(path));
+  const handleDeleteClick = () => dispatch(deleteOperation({ listRef, id }));
 
-  const operationNumber = getOperationNumber(path);
   const operationSubheader = replaceFormatWithInputs(
     operation.format,
     operation.inputs
@@ -65,7 +71,7 @@ function OperationCard({ path }: OperationCardProps) {
           className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent"
           onClick={handleExpandToggle}
         >
-          <Badge variant="outline">{operationNumber}</Badge>
+          <Badge variant="outline">{number}</Badge>
           <span className="min-w-0">
             <span className="block truncate font-medium">{operation.name}</span>
             <span className="block truncate text-sm text-muted-foreground">
@@ -115,14 +121,18 @@ function OperationCard({ path }: OperationCardProps) {
       {expanded && (
         <div className="border-t p-4">
           <div className="grid grid-cols-12 gap-3">
-            {operation.inputs.map((input, index) => (
+            {operation.inputs.map((input, inputIndex) => (
               <div
-                key={`${path}.inputs.${index}`}
+                key={`${id}-input-${inputIndex}`}
                 className={
                   INPUT_WIDTH_CLASSES["width" in input ? input.width : 12]
                 }
               >
-                <OperationInput path={`${path}.inputs.${index}`} />
+                <OperationInput
+                  operationId={id}
+                  inputIndex={inputIndex}
+                  numberPrefix={`${number}.`}
+                />
               </div>
             ))}
           </div>

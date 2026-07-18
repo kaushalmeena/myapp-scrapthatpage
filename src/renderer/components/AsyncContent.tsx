@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { FetchStatus } from "@/hooks/useDexieFetch";
+
+export type FetchStatus = "loading" | "loaded" | "error";
 
 type AsyncContentProps = {
   status: FetchStatus;
