@@ -41,22 +41,6 @@ JSON. Scripts are saved locally, so everything runs on your machine.
 - **Local-first** — scripts are stored on-device in IndexedDB; nothing is sent anywhere.
 - **Light & dark themes.**
 
-## How it works
-
-A **script** is an ordered list of **operations**. When you run it, ScrapThatPage
-opens a dedicated, sandboxed scraper window and executes each operation in turn:
-
-1. `open` navigates the scraper window to a URL.
-2. `click` / `type` interact with elements via CSS selectors.
-3. `extract` reads an attribute from every element matching a selector and adds
-   it as a column in the results table.
-4. `set` / `increase` / `decrease`, `if`, and `while` drive variables and control
-   flow so you can page through results or scrape conditionally.
-
-Under the hood each operation is stored in a compact form and run through the
-main process over a small, validated IPC bridge — the renderer never talks to
-Node.js or the scraped page directly.
-
 ## Tech stack
 
 - [Electron](https://www.electronjs.org/) + [Electron Forge](https://www.electronforge.io/) (packaging) with [Vite](https://vite.dev/) (bundling)
@@ -96,16 +80,6 @@ pnpm start
 | `pnpm lint` | Run ESLint. |
 | `pnpm typecheck` | Type-check the project with `tsc` (no emit). |
 
-## Project structure
-
-```
-src/
-├── main/       # Electron main process — window, scraper, IPC handlers
-├── preload/    # contextBridge API exposed to the renderer
-├── common/     # Types and constants shared across processes
-└── renderer/   # React UI (screens, components, redux, hooks, database)
-```
-
 ## Building for distribution
 
 ```bash
@@ -115,21 +89,6 @@ pnpm make
 Artifacts are written to `out/`. Forge is configured to produce a Squirrel
 installer (Windows), a ZIP (macOS), and `.deb` / `.rpm` packages (Linux); build
 on the target OS to produce that platform's package.
-
-## Development notes
-
-Two dev dependencies are intentionally held one major version behind the latest
-release because the lint tooling has not caught up yet:
-
-- **TypeScript is pinned to `5.9.x`** (not 7.x). `typescript-eslint` does not yet
-  support the TypeScript 7 native compiler (it caps at `<6.1.0`), so ESLint
-  crashes when parsing under TS 7. The app itself builds and runs on TS 7 — only
-  the linter is the blocker.
-- **ESLint is pinned to `9.x`** (not 10.x). `eslint-plugin-react` still calls
-  `context.getFilename()`, which ESLint 10 removed.
-
-Bump both once `typescript-eslint` ships TypeScript 7 support and
-`eslint-plugin-react` supports ESLint 10.
 
 ## License
 
