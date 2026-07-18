@@ -14,9 +14,9 @@ JSON. Scripts are saved locally, so everything runs on your machine.
 
 ## Screenshots
 
-|  |  |
-| --- | --- |
-| ![Home](./screenshots/Home.png) | ![Create](./screenshots/Create.png) |
+|                                       |                                     |
+| ------------------------------------- | ----------------------------------- |
+| ![Home](./screenshots/Home.png)       | ![Create](./screenshots/Create.png) |
 | ![Execute](./screenshots/Execute.png) | ![Search](./screenshots/Search.png) |
 
 <details>
@@ -75,14 +75,15 @@ pnpm start
 
 ## Scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm start` | Launch the app in development with hot reload. |
-| `pnpm package` | Bundle the app into a platform-specific executable in `out/`. |
-| `pnpm make` | Build distributable installers/archives for the current platform. |
-| `pnpm lint` | Run ESLint. |
-| `pnpm typecheck` | Type-check the project with `tsc` (no emit). |
-| `pnpm test` | Run the Vitest test suite. |
+| Command          | Description                                                       |
+| ---------------- | ----------------------------------------------------------------- |
+| `pnpm start`     | Launch the app in development with hot reload.                    |
+| `pnpm package`   | Bundle the app into a platform-specific executable in `out/`.     |
+| `pnpm make`      | Build distributable installers/archives for the current platform. |
+| `pnpm lint`      | Run ESLint.                                                       |
+| `pnpm format`    | Format the codebase with Prettier (sorts Tailwind classes too).   |
+| `pnpm typecheck` | Type-check the project with `tsc` (no emit).                      |
+| `pnpm test`      | Run the Vitest test suite.                                        |
 
 ## Building for distribution
 
