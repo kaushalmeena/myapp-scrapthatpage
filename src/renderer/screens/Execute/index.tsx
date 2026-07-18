@@ -1,5 +1,7 @@
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { useParams } from "react-router";
+import AsyncContent from "../../components/AsyncContent";
+import PageName from "../../components/PageName";
 import ScriptRunner from "../../components/ScriptRunner";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import db from "../../database";
@@ -20,44 +22,19 @@ function ExecuteScreen() {
     defaultValue: INITIAL_SCRIPT
   });
 
-  if (status === "loading" || status === "error") {
-    return (
-      <>
-        <Box sx={{ display: "flex", marginBottom: 2 }}>
-          <Typography sx={{ fontSize: 28, fontWeight: "400" }}>
-            Execute
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            marginTop: 2,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-          }}
-        >
-          {status === "loading" && <CircularProgress />}
-          {status === "error" && <Typography variant="h6">{error}</Typography>}
-        </Box>
-      </>
-    );
-  }
-
   return (
     <>
-      <Box sx={{ display: "flex", marginBottom: 2 }}>
-        <Typography sx={{ fontSize: 28, fontWeight: "400" }}>
-          Execute
+      <PageName name="Execute" />
+      <AsyncContent status={status} error={error}>
+        <Typography
+          component="div"
+          variant="h5"
+          sx={{ marginBottom: 4, textAlign: "center" }}
+        >
+          {script.name}
         </Typography>
-      </Box>
-      <Typography
-        component="div"
-        variant="h5"
-        sx={{ marginBottom: 4, textAlign: "center" }}
-      >
-        {script.name}
-      </Typography>
-      <ScriptRunner script={script} />
+        <ScriptRunner script={script} />
+      </AsyncContent>
     </>
   );
 }

@@ -1,22 +1,16 @@
 import { Search } from "@mui/icons-material";
-import {
-  Box,
-  CircularProgress,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography
-} from "@mui/material";
+import { Box, InputAdornment, TextField } from "@mui/material";
 import { ChangeEvent, useDeferredValue, useMemo, useState } from "react";
-import EmptyText from "../../components/EmptyText";
+import AsyncContent from "../../components/AsyncContent";
 import PageName from "../../components/PageName";
-import ScriptCard from "../../components/ScriptCard";
+import ScriptList from "../../components/ScriptList";
 import db from "../../database";
 import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
 
 function SearchScreen() {
   const [search, setSearch] = useState("");
+  // Defer the query so filtering doesn't block typing on large script lists.
   const query = useDeferredValue(search);
 
   const {
@@ -30,11 +24,13 @@ function SearchScreen() {
   });
 
   const filteredScripts = useMemo(() => {
-    const regexp = new RegExp(query, "i");
-    if (query) {
-      return scripts.filter((item) => regexp.test(item.name));
+    if (!query) {
+      return scripts;
     }
-    return scripts;
+    // Case-insensitive substring match. Avoids `new RegExp(query)`, which throws
+    // on invalid patterns (e.g. an unbalanced "(") typed into the search box.
+    const needle = query.toLowerCase();
+    return scripts.filter((item) => item.name.toLowerCase().includes(needle));
   }, [query, scripts]);
 
   const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -44,43 +40,27 @@ function SearchScreen() {
   return (
     <>
       <PageName name="Search" />
-      <Box sx={{ marginTop: 2 }}>
-        {status === "loading" && <CircularProgress />}
-        {status === "loaded" && (
-          <>
-            <TextField
-              fullWidth
-              variant="outlined"
-              size="small"
-              value={search}
-              onChange={handleSearchChange}
-              slotProps={{
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  )
-                }
-              }}
-            />
-            <Stack sx={{ marginTop: 2, gap: 1 }}>
-              {filteredScripts.length > 0 ? (
-                filteredScripts.map((item) => (
-                  <ScriptCard
-                    key={`script-${item.id}`}
-                    script={item}
-                    onReload={reload}
-                  />
-                ))
-              ) : (
-                <EmptyText />
-              )}
-            </Stack>
-          </>
-        )}
-        {status === "error" && <Typography variant="h6">{error}</Typography>}
-      </Box>
+      <AsyncContent status={status} error={error}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          size="small"
+          value={search}
+          onChange={handleSearchChange}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              )
+            }
+          }}
+        />
+        <Box sx={{ marginTop: 2 }}>
+          <ScriptList scripts={filteredScripts} onReload={reload} />
+        </Box>
+      </AsyncContent>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { Box, Card, CardHeader } from "@mui/material";
+import { alpha, Box, Card, CardHeader } from "@mui/material";
 import { Script } from "../../types/script";
 import ActionButton from "./ActionButton";
 import ResultTable from "./ResultTable";
@@ -13,11 +13,18 @@ function ScriptRunner({ script }: ScriptRunnerProps) {
   const { status, heading, message, result, start, stop } =
     useScriptRunner(script);
 
-  const { title, color, backgroundColor, Icon } = getRunnerCardInfo(status);
+  const { title, color, tone, Icon } = getRunnerCardInfo(status);
 
   return (
     <>
-      <Card variant="outlined" sx={{ backgroundColor }}>
+      <Card
+        variant="outlined"
+        sx={{
+          backgroundColor: tone
+            ? (theme) => alpha(theme.palette[tone].main, 0.1)
+            : undefined
+        }}
+      >
         <CardHeader
           title={heading}
           subheader={message}

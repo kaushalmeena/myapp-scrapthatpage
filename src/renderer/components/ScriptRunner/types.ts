@@ -21,7 +21,9 @@ export type ActionButtonColor =
 export type RunnerCardInfo = {
   title: string;
   color: ActionButtonColor;
-  backgroundColor?: string;
+  // Palette key used to tint the card background for terminal states; the
+  // component resolves it to a theme color so it adapts to light/dark mode.
+  tone?: "success" | "error";
   Icon: SvgIconComponent;
 };
 

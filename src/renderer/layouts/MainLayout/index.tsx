@@ -1,5 +1,6 @@
 import { Box, createTheme, ThemeProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
+import { useMemo } from "react";
 import { Outlet } from "react-router-dom";
 import { THEMES } from "../../constants/themes";
 import { useAppSelector } from "../../hooks/useAppSelector";
@@ -10,8 +11,12 @@ import Sidebar from "./Sidebar";
 function MainLayout() {
   const themeType = useAppSelector(selectTheme);
 
-  const themeData = THEMES[themeType].data;
-  const muiTheme = createTheme(themeData);
+  // Rebuild the MUI theme only when the selected theme changes, not on every
+  // render (createTheme is comparatively expensive).
+  const muiTheme = useMemo(
+    () => createTheme(THEMES[themeType].data),
+    [themeType]
+  );
 
   return (
     <ThemeProvider theme={muiTheme}>

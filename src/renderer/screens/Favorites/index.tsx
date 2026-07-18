@@ -1,7 +1,6 @@
-import { Box, CircularProgress, Stack, Typography } from "@mui/material";
-import EmptyText from "../../components/EmptyText";
+import AsyncContent from "../../components/AsyncContent";
 import PageName from "../../components/PageName";
-import ScriptCard from "../../components/ScriptCard";
+import ScriptList from "../../components/ScriptList";
 import db from "../../database";
 import { useDexieFetch } from "../../hooks/useDexieFetch";
 import { Script } from "../../types/script";
@@ -20,25 +19,9 @@ function FavoritesScreen() {
   return (
     <>
       <PageName name="Favorites" />
-      <Box sx={{ marginTop: 2 }}>
-        {status === "loading" && <CircularProgress />}
-        {status === "loaded" && (
-          <Stack sx={{ gap: 1 }}>
-            {scripts.length > 0 ? (
-              scripts.map((item) => (
-                <ScriptCard
-                  key={`script-${item.id}`}
-                  script={item}
-                  onReload={reload}
-                />
-              ))
-            ) : (
-              <EmptyText />
-            )}
-          </Stack>
-        )}
-        {status === "error" && <Typography variant="h6">{error}</Typography>}
-      </Box>
+      <AsyncContent status={status} error={error}>
+        <ScriptList scripts={scripts} onReload={reload} />
+      </AsyncContent>
     </>
   );
 }

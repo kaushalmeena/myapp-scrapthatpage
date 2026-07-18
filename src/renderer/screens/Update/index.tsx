@@ -1,5 +1,5 @@
-import { Box, CircularProgress, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
+import AsyncContent from "../../components/AsyncContent";
 import PageName from "../../components/PageName";
 import ScriptEditor from "../../components/ScriptEditor";
 import { INITIAL_SCRIPT } from "../../constants/script";
@@ -39,22 +39,9 @@ function UpdateScreen() {
   return (
     <>
       <PageName name="Update" />
-      {status === "loaded" && (
+      <AsyncContent status={status} error={error}>
         <ScriptEditor script={fetchedScript} onSubmit={handleSubmit} />
-      )}
-      {(status === "loading" || status === "error") && (
-        <Box
-          sx={{
-            marginTop: 2,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-          }}
-        >
-          {status === "loading" && <CircularProgress />}
-          {status === "error" && <Typography variant="h6">{error}</Typography>}
-        </Box>
-      )}
+      </AsyncContent>
     </>
   );
 }

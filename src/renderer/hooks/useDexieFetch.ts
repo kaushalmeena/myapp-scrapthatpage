@@ -1,7 +1,7 @@
 import { PromiseExtended } from "dexie";
 import { useState, useEffect, useCallback, useRef } from "react";
 
-type FetchStatus = "loading" | "loaded" | "error";
+export type FetchStatus = "loading" | "loaded" | "error";
 
 type HookParams<T> = {
   fetcher: () => PromiseExtended<T | undefined>;

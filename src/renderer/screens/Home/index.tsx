@@ -31,7 +31,9 @@ function HomeScreen() {
                 <CardHeader
                   avatar={<Icon fontSize="large" />}
                   title={title}
-                  titleTypographyProps={{ fontSize: 18, fontWeight: "400" }}
+                  slotProps={{
+                    title: { sx: { fontSize: 18, fontWeight: "400" } }
+                  }}
                   subheader={subtitle}
                 />
               </CardActionArea>

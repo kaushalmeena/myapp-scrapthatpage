@@ -1,11 +1,6 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Stack,
-  Typography
-} from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
+import AsyncContent from "../../components/AsyncContent";
 import PageName from "../../components/PageName";
 import { INITIAL_SCRIPT } from "../../constants/script";
 import { TOAST_MESSAGES } from "../../constants/toast";
@@ -48,32 +43,28 @@ function DeleteScreen() {
   return (
     <>
       <PageName name="Delete" />
-      <Box
-        sx={{
-          marginTop: 2,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center"
-        }}
-      >
-        {status === "loading" && <CircularProgress />}
-        {status === "loaded" && (
-          <>
-            <Typography variant="h6">
-              Do you want to delete {script.name} ?
-            </Typography>
-            <Stack direction="row" sx={{ gap: 2, marginTop: 2 }}>
-              <Button variant="outlined" onClick={handleYesClick}>
-                Yes
-              </Button>
-              <Button variant="contained" onClick={handleNoClick}>
-                No
-              </Button>
-            </Stack>
-          </>
-        )}
-        {status === "error" && <Typography variant="h6">{error}</Typography>}
-      </Box>
+      <AsyncContent status={status} error={error}>
+        <Box
+          sx={{
+            marginTop: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+          }}
+        >
+          <Typography variant="h6">
+            Do you want to delete {script.name} ?
+          </Typography>
+          <Stack direction="row" sx={{ gap: 2, marginTop: 2 }}>
+            <Button variant="outlined" onClick={handleYesClick}>
+              Yes
+            </Button>
+            <Button variant="contained" onClick={handleNoClick}>
+              No
+            </Button>
+          </Stack>
+        </Box>
+      </AsyncContent>
     </>
   );
 }

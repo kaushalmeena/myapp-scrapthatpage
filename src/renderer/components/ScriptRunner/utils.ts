@@ -244,14 +244,14 @@ export const getRunnerCardInfo = (status: RunnerStatus): RunnerCardInfo => {
       return {
         title: "Restart execution",
         color: "success",
-        backgroundColor: "rgba(46, 125, 50, 0.1)",
+        tone: "success",
         Icon: Refresh
       };
     case "error":
       return {
         title: "Restart execution",
         color: "error",
-        backgroundColor: "rgba(211, 47, 47, 0.1)",
+        tone: "error",
         Icon: Refresh
       };
   }

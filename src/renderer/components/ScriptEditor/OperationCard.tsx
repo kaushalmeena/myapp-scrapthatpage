@@ -6,6 +6,7 @@ import {
   VisibilityOff
 } from "@mui/icons-material";
 import {
+  alpha,
   Card,
   CardActionArea,
   CardActions,
@@ -64,9 +65,10 @@ function OperationCard({ path }: OperationCardProps) {
     <Card
       variant="outlined"
       sx={{
-        backgroundColor: isOperationValid(operation)
-          ? "auto"
-          : "rgba(211, 47, 47, 0.1)"
+        backgroundColor: (theme) =>
+          isOperationValid(operation)
+            ? "transparent"
+            : alpha(theme.palette.error.main, 0.1)
       }}
     >
       <Stack direction="row">
