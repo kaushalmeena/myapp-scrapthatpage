@@ -6,5 +6,8 @@ export const TOAST_MESSAGES = {
   SCRIPT_DELETE_SUCCESS: "Script successfully deleted!",
   SCRIPT_DELETE_FAILURE: "Error occurred while deleting.",
   SCRIPT_FAVORITE_ADD: "Script added to favorites.",
-  SCRIPT_FAVORITE_REMOVE: "Script removed from favorites."
+  SCRIPT_FAVORITE_REMOVE: "Script removed from favorites.",
+  SCRIPT_IMPORT_SUCCESS: "Script imported!",
+  SCRIPT_IMPORT_FAILURE:
+    "Could not import script — the file is not a valid script export."
 };

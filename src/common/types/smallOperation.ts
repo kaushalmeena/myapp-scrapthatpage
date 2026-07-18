@@ -64,6 +64,21 @@ type SmallWhileOperation = {
   inputs: [SmallTextInput, SmallOperationBoxInput];
 };
 
+type SmallWaitOperation = {
+  type: "wait";
+  inputs: [SmallTextInput, SmallTextInput];
+};
+
+type SmallDelayOperation = {
+  type: "delay";
+  inputs: [SmallTextInput];
+};
+
+type SmallScrollOperation = {
+  type: "scroll";
+  inputs: [SmallTextInput];
+};
+
 export type SmallInput =
   SmallTextInput | SmallSelectInput | SmallOperationBoxInput;
 
@@ -76,4 +91,7 @@ export type SmallOperation =
   | SmallIncreaseOperation
   | SmallDecreaseOperation
   | SmallIfOperation
-  | SmallWhileOperation;
+  | SmallWhileOperation
+  | SmallWaitOperation
+  | SmallDelayOperation
+  | SmallScrollOperation;

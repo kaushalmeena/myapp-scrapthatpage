@@ -1,9 +1,22 @@
 import { app, ipcMain } from "electron";
 import Scraper from "../lib/Scraper";
 import { executeOperation } from "../utils/scraper";
-import { ScraperChannel, ScraperOperation } from "../../common/types/scraper";
+import {
+  PickElementResponse,
+  ScraperChannel,
+  ScraperConfig,
+  ScraperOperation
+} from "../../common/types/scraper";
 
-const SCRAPER_OPERATION_TYPES = ["open", "extract", "click", "type"];
+const SCRAPER_OPERATION_TYPES = [
+  "open",
+  "extract",
+  "click",
+  "type",
+  "wait",
+  "delay",
+  "scroll"
+];
 
 // The renderer is treated as untrusted, so every IPC argument is validated
 // before it reaches the scraper.
@@ -42,13 +55,41 @@ export const connectScraperProxy = (scraper: Scraper) => {
     }
     return executeOperation(operation, scraper);
   });
+  ipcMain.on(ScraperChannel.CONFIGURE, (_, config: unknown) => {
+    if (
+      typeof config === "object" &&
+      config !== null &&
+      typeof (config as ScraperConfig).showWindow === "boolean"
+    ) {
+      scraper.configure({
+        showWindow: (config as ScraperConfig).showWindow
+      });
+    }
+  });
+  ipcMain.handle(
+    ScraperChannel.PICK_ELEMENT,
+    async (): Promise<PickElementResponse> => {
+      try {
+        const selector = await scraper.pickElement();
+        return { status: "success", selector };
+      } catch (err) {
+        return {
+          status: "error",
+          message:
+            err instanceof Error ? err.message : "Element picking failed."
+        };
+      }
+    }
+  );
 };
 
 export const disconnectScraperProxy = () => {
   ipcMain.removeAllListeners(ScraperChannel.OPEN_WINDOW);
   ipcMain.removeAllListeners(ScraperChannel.CLOSE_WINDOW);
+  ipcMain.removeAllListeners(ScraperChannel.CONFIGURE);
   ipcMain.removeHandler(ScraperChannel.GET_VERSION);
   ipcMain.removeHandler(ScraperChannel.LOAD_URL);
   ipcMain.removeHandler(ScraperChannel.RUN_JAVASCRIPT);
   ipcMain.removeHandler(ScraperChannel.RUN_OPERATION);
+  ipcMain.removeHandler(ScraperChannel.PICK_ELEMENT);
 };

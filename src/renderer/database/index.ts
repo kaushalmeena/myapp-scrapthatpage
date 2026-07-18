@@ -1,4 +1,5 @@
 import Dexie, { PromiseExtended, Table } from "dexie";
+import { Run } from "../types/run";
 import { Script } from "../types/script";
 import { mostPopularMoviesScript } from "./dummyScripts";
 import { parseStoredScript, prepareScriptForWrite } from "./schema";
@@ -10,12 +11,19 @@ import { parseStoredScript, prepareScriptForWrite } from "./schema";
 class ScriptDatabase extends Dexie {
   public scripts: Table<Script, number>;
 
+  public runs: Table<Run, number>;
+
   public constructor() {
     super("script_database");
     // `favorite` is indexed as a number (0/1) rather than a boolean because
     // IndexedDB cannot index boolean values.
     this.version(1).stores({ scripts: "++id, name, favorite" });
+    this.version(2).stores({
+      scripts: "++id, name, favorite",
+      runs: "++id, scriptId, startedAt"
+    });
     this.scripts = this.table("scripts");
+    this.runs = this.table("runs");
     // Seed a sample script the first time the database is created.
     this.on("populate", () => {
       this.scripts.add(prepareScriptForWrite(mostPopularMoviesScript));
@@ -64,6 +72,20 @@ class ScriptDatabase extends Dexie {
       await this.scripts.put({ ...script, favorite: value });
     }
   };
+
+  // Runs are app-generated at the end of an execution, so they skip the zod
+  // validation that user-editable scripts go through.
+  addRun = (run: Run): PromiseExtended<number> => this.runs.add(run);
+
+  fetchRecentRuns = (limit = 50): Promise<Run[]> =>
+    this.runs.orderBy("startedAt").reverse().limit(limit).toArray();
+
+  fetchRunById = (id: number): PromiseExtended<Run | undefined> =>
+    this.runs.get(id);
+
+  deleteRunById = (id: number): PromiseExtended<void> => this.runs.delete(id);
+
+  clearRuns = (): PromiseExtended<void> => this.runs.clear();
 }
 
 const db = new ScriptDatabase();

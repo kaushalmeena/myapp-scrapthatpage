@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, Eye, EyeOff, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Copy, Eye, EyeOff, X } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,6 +13,7 @@ import {
 import OperationInput from "./OperationInput";
 import {
   deleteOperation,
+  duplicateOperation,
   moveOperation,
   OperationListRef
 } from "./scriptEditorSlice";
@@ -52,6 +53,9 @@ function OperationCard({ id, listRef, index, number }: OperationCardProps) {
     dispatch(moveOperation({ listRef, index, direction: "down" }));
 
   const handleDeleteClick = () => dispatch(deleteOperation({ listRef, id }));
+
+  const handleDuplicateClick = () =>
+    dispatch(duplicateOperation({ listRef, id }));
 
   const operationSubheader = replaceFormatWithInputs(
     operation.format,
@@ -95,6 +99,14 @@ function OperationCard({ id, listRef, index, number }: OperationCardProps) {
             onClick={handleMoveDownClick}
           >
             <ArrowDown className="size-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            title="Duplicate operation"
+            onClick={handleDuplicateClick}
+          >
+            <Copy className="size-4" />
           </Button>
           <Button
             variant="ghost"

@@ -53,6 +53,27 @@ describe("getRunnerGenerator", () => {
     ]);
   });
 
+  it("yields wait/delay/scroll operations with numeric coercion", () => {
+    const operations: SmallOperation[] = [
+      setOperation("n", "2"),
+      {
+        type: "wait",
+        inputs: [
+          { type: "text", value: ".item-{{n}}" },
+          { type: "text", value: "5000" }
+        ]
+      },
+      { type: "delay", inputs: [{ type: "text", value: "not-a-number" }] },
+      { type: "scroll", inputs: [{ type: "text", value: "" }] }
+    ];
+
+    expect([...getRunnerGenerator(operations)]).toEqual([
+      { type: "wait", selector: ".item-2", timeoutMs: 5000 },
+      { type: "delay", ms: 0 },
+      { type: "scroll", selector: "" }
+    ]);
+  });
+
   it("throws instead of looping forever on a constant condition", () => {
     const operations: SmallOperation[] = [
       {

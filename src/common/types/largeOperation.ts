@@ -30,6 +30,9 @@ export type LargeTextInput = {
   error: string;
   variablePicker?: VariablePicker;
   variableSetter?: VariableSetter;
+  // When true the editor offers a crosshair button that lets the user click
+  // an element in the scraper window to fill this input with its selector.
+  elementPicker?: boolean;
   inputProps?: InputAttributes;
   rules: ValidationRule[];
 };
@@ -123,6 +126,30 @@ type LargeWhileOperation = {
   inputs: [LargeTextInput, LargeOperationBoxInput];
 };
 
+type LargeWaitOperation = {
+  name: string;
+  description: string;
+  format: string;
+  type: "wait";
+  inputs: [LargeTextInput, LargeTextInput];
+};
+
+type LargeDelayOperation = {
+  name: string;
+  description: string;
+  format: string;
+  type: "delay";
+  inputs: [LargeTextInput];
+};
+
+type LargeScrollOperation = {
+  name: string;
+  description: string;
+  format: string;
+  type: "scroll";
+  inputs: [LargeTextInput];
+};
+
 export type LargeInput =
   LargeTextInput | LargeSelectInput | LargeOperationBoxInput;
 
@@ -135,4 +162,7 @@ export type LargeOperation =
   | LargeIncreaseOperation
   | LargeDecreaseOperation
   | LargeIfOperation
-  | LargeWhileOperation;
+  | LargeWhileOperation
+  | LargeWaitOperation
+  | LargeDelayOperation
+  | LargeScrollOperation;

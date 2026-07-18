@@ -53,6 +53,18 @@ const smallOperationSchemaInternal = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("while"),
     inputs: z.tuple([textInputSchema, operationBoxInputSchema])
+  }),
+  z.object({
+    type: z.literal("wait"),
+    inputs: z.tuple([textInputSchema, textInputSchema])
+  }),
+  z.object({
+    type: z.literal("delay"),
+    inputs: z.tuple([textInputSchema])
+  }),
+  z.object({
+    type: z.literal("scroll"),
+    inputs: z.tuple([textInputSchema])
   })
 ]);
 

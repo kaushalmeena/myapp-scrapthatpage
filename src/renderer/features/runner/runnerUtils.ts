@@ -1,3 +1,4 @@
+import ExcelJS from "exceljs";
 import { Play, RotateCw, Square } from "lucide-react";
 import { produce } from "immer";
 import { evaluate } from "mathjs";
@@ -158,6 +159,35 @@ export function* getRunnerGenerator(
           }
         }
         break;
+      case "wait":
+        {
+          const selector = operation.inputs[0].value;
+          const timeout = operation.inputs[1].value;
+          yield {
+            type: operation.type,
+            selector: replaceFormatWithVariables(selector, variables),
+            timeoutMs: Number(timeout) || 10000
+          };
+        }
+        break;
+      case "delay":
+        {
+          const duration = operation.inputs[0].value;
+          yield {
+            type: operation.type,
+            ms: Number(replaceFormatWithVariables(duration, variables)) || 0
+          };
+        }
+        break;
+      case "scroll":
+        {
+          const selector = operation.inputs[0].value;
+          yield {
+            type: operation.type,
+            selector: replaceFormatWithVariables(selector, variables)
+          };
+        }
+        break;
     }
   }
 }
@@ -216,6 +246,21 @@ export const getRunnerHeaderInfo = (
       return {
         heading: "TYPE",
         message: `[${operation.selector}] ${operation.text}`
+      };
+    case "wait":
+      return {
+        heading: "WAIT",
+        message: `[${operation.selector}] up to ${operation.timeoutMs}ms`
+      };
+    case "delay":
+      return {
+        heading: "DELAY",
+        message: `${operation.ms}ms`
+      };
+    case "scroll":
+      return {
+        heading: "SCROLL",
+        message: operation.selector ? `[${operation.selector}]` : "page bottom"
       };
   }
 };
@@ -285,7 +330,11 @@ const convertToJSON = (data: TableData) => {
   return result;
 };
 
-const saveFile = (data: string, extension = "txt", type = "text/plain") => {
+const saveFile = (
+  data: string | ArrayBuffer,
+  extension = "txt",
+  type = "text/plain"
+) => {
   const blob = new Blob([data], { type });
   const href = window.URL.createObjectURL(blob);
   const anchorEl = document.createElement("a");
@@ -303,4 +352,27 @@ export const downloadAsCSV = (data: TableData) => {
 export const downloadAsJSON = (data: TableData) => {
   const jsonString = convertToJSON(data);
   saveFile(jsonString, "json", "application/json");
+};
+
+export const downloadAsXLSX = async (data: TableData): Promise<void> => {
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("Results");
+  sheet.addRow(data.cols);
+  sheet.getRow(1).font = { bold: true };
+  for (const row of data.rows) {
+    sheet.addRow(data.cols.map((_, i) => row[i] ?? ""));
+  }
+  const buffer = await workbook.xlsx.writeBuffer();
+  saveFile(
+    buffer,
+    "xlsx",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
+};
+
+export const copyTableToClipboard = async (data: TableData): Promise<void> => {
+  const toRow = (cells: string[]) =>
+    data.cols.map((_, colIdx) => cells[colIdx] || "").join("\t");
+  const tsv = [data.cols.join("\t"), ...data.rows.map(toRow)].join("\n");
+  await navigator.clipboard.writeText(tsv);
 };

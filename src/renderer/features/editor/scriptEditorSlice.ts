@@ -254,6 +254,40 @@ const scriptEditorSlice = createSlice({
         (item) => !removedIds.includes(item.ownerId)
       );
     },
+    duplicateOperation(
+      state,
+      action: PayloadAction<{ listRef: OperationListRef; id: string }>
+    ) {
+      const { listRef, id } = action.payload;
+      const ids = getListIds(state, listRef);
+      const index = ids.indexOf(id);
+      if (index === -1) {
+        return;
+      }
+      // Deep-clone the operation subtree, assigning fresh ids throughout and
+      // duplicating any variables owned by cloned "set" operations.
+      const cloneSubtree = (sourceId: string): string => {
+        const source = state.operations[sourceId];
+        const copy: EditorOperation = {
+          ...cloneDeep({ ...source }),
+          id: nanoid()
+        };
+        copy.inputs = copy.inputs.map((input) =>
+          input.type === "operation_box"
+            ? { ...input, operationIds: input.operationIds.map(cloneSubtree) }
+            : input
+        );
+        state.operations[copy.id] = copy;
+        const ownedVariable = state.variables.find(
+          (item) => item.ownerId === sourceId
+        );
+        if (ownedVariable) {
+          state.variables.push({ ...ownedVariable, ownerId: copy.id });
+        }
+        return copy.id;
+      };
+      ids.splice(index + 1, 0, cloneSubtree(id));
+    },
     moveOperation(
       state,
       action: PayloadAction<{
@@ -327,6 +361,7 @@ export const {
   updateInformation,
   appendOperation,
   deleteOperation,
+  duplicateOperation,
   moveOperation,
   updateInput,
   updateInputWithVariable,

@@ -33,11 +33,14 @@ JSON. Scripts are saved locally, so everything runs on your machine.
 ## Features
 
 - **Visual script builder** — compose a script from operations without writing code.
-- **Browser operations** — `open` a URL, `click` an element, `type` into a field, and `extract` values by CSS selector and attribute.
+- **Browser operations** — `open` a URL, `click` an element, `type` into a field, `extract` values by CSS selector and attribute, plus `wait` for elements, `delay`, and `scroll`.
+- **Element picker** — click an element in the scraper window to fill in its CSS selector automatically.
+- **Robust execution** — clicks and typing auto-wait for their target element; runs can be headless and paced with a configurable delay between operations.
 - **Variables & control flow** — `set`/`increase`/`decrease` variables and branch or loop with `if`/`while` (conditions are evaluated with [mathjs](https://mathjs.org/)).
 - **Templating** — reference variables inside inputs with `{{variable}}` placeholders.
-- **Results table** — extracted data is collected into a table and exported to **CSV** or **JSON**.
-- **Library management** — create, update, delete, favorite, and search your saved scripts.
+- **Results table** — extracted data is collected into a table and exported to **CSV**, **JSON**, or **XLSX**, or copied to the clipboard.
+- **Run history** — every run is recorded with its results and a per-operation log.
+- **Library management** — create, update, delete, favorite, search, and import/export your saved scripts as JSON.
 - **Local-first** — scripts are stored on-device in IndexedDB; nothing is sent anywhere.
 - **Light & dark themes.**
 

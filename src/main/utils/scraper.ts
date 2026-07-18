@@ -5,6 +5,9 @@ import {
 } from "../../common/types/scraper";
 import Scraper from "../lib/Scraper";
 
+// How long click/type wait for their target element before failing.
+const AUTO_WAIT_TIMEOUT_MS = 10000;
+
 const processOperation = async (
   operation: ScraperOperation,
   scraper: Scraper
@@ -33,16 +36,28 @@ const processOperation = async (
       }
       break;
     case "click":
+      // Auto-wait so clicks tolerate content that loads after navigation.
+      await scraper.waitForSelector(operation.selector, AUTO_WAIT_TIMEOUT_MS);
       await scraper.executeJavascript(`
           document.querySelector(${JSON.stringify(operation.selector)}).click();
         `);
       break;
     case "type":
+      await scraper.waitForSelector(operation.selector, AUTO_WAIT_TIMEOUT_MS);
       await scraper.executeJavascript(`
           document.querySelector(${JSON.stringify(
             operation.selector
           )}).value = ${JSON.stringify(operation.text)};
         `);
+      break;
+    case "wait":
+      await scraper.waitForSelector(operation.selector, operation.timeoutMs);
+      break;
+    case "delay":
+      await scraper.delay(operation.ms);
+      break;
+    case "scroll":
+      await scraper.scroll(operation.selector);
       break;
   }
 

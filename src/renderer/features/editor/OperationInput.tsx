@@ -1,5 +1,6 @@
-import { CopyPlus } from "lucide-react";
-import { ChangeEvent, useId } from "react";
+import { CopyPlus, Crosshair } from "lucide-react";
+import { ChangeEvent, useId, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
+import { cn } from "@/lib/utils";
 import OperationsPanel from "./OperationsPanel";
 import { showVariableSelector, updateInput } from "./scriptEditorSlice";
 
@@ -33,6 +35,8 @@ function OperationInput({
     (state) => state.scriptEditor.operations[operationId]?.inputs[inputIndex]
   );
 
+  const [picking, setPicking] = useState(false);
+
   if (!input) {
     return null;
   }
@@ -48,15 +52,38 @@ function OperationInput({
   const handlePickerOpen = () =>
     dispatch(showVariableSelector({ operationId, inputIndex }));
 
+  const handleElementPick = async () => {
+    setPicking(true);
+    try {
+      const res = await window.scraper.pickElement();
+      if (res.status === "success") {
+        dispatch(updateInput({ operationId, inputIndex, value: res.selector }));
+        toast.success("Element picked");
+      } else {
+        toast.error(res.message);
+      }
+    } finally {
+      setPicking(false);
+    }
+  };
+
   switch (input.type) {
-    case "text":
+    case "text": {
+      const hasVariablePicker = Boolean(input.variablePicker);
+      const hasElementPicker = Boolean(input.elementPicker);
+      const inputPadding =
+        hasVariablePicker && hasElementPicker
+          ? "pr-14"
+          : hasVariablePicker || hasElementPicker
+            ? "pr-8"
+            : "";
       return (
         <div className="flex flex-col gap-1.5">
           <Label htmlFor={inputId}>{input.label}</Label>
           <div className="relative">
             <Input
               id={inputId}
-              className={input.variablePicker ? "h-8 pr-8" : "h-8"}
+              className={cn("h-8", inputPadding)}
               value={input.value}
               readOnly={input.inputProps?.readOnly}
               placeholder={input.inputProps?.placeholder}
@@ -64,7 +91,7 @@ function OperationInput({
               aria-invalid={Boolean(input.error)}
               onChange={handleInputChange}
             />
-            {input.variablePicker && (
+            {hasVariablePicker && (
               <Button
                 type="button"
                 variant="ghost"
@@ -76,12 +103,29 @@ function OperationInput({
                 <CopyPlus className="size-4" />
               </Button>
             )}
+            {hasElementPicker && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                title="Pick element from page"
+                className={cn(
+                  "absolute top-1",
+                  hasVariablePicker ? "right-8" : "right-1"
+                )}
+                disabled={picking}
+                onClick={handleElementPick}
+              >
+                <Crosshair className="size-4" />
+              </Button>
+            )}
           </div>
           {input.error && (
             <p className="text-xs text-destructive">{input.error}</p>
           )}
         </div>
       );
+    }
     case "select":
       return (
         <div className="flex flex-col gap-1.5">

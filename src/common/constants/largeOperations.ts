@@ -52,6 +52,7 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
       {
         label: "Selector",
         type: "text",
+        elementPicker: true,
         width: 4,
         value: "",
         error: "",
@@ -100,6 +101,7 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
       {
         label: "Selector",
         type: "text",
+        elementPicker: true,
         width: 12,
         value: "",
         error: "",
@@ -125,6 +127,7 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
       {
         label: "Selector",
         type: "text",
+        elementPicker: true,
         width: 6,
         value: "",
         error: "",
@@ -368,6 +371,93 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
         label: "While Block",
         type: "operation_box",
         operations: []
+      }
+    ]
+  },
+  {
+    name: "WAIT",
+    type: "wait",
+    description: "Waits until specified element appears on the page.",
+    format: "[{0}] {1}ms",
+    inputs: [
+      {
+        label: "Selector",
+        type: "text",
+        elementPicker: true,
+        width: 6,
+        value: "",
+        error: "",
+        variablePicker: {
+          type: "any",
+          mode: "append"
+        },
+        rules: [
+          {
+            type: "required",
+            message: "Please enter selector."
+          }
+        ]
+      },
+      {
+        label: "Timeout (ms)",
+        type: "text",
+        width: 6,
+        value: "10000",
+        error: "",
+        inputProps: {
+          type: "number"
+        },
+        rules: [
+          {
+            type: "required",
+            message: "Please enter timeout."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "DELAY",
+    type: "delay",
+    description: "Pauses execution for the given number of milliseconds.",
+    format: "{0}ms",
+    inputs: [
+      {
+        label: "Duration (ms)",
+        type: "text",
+        width: 12,
+        value: "1000",
+        error: "",
+        inputProps: {
+          type: "number"
+        },
+        rules: [
+          {
+            type: "required",
+            message: "Please enter duration."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "SCROLL",
+    type: "scroll",
+    description: "Scrolls to an element, or to the page bottom when empty.",
+    format: "[{0}]",
+    inputs: [
+      {
+        label: "Selector (empty = page bottom)",
+        type: "text",
+        elementPicker: true,
+        width: 12,
+        value: "",
+        error: "",
+        variablePicker: {
+          type: "any",
+          mode: "append"
+        },
+        rules: []
       }
     ]
   }

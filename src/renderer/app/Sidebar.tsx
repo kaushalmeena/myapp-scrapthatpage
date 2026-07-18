@@ -1,4 +1,4 @@
-import { FileSearch } from "lucide-react";
+import { FileSearch, History } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -41,6 +41,21 @@ function Sidebar() {
           />
         </Button>
       ))}
+      <Button
+        variant="ghost"
+        size="icon"
+        title="History"
+        onClick={() => navigate("/history")}
+      >
+        <History
+          className={cn(
+            "size-5",
+            pathname.startsWith("/history")
+              ? "text-primary"
+              : "text-muted-foreground"
+          )}
+        />
+      </Button>
     </aside>
   );
 }

@@ -1,4 +1,4 @@
-import { Heart, Pencil, Play, X } from "lucide-react";
+import { FileDown, Heart, Pencil, Play, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ import { TOAST_MESSAGES } from "@/lib/messages";
 import db from "@/database";
 import { Script } from "@/types/script";
 import { cn } from "@/lib/utils";
+import { exportScriptToJSON } from "./scriptTransfer";
 
 type ScriptCardProps = {
   script: Script;
@@ -106,6 +107,14 @@ function ScriptCard({ script }: ScriptCardProps) {
               script.favorite && "fill-current"
             )}
           />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          title="Export script as JSON"
+          onClick={() => exportScriptToJSON(script)}
+        >
+          <FileDown className="size-4 text-primary" />
         </Button>
         <Button
           variant="ghost"
