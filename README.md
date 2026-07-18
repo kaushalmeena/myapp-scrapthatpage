@@ -59,8 +59,8 @@ JSON. Scripts are saved locally, so everything runs on your machine.
 ### Installation
 
 ```bash
-git clone https://github.com/kaushalmeena/scrapthatpage.git
-cd scrapthatpage
+git clone https://github.com/kaushalmeena/scrap-that-page.git
+cd scrap-that-page
 pnpm install
 ```
 

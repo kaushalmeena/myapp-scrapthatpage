@@ -1,5 +1,5 @@
 {
-  "name": "scrapthatpage",
+  "name": "scrap-that-page",
   "version": "1.0.0",
   "description": "Automate web scraper with easy to use script actions.",
   "main": ".vite/build/main.js",
