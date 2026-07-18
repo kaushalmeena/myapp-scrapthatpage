@@ -1,4 +1,6 @@
-import { ArrowDown, ArrowUp, Copy, Eye, EyeOff, X } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Copy, Eye, EyeOff, GripVertical, X } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,7 +16,6 @@ import OperationInput from "./OperationInput";
 import {
   deleteOperation,
   duplicateOperation,
-  moveOperation,
   OperationListRef
 } from "./scriptEditorSlice";
 
@@ -27,12 +28,11 @@ const INPUT_WIDTH_CLASSES: Record<number, string> = {
 type OperationCardProps = {
   id: string;
   listRef: OperationListRef;
-  index: number;
   // Display number like "2" or "2.3" (position within nested lists).
   number: string;
 };
 
-function OperationCard({ id, listRef, index, number }: OperationCardProps) {
+function OperationCard({ id, listRef, number }: OperationCardProps) {
   const dispatch = useAppDispatch();
   const operation = useAppSelector(
     (state) => state.scriptEditor.operations[id]
@@ -40,22 +40,25 @@ function OperationCard({ id, listRef, index, number }: OperationCardProps) {
 
   const [expanded, setExpanded] = useState(false);
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id });
+
   if (!operation) {
     return null;
   }
 
   const handleExpandToggle = () => setExpanded((prev) => !prev);
 
-  const handleMoveUpClick = () =>
-    dispatch(moveOperation({ listRef, index, direction: "up" }));
-
-  const handleMoveDownClick = () =>
-    dispatch(moveOperation({ listRef, index, direction: "down" }));
-
-  const handleDeleteClick = () => dispatch(deleteOperation({ listRef, id }));
-
   const handleDuplicateClick = () =>
     dispatch(duplicateOperation({ listRef, id }));
+
+  const handleDeleteClick = () => dispatch(deleteOperation({ listRef, id }));
 
   const operationSubheader = replaceFormatWithInputs(
     operation.format,
@@ -64,12 +67,24 @@ function OperationCard({ id, listRef, index, number }: OperationCardProps) {
 
   return (
     <Card
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
         "gap-0 py-0",
-        !isOperationValid(operation) && "bg-destructive/10"
+        !isOperationValid(operation) && "bg-destructive/10",
+        isDragging && "relative z-10 opacity-60 shadow-lg"
       )}
     >
-      <div className="flex flex-row items-center gap-2 p-2">
+      <div className="flex flex-row items-center gap-1 p-2">
+        <button
+          type="button"
+          title="Drag to reorder"
+          className="cursor-grab touch-none rounded-md p-1.5 text-muted-foreground hover:bg-accent active:cursor-grabbing"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVertical className="size-4" />
+        </button>
         <button
           type="button"
           className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent"
@@ -84,22 +99,6 @@ function OperationCard({ id, listRef, index, number }: OperationCardProps) {
           </span>
         </button>
         <div className="flex shrink-0 items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            title="Move operation up"
-            onClick={handleMoveUpClick}
-          >
-            <ArrowUp className="size-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            title="Move operation down"
-            onClick={handleMoveDownClick}
-          >
-            <ArrowDown className="size-4" />
-          </Button>
           <Button
             variant="ghost"
             size="icon"

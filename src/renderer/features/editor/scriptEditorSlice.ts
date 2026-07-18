@@ -1,4 +1,10 @@
-import { createSlice, Draft, nanoid, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  current,
+  Draft,
+  nanoid,
+  PayloadAction
+} from "@reduxjs/toolkit";
 import { cloneDeep } from "lodash";
 import type { RootState } from "@/app/store";
 import {
@@ -53,6 +59,17 @@ export type EditorField = {
   rules: ValidationRule[];
 };
 
+// The undoable core of the editor state (everything the user edits).
+export type EditorSnapshot = {
+  information: {
+    name: EditorField;
+    description: EditorField;
+  };
+  operations: Record<string, EditorOperation>;
+  rootIds: string[];
+  variables: Variable[];
+};
+
 export type ScriptEditorState = {
   id?: number;
   version?: number;
@@ -64,6 +81,10 @@ export type ScriptEditorState = {
   operations: Record<string, EditorOperation>;
   rootIds: string[];
   variables: Variable[];
+  past: EditorSnapshot[];
+  future: EditorSnapshot[];
+  // Coalescing key so continuous typing into one field is a single undo step.
+  lastEdit: string | null;
   operationSelector: {
     target: OperationListRef | null;
   };
@@ -91,6 +112,9 @@ export const initialScriptEditorState: ScriptEditorState = {
   operations: {},
   rootIds: [],
   variables: [],
+  past: [],
+  future: [],
+  lastEdit: null,
   operationSelector: {
     target: null
   },
@@ -99,6 +123,48 @@ export const initialScriptEditorState: ScriptEditorState = {
     filterType: "any",
     updateMode: "set"
   }
+};
+
+const HISTORY_LIMIT = 50;
+
+const takeSnapshot = (state: Draft<ScriptEditorState>): EditorSnapshot => {
+  // current() gives an immutable plain snapshot, so past entries can be
+  // stored by reference without cloning.
+  const snapshot = current(state);
+  return {
+    information: snapshot.information,
+    operations: snapshot.operations,
+    rootIds: snapshot.rootIds,
+    variables: snapshot.variables
+  };
+};
+
+const applySnapshot = (
+  state: Draft<ScriptEditorState>,
+  snapshot: EditorSnapshot
+) => {
+  state.information = snapshot.information;
+  state.operations = snapshot.operations;
+  state.rootIds = snapshot.rootIds;
+  state.variables = snapshot.variables;
+};
+
+// Records the pre-mutation state onto the undo stack. Mutations sharing the
+// same non-null editKey (e.g. keystrokes into one field) coalesce into a
+// single undo step.
+const commitHistory = (
+  state: Draft<ScriptEditorState>,
+  editKey: string | null = null
+) => {
+  if (editKey !== null && state.lastEdit === editKey) {
+    return;
+  }
+  state.past.push(takeSnapshot(state));
+  if (state.past.length > HISTORY_LIMIT) {
+    state.past.shift();
+  }
+  state.future = [];
+  state.lastEdit = editKey;
 };
 
 export const getListIds = (
@@ -221,6 +287,7 @@ const scriptEditorSlice = createSlice({
       action: PayloadAction<{ key: "name" | "description"; value: string }>
     ) {
       const { key, value } = action.payload;
+      commitHistory(state, `information:${key}`);
       const field = state.information[key];
       field.error = validateWithRules(value, field.rules);
       field.value = value;
@@ -230,6 +297,7 @@ const scriptEditorSlice = createSlice({
       if (!target) {
         return;
       }
+      commitHistory(state);
       const operation = createEditorOperation(action.payload);
       state.operations[operation.id] = operation;
       getListIds(state, target).push(operation.id);
@@ -244,6 +312,7 @@ const scriptEditorSlice = createSlice({
       if (index === -1) {
         return;
       }
+      commitHistory(state);
       ids.splice(index, 1);
       const removedIds: string[] = [];
       collectOperationIds(state, id, removedIds);
@@ -264,6 +333,7 @@ const scriptEditorSlice = createSlice({
       if (index === -1) {
         return;
       }
+      commitHistory(state);
       // Deep-clone the operation subtree, assigning fresh ids throughout and
       // duplicating any variables owned by cloned "set" operations.
       const cloneSubtree = (sourceId: string): string => {
@@ -288,21 +358,46 @@ const scriptEditorSlice = createSlice({
       };
       ids.splice(index + 1, 0, cloneSubtree(id));
     },
-    moveOperation(
+    reorderOperation(
       state,
       action: PayloadAction<{
         listRef: OperationListRef;
-        index: number;
-        direction: "up" | "down";
+        from: number;
+        to: number;
       }>
     ) {
-      const { listRef, index, direction } = action.payload;
+      const { listRef, from, to } = action.payload;
       const ids = getListIds(state, listRef);
-      const targetIndex = direction === "up" ? index - 1 : index + 1;
-      if (targetIndex < 0 || targetIndex >= ids.length) {
+      if (
+        from === to ||
+        from < 0 ||
+        to < 0 ||
+        from >= ids.length ||
+        to >= ids.length
+      ) {
         return;
       }
-      [ids[index], ids[targetIndex]] = [ids[targetIndex], ids[index]];
+      commitHistory(state);
+      const [moved] = ids.splice(from, 1);
+      ids.splice(to, 0, moved);
+    },
+    undo(state) {
+      const previous = state.past.pop();
+      if (!previous) {
+        return;
+      }
+      state.future.unshift(takeSnapshot(state));
+      applySnapshot(state, previous);
+      state.lastEdit = null;
+    },
+    redo(state) {
+      const next = state.future.shift();
+      if (!next) {
+        return;
+      }
+      state.past.push(takeSnapshot(state));
+      applySnapshot(state, next);
+      state.lastEdit = null;
     },
     updateInput(
       state,
@@ -313,6 +408,7 @@ const scriptEditorSlice = createSlice({
       }>
     ) {
       const { operationId, inputIndex, value } = action.payload;
+      commitHistory(state, `input:${operationId}:${inputIndex}`);
       applyInputValue(state, operationId, inputIndex, value);
     },
     updateInputWithVariable(state, action: PayloadAction<Variable>) {
@@ -325,6 +421,7 @@ const scriptEditorSlice = createSlice({
       if (!input || input.type === "operation_box") {
         return;
       }
+      commitHistory(state);
       const newValue = getUpdatedInputValueWithVariable(
         input.value,
         state.variableSelector.updateMode,
@@ -362,7 +459,9 @@ export const {
   appendOperation,
   deleteOperation,
   duplicateOperation,
-  moveOperation,
+  reorderOperation,
+  undo,
+  redo,
   updateInput,
   updateInputWithVariable,
   showOperationSelector,
@@ -381,3 +480,7 @@ export const selectVariableSelector = (state: RootState) =>
   state.scriptEditor.variableSelector;
 export const selectVariables = (state: RootState) =>
   state.scriptEditor.variables;
+export const selectCanUndo = (state: RootState) =>
+  state.scriptEditor.past.length > 0;
+export const selectCanRedo = (state: RootState) =>
+  state.scriptEditor.future.length > 0;
