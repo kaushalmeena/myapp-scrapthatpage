@@ -44,9 +44,9 @@ JSON. Scripts are saved locally, so everything runs on your machine.
 ## Tech stack
 
 - [Electron](https://www.electronjs.org/) + [Electron Forge](https://www.electronforge.io/) (packaging) with [Vite](https://vite.dev/) (bundling)
-- [React](https://react.dev/) + [Material UI](https://mui.com/)
+- [React](https://react.dev/) + [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS](https://tailwindcss.com/)
 - [Redux Toolkit](https://redux-toolkit.js.org/) (state) + [Dexie](https://dexie.org/) (IndexedDB)
-- [TypeScript](https://www.typescriptlang.org/)
+- [TypeScript](https://www.typescriptlang.org/) + [Vitest](https://vitest.dev/) (tests)
 
 ## Getting started
 
@@ -79,6 +79,7 @@ pnpm start
 | `pnpm make` | Build distributable installers/archives for the current platform. |
 | `pnpm lint` | Run ESLint. |
 | `pnpm typecheck` | Type-check the project with `tsc` (no emit). |
+| `pnpm test` | Run the Vitest test suite. |
 
 ## Building for distribution
 

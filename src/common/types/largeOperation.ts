@@ -1,7 +1,15 @@
-import { InputBaseProps } from "@mui/material";
-import { GridSize } from "@mui/material/Grid";
 import { ValidationRule } from "./validation";
 import { VariablePicker, VariableSetter } from "./variable";
+
+// Number of columns (out of a 12-column grid) an input occupies in the editor.
+export type InputWidth = 4 | 6 | 12;
+
+// Plain HTML input attributes an operation can preset on its text input.
+export type InputAttributes = {
+  readOnly?: boolean;
+  placeholder?: string;
+  type?: "text" | "number";
+};
 
 // "Large" operations are the editor-facing form of a script action. On top of
 // the raw value they carry everything the editor UI needs: labels, layout width,
@@ -17,19 +25,19 @@ export type SelectOption = {
 export type LargeTextInput = {
   label: string;
   type: "text";
-  width: GridSize;
+  width: InputWidth;
   value: string;
   error: string;
   variablePicker?: VariablePicker;
   variableSetter?: VariableSetter;
-  inputProps?: InputBaseProps;
+  inputProps?: InputAttributes;
   rules: ValidationRule[];
 };
 
 export type LargeSelectInput = {
   label: string;
   type: "select";
-  width: GridSize;
+  width: InputWidth;
   options: SelectOption[];
   value: string;
   error: string;

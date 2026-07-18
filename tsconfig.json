@@ -10,7 +10,11 @@
     "sourceMap": true,
     "outDir": "dist",
     "resolveJsonModule": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./src/renderer/*"]
+    },
+    "types": ["vite/client", "@testing-library/jest-dom"]
   },
   "ts-node": {
     "compilerOptions": {

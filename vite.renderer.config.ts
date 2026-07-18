@@ -1,6 +1,8 @@
+import path from "node:path";
 import type { ConfigEnv, UserConfig } from "vite";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { pluginExposeRenderer } from "./vite.base.config";
 
 // https://vitejs.dev/config
@@ -16,9 +18,12 @@ export default defineConfig((env) => {
     build: {
       outDir: `.vite/renderer/${name}`
     },
-    plugins: [pluginExposeRenderer(name), react()],
+    plugins: [pluginExposeRenderer(name), react(), tailwindcss()],
     resolve: {
-      preserveSymlinks: true
+      preserveSymlinks: true,
+      alias: {
+        "@": path.resolve(__dirname, "src/renderer")
+      }
     },
     clearScreen: false
   } as UserConfig;
