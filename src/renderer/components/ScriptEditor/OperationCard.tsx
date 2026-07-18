@@ -119,10 +119,10 @@ function OperationCard({ path }: OperationCardProps) {
           <Grid container spacing={2}>
             {operation.inputs.map((input, index) => (
               <Grid
-                item
                 key={`${path}.inputs.${index}`}
-                xs={12}
-                md={"width" in input ? input.width : undefined}
+                size={
+                  "width" in input ? { xs: 12, md: input.width } : { xs: 12 }
+                }
               >
                 <OperationInput path={`${path}.inputs.${index}`} />
               </Grid>

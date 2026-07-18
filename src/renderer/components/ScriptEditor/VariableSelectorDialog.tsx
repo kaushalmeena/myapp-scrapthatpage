@@ -45,7 +45,7 @@ function VariableSelectorDialog() {
       onClose={handleModalClose}
     >
       <DialogTitle>Select Variable</DialogTitle>
-      <Box overflow="scroll">
+      <Box sx={{ overflow: "scroll" }}>
         {filteredVariables.length > 0 ? (
           <List disablePadding>
             {filteredVariables.map((variable) => (

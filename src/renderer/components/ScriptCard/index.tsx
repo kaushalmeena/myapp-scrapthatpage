@@ -40,6 +40,9 @@ function ScriptCard({ script, onReload }: ScriptCardProps) {
   };
 
   const handleFavoriteToggle = () => {
+    if (script.id === undefined) {
+      return;
+    }
     const nextFavorite = 1 - script.favorite;
     const nextToastMessage = nextFavorite
       ? TOAST_MESSAGES.SCRIPT_FAVORITE_ADD

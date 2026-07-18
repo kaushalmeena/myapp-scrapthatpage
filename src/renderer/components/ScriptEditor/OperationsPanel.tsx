@@ -22,8 +22,11 @@ function OperationsPanel({ path }: OperationalPaneProps) {
   const handleAddClick = () => dispatch(showOperationSelector(path));
 
   return (
-    <Box display="flex" flexDirection="column">
-      <Stack direction="row" marginBottom={1} justifyContent="flex-end">
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <Stack
+        direction="row"
+        sx={{ marginBottom: 1, justifyContent: "flex-end" }}
+      >
         <Button
           title="Add operation"
           size="small"
@@ -33,7 +36,7 @@ function OperationsPanel({ path }: OperationalPaneProps) {
           Add
         </Button>
       </Stack>
-      <Stack gap={1}>
+      <Stack sx={{ gap: 1 }}>
         {operations.length > 0 ? (
           operations.map((_, index) => (
             <OperationCard key={`${path}.${index}`} path={`${path}.${index}`} />

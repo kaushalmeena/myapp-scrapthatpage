@@ -8,11 +8,7 @@ export type RunnerGenerator = Generator<
 >;
 
 export type RunnerStatus =
-  | "ready"
-  | "started"
-  | "stopped"
-  | "finished"
-  | "error";
+  "ready" | "started" | "stopped" | "finished" | "error";
 
 export type RunnerHeaderInfo = {
   heading: string;
@@ -20,12 +16,7 @@ export type RunnerHeaderInfo = {
 };
 
 export type ActionButtonColor =
-  | "primary"
-  | "secondary"
-  | "success"
-  | "error"
-  | "info"
-  | "warning";
+  "primary" | "secondary" | "success" | "error" | "info" | "warning";
 
 export type RunnerCardInfo = {
   title: string;

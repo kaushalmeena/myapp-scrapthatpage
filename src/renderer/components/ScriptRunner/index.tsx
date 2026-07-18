@@ -33,7 +33,7 @@ function ScriptRunner({ script }: ScriptRunnerProps) {
         />
       </Card>
       {result && (
-        <Box marginTop={3}>
+        <Box sx={{ marginTop: 3 }}>
           <ResultTable data={result} />
         </Box>
       )}

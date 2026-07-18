@@ -13,7 +13,14 @@ class Scraper {
     if (!this.scraperWindow) {
       this.scraperWindow = new BrowserWindow({
         title: "Scraper",
-        parent: this.mainWindow
+        parent: this.mainWindow,
+        webPreferences: {
+          // The scraper window loads arbitrary third-party pages, so keep it
+          // locked down: no Node.js access, isolated context, sandboxed.
+          nodeIntegration: false,
+          contextIsolation: true,
+          sandbox: true
+        }
       });
       this.scraperWindow.once("closed", () => {
         this.scraperWindow = undefined;
@@ -23,28 +30,19 @@ class Scraper {
   }
 
   getActiveURL(): string {
-    if (!this.scraperWindow) {
-      return "";
-    }
-    return this.scraperWindow.webContents.getURL();
+    return this.scraperWindow?.webContents.getURL() ?? "";
   }
 
   loadURL(url: string): Promise<void> {
-    if (!this.scraperWindow) {
-      this.scraperWindow = this.getWindow();
-    }
-    return this.scraperWindow.webContents.loadURL(url);
+    return this.getWindow().webContents.loadURL(url);
   }
 
   executeJavascript(code: string): Promise<unknown> {
-    if (!this.scraperWindow) {
-      this.scraperWindow = this.getWindow();
-    }
-    return this.scraperWindow.webContents.executeJavaScript(code);
+    return this.getWindow().webContents.executeJavaScript(code);
   }
 
   openWindow(): void {
-    this.scraperWindow = this.getWindow();
+    this.getWindow();
   }
 
   closeWindow(): void {

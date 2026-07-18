@@ -44,10 +44,12 @@ function UpdateScreen() {
       )}
       {(status === "loading" || status === "error") && (
         <Box
-          marginTop={2}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
+          sx={{
+            marginTop: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+          }}
         >
           {status === "loading" && <CircularProgress />}
           {status === "error" && <Typography variant="h6">{error}</Typography>}

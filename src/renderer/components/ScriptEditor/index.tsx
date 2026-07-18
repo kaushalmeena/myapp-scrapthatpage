@@ -53,7 +53,10 @@ function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
 
   return (
     <>
-      <Stack direction="row" marginBottom={2} justifyContent="flex-end">
+      <Stack
+        direction="row"
+        sx={{ marginBottom: 2, justifyContent: "flex-end" }}
+      >
         <Button variant="contained" onClick={handleSubmitClick}>
           Submit
         </Button>
@@ -79,7 +82,7 @@ function ScriptEditor({ script, onSubmit }: ScriptEditorProps) {
             <Tab label="Operations" />
           </Tabs>
         </Box>
-        <Box padding={2}>
+        <Box sx={{ padding: 2 }}>
           <TabPanel value={activeTab} index={0}>
             <InformationPanel />
           </TabPanel>

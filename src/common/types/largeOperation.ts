@@ -1,6 +1,13 @@
-import { GridSize, InputBaseProps } from "@mui/material";
+import { InputBaseProps } from "@mui/material";
+import { GridSize } from "@mui/material/Grid";
 import { ValidationRule } from "./validation";
 import { VariablePicker, VariableSetter } from "./variable";
+
+// "Large" operations are the editor-facing form of a script action. On top of
+// the raw value they carry everything the editor UI needs: labels, layout width,
+// validation rules/errors, a display format string, and variable picker/setter
+// config. They are converted to the compact "Small" form (see smallOperation.ts)
+// for storage and execution in common/utils/operation.ts.
 
 export type SelectOption = {
   label: string;
@@ -109,9 +116,7 @@ type LargeWhileOperation = {
 };
 
 export type LargeInput =
-  | LargeTextInput
-  | LargeSelectInput
-  | LargeOperationBoxInput;
+  LargeTextInput | LargeSelectInput | LargeOperationBoxInput;
 
 export type LargeOperation =
   | LargeOpenOperation

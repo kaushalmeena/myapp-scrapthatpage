@@ -18,7 +18,7 @@ function ActionButton({
   onClick
 }: ActionButtonProps) {
   return (
-    <Box position="relative">
+    <Box sx={{ position: "relative" }}>
       <Button
         variant="contained"
         title={title}

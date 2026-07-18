@@ -29,7 +29,7 @@ function SettingsScreen() {
   return (
     <>
       <PageName name="Settings" />
-      <Box maxWidth={500}>
+      <Box sx={{ maxWidth: 500 }}>
         <List>
           <ListItem>
             <ListItemIcon>
@@ -37,7 +37,7 @@ function SettingsScreen() {
             </ListItemIcon>
             <ListItemText
               primary="Theme"
-              primaryTypographyProps={{ fontSize: 18 }}
+              slotProps={{ primary: { sx: { fontSize: 18 } } }}
             />
             <FormControl size="small">
               <Select value={settings.theme} onChange={handleThemeChange}>

@@ -7,8 +7,11 @@ class ScriptDatabase extends Dexie {
 
   public constructor() {
     super("script_database");
+    // `favorite` is indexed as a number (0/1) rather than a boolean because
+    // IndexedDB cannot index boolean values.
     this.version(1).stores({ scripts: "++id, name, favorite" });
     this.scripts = this.table("scripts");
+    // Seed a sample script the first time the database is created.
     this.on("populate", () => {
       this.scripts.add(mostPopularMoviesScript);
     });
@@ -32,10 +35,17 @@ class ScriptDatabase extends Dexie {
   deleteScriptById = (id: number): PromiseExtended<void> =>
     this.scripts.delete(id);
 
-  updateScriptFavoriteField = (
+  // Uses get + put instead of Dexie's `update`, whose `UpdateSpec` deep-maps
+  // the recursive SmallOperation union and fails to type-check.
+  updateScriptFavoriteField = async (
     id: number,
     value: number
-  ): PromiseExtended<number> => this.scripts.update(id, { favorite: value });
+  ): Promise<void> => {
+    const script = await this.scripts.get(id);
+    if (script) {
+      await this.scripts.put({ ...script, favorite: value });
+    }
+  };
 }
 
 const db = new ScriptDatabase();

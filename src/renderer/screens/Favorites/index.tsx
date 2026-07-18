@@ -20,10 +20,10 @@ function FavoritesScreen() {
   return (
     <>
       <PageName name="Favorites" />
-      <Box marginTop={2}>
+      <Box sx={{ marginTop: 2 }}>
         {status === "loading" && <CircularProgress />}
         {status === "loaded" && (
-          <Stack gap={1}>
+          <Stack sx={{ gap: 1 }}>
             {scripts.length > 0 ? (
               scripts.map((item) => (
                 <ScriptCard

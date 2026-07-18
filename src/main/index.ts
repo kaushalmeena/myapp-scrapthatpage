@@ -4,6 +4,9 @@ import Scraper from "./lib/Scraper";
 import { connectScraperProxy, disconnectScraperProxy } from "./proxy/scraper";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// electron-squirrel-startup is a CJS-only package that ships no type
+// declarations, so it is loaded via require (the Forge-recommended form).
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 if (require("electron-squirrel-startup")) {
   app.quit();
 }

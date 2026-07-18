@@ -23,8 +23,8 @@ function HomeScreen() {
   return (
     <>
       <PageName name="Home" />
-      <Box display="flex" flexDirection="row">
-        <Stack gap={1} flex={1}>
+      <Box sx={{ display: "flex", flexDirection: "row" }}>
+        <Stack sx={{ gap: 1, flex: 1 }}>
           {PAGE_LINKS.map(({ title, subtitle, route, Icon }) => (
             <Card key={`card-${title}`} variant="outlined">
               <CardActionArea onClick={() => navigate(route)}>
@@ -38,7 +38,9 @@ function HomeScreen() {
             </Card>
           ))}
         </Stack>
-        <Box marginX={2} display="flex" flexDirection="row" flex={1}>
+        <Box
+          sx={{ marginX: 2, display: "flex", flexDirection: "row", flex: 1 }}
+        >
           <FindInPage sx={{ color: "primary.main", fontSize: 84 }} />
           <Stack>
             <Typography variant="h5">ScrapThatPage!</Typography>

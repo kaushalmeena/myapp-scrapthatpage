@@ -24,7 +24,11 @@ export const useDexieFetch = <T>(config: HookParams<T>): HookReturnType<T> => {
 
   const hookConfigRef = useRef<HookParams<T>>(config);
 
-  hookConfigRef.current = config;
+  // Keep the latest config (fetcher/callbacks) in a ref without retriggering
+  // fetchData. Updating the ref in an effect avoids mutating it during render.
+  useEffect(() => {
+    hookConfigRef.current = config;
+  });
 
   const fetchData = useCallback(() => {
     hookConfigRef.current

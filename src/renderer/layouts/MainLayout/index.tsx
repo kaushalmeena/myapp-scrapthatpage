@@ -1,6 +1,5 @@
-import { Box, createTheme } from "@mui/material";
+import { Box, createTheme, ThemeProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
-import ThemeProvider from "@mui/material/styles/ThemeProvider";
 import { Outlet } from "react-router-dom";
 import { THEMES } from "../../constants/themes";
 import { useAppSelector } from "../../hooks/useAppSelector";
@@ -17,13 +16,11 @@ function MainLayout() {
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
-      <Box display="flex">
+      <Box sx={{ display: "flex" }}>
         <Sidebar />
         <Box
-          padding={2}
-          flexGrow={1}
-          bgcolor="background.default"
           component="main"
+          sx={{ padding: 2, flexGrow: 1, bgcolor: "background.default" }}
         >
           <Outlet />
         </Box>

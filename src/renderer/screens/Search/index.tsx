@@ -44,7 +44,7 @@ function SearchScreen() {
   return (
     <>
       <PageName name="Search" />
-      <Box marginTop={2}>
+      <Box sx={{ marginTop: 2 }}>
         {status === "loading" && <CircularProgress />}
         {status === "loaded" && (
           <>
@@ -54,15 +54,17 @@ function SearchScreen() {
               size="small"
               value={search}
               onChange={handleSearchChange}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                )
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Search />
+                    </InputAdornment>
+                  )
+                }
               }}
             />
-            <Stack marginTop={2} gap={1}>
+            <Stack sx={{ marginTop: 2, gap: 1 }}>
               {filteredScripts.length > 0 ? (
                 filteredScripts.map((item) => (
                   <ScriptCard

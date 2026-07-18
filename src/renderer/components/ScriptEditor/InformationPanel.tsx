@@ -17,7 +17,7 @@ function InformationPanel() {
     );
 
   return (
-    <Box display="flex" flexDirection="column">
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
       <TextField
         name="name"
         variant="standard"

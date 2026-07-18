@@ -29,12 +29,14 @@ function TableToolbar({ data }: TableToolbarProps) {
   return (
     <Stack
       direction="row"
-      gap={1}
-      paddingTop={1}
-      paddingLeft={2}
-      paddingRight={1}
-      justifyContent="space-between"
-      alignItems="center"
+      sx={{
+        gap: 1,
+        paddingTop: 1,
+        paddingLeft: 2,
+        paddingRight: 1,
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}
     >
       <Typography variant="h6">Results</Typography>
       <Button onClick={handledMenuOpen}>Export</Button>

@@ -5,6 +5,10 @@ import { LargeInput, LargeOperation } from "../types/largeOperation";
 import { SmallInput, SmallOperation } from "../types/smallOperation";
 import { ValidationRule } from "../types/validation";
 
+// Builds an operation's human-readable subheader from its `format` string by
+// substituting single-brace, index-based tokens (e.g. "Open {0}") with the
+// corresponding input's value. Distinct from the runtime `{{name}}` variable
+// tokens resolved in the ScriptRunner.
 export const replaceFormatWithInputs = (
   format: string,
   inputs: LargeInput[] | SmallInput[]
@@ -18,6 +22,9 @@ export const replaceFormatWithInputs = (
     return "";
   });
 
+// Rehydrates a stored Small operation into its editable Large form by cloning
+// the operation's template from LARGE_OPERATIONS and copying the saved values
+// into it. Nested operations (if/while) are converted recursively.
 export const convertToLargeOperation = (
   operation: SmallOperation
 ): LargeOperation => {
@@ -63,6 +70,9 @@ export const convertToLargeOperation = (
   return chainedOperation.value();
 };
 
+// Strips a Large operation down to the compact Small form for storage/execution,
+// keeping only each input's type and value. Nested operations are converted
+// recursively.
 export const convertToSmallOperation = (
   operation: LargeOperation
 ): SmallOperation => {
@@ -151,7 +161,7 @@ export const convertToSmallOperation = (
 };
 
 export const isOperationValid = (operation: LargeOperation) =>
-  operation.inputs.some((input) => "error" in input && !input.error);
+  operation.inputs.every((input) => !("error" in input) || !input.error);
 
 export const validateWithRules = (value: string, rules: ValidationRule[]) => {
   for (let i = 0; i < rules.length; i += 1) {

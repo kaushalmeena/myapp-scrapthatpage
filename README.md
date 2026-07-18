@@ -51,6 +51,23 @@ yarn run start
 <img src="./screenshots/Execute.png">
 <img src="./screenshots/Delete.png">
 
+## Development notes
+
+Two dev dependencies are intentionally held one major version behind the latest
+release because the linting ecosystem has not yet caught up:
+
+- **TypeScript is pinned to `5.9.x`** (not 7.x). `typescript-eslint` does not yet
+  support the TypeScript 7 native compiler (it caps at `<6.1.0`), so ESLint
+  crashes when parsing under TS 7. The app itself builds and runs fine on TS 7 —
+  only the linter is the blocker.
+- **ESLint is pinned to `9.x`** (not 10.x). `eslint-plugin-react` still calls
+  `context.getFilename()`, which ESLint 10 removed.
+
+Bump both once `typescript-eslint` ships TypeScript 7 support and
+`eslint-plugin-react` supports ESLint 10.
+
+Useful scripts: `yarn typecheck` (type-only check) and `yarn lint`.
+
 ## Built With
 
 - [Electron](https://www.electronjs.org/)

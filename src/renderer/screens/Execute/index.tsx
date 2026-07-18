@@ -23,16 +23,18 @@ function ExecuteScreen() {
   if (status === "loading" || status === "error") {
     return (
       <>
-        <Box display="flex" marginBottom={2}>
-          <Typography fontSize={28} fontWeight="400">
+        <Box sx={{ display: "flex", marginBottom: 2 }}>
+          <Typography sx={{ fontSize: 28, fontWeight: "400" }}>
             Execute
           </Typography>
         </Box>
         <Box
-          marginTop={2}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
+          sx={{
+            marginTop: 2,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+          }}
         >
           {status === "loading" && <CircularProgress />}
           {status === "error" && <Typography variant="h6">{error}</Typography>}
@@ -43,16 +45,15 @@ function ExecuteScreen() {
 
   return (
     <>
-      <Box display="flex" marginBottom={2}>
-        <Typography fontSize={28} fontWeight="400">
+      <Box sx={{ display: "flex", marginBottom: 2 }}>
+        <Typography sx={{ fontSize: 28, fontWeight: "400" }}>
           Execute
         </Typography>
       </Box>
       <Typography
         component="div"
         variant="h5"
-        marginBottom={4}
-        textAlign="center"
+        sx={{ marginBottom: 4, textAlign: "center" }}
       >
         {script.name}
       </Typography>

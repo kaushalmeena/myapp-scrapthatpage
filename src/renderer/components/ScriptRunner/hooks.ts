@@ -24,7 +24,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   const [result, setResult] = useState<TableData | null>(null);
 
   const statusRef = useRef<RunnerStatus>("stopped");
-  const generatorRef = useRef<RunnerGenerator>();
+  const generatorRef = useRef<RunnerGenerator | undefined>(undefined);
 
   const processScraperResult = (data: ScraperResult) => {
     if (!data) {
@@ -43,6 +43,10 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     }
 
     const operationData = generatorRef.current?.next();
+
+    if (!operationData) {
+      return;
+    }
 
     if (operationData.done) {
       finish();

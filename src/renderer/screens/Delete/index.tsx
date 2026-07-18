@@ -49,10 +49,12 @@ function DeleteScreen() {
     <>
       <PageName name="Delete" />
       <Box
-        marginTop={2}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
+        sx={{
+          marginTop: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center"
+        }}
       >
         {status === "loading" && <CircularProgress />}
         {status === "loaded" && (
@@ -60,7 +62,7 @@ function DeleteScreen() {
             <Typography variant="h6">
               Do you want to delete {script.name} ?
             </Typography>
-            <Stack direction="row" gap={2} marginTop={2}>
+            <Stack direction="row" sx={{ gap: 2, marginTop: 2 }}>
               <Button variant="outlined" onClick={handleYesClick}>
                 Yes
               </Button>

@@ -82,6 +82,12 @@ export const initialScriptEditorState: ScriptEditorState = {
   }
 };
 
+// Operations can be nested arbitrarily deep (if/while contain operation boxes),
+// so the editor addresses any input or operation by its lodash path into the
+// state tree (e.g. "operations.0.inputs.1.operations.2"). Reducers receive that
+// path and use lodash `get` to reach the target, which lets one set of actions
+// operate at any depth. This splits a path into the parent operations array's
+// path and the index within it.
 export const getOperationsPathInfo = (path: string) => {
   const splittedPath = path.split(".");
   const operationsPath = splittedPath.slice(0, -1).join(".");

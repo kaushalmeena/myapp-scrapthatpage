@@ -16,6 +16,13 @@ import {
   TableData
 } from "./types";
 
+// Upper bound on `while` loop iterations to prevent an ill-formed condition
+// from locking up the renderer.
+const MAX_WHILE_ITERATIONS = 100000;
+
+// Substitutes runtime `{{name}}` tokens in a value with the current value of
+// the corresponding script variable. Used at execution time (distinct from the
+// editor's single-brace `{index}` display tokens in common/utils/operation.ts).
 const replaceFormatWithVariables = (
   format: string,
   variables: VariableMapping
@@ -26,6 +33,11 @@ const replaceFormatWithVariables = (
     return String(value);
   });
 
+// Walks a script's operations and yields one browser-facing operation (open,
+// extract, click, type) at a time for the runner hook to dispatch over IPC.
+// Control-flow and variable operations (set/increase/decrease/if/while) are
+// evaluated here in the renderer and don't yield; if/while recurse into their
+// nested operations, sharing the same mutable `variables` map.
 export function* getRunnerGenerator(
   operations: SmallOperation[],
   variables: VariableMapping = {}
@@ -127,7 +139,16 @@ export function* getRunnerGenerator(
             variables
           );
           let evaluatedValue = evaluate(formattedCondition);
+          let iterations = 0;
           while (evaluatedValue) {
+            // Guard against a condition that never becomes falsy (e.g. a loop
+            // body with no scraper step) freezing the renderer indefinitely.
+            iterations += 1;
+            if (iterations > MAX_WHILE_ITERATIONS) {
+              throw new Error(
+                `"while" loop exceeded ${MAX_WHILE_ITERATIONS} iterations`
+              );
+            }
             yield* getRunnerGenerator(nestedOperations, variables);
             formattedCondition = replaceFormatWithVariables(
               condition,
@@ -141,16 +162,22 @@ export function* getRunnerGenerator(
   }
 }
 
+// Merges one extract result into the accumulating table. Columns are keyed by
+// the extract's name (reused if already present, otherwise appended) and rows
+// are filled by index, so repeated extracts into the same column overwrite and
+// longer results grow the table.
 export const getRunnerTableData = (
   result: ExtractOperationResult,
-  oldTableData?: TableData
+  oldTableData?: TableData | null
 ): TableData =>
   produce(oldTableData || INITIAL_TABLE_DATA, (draft) => {
     let rowIdx = 0;
     let colIdx = draft.cols.findIndex((col) => col === result.name);
 
     if (colIdx === -1) {
-      colIdx = draft.cols.push(result.name);
+      // push() returns the new length, so the appended column's index is one
+      // less. Using the length directly left a gap and shifted every export.
+      colIdx = draft.cols.push(result.name) - 1;
     }
 
     while (rowIdx < draft.rows.length && rowIdx < result.data.length) {
@@ -224,18 +251,24 @@ export const getRunnerCardInfo = (status: RunnerStatus): RunnerCardInfo => {
       return {
         title: "Restart execution",
         color: "error",
-        backgroundColor: "rgba(46, 125, 50, 0.1)",
+        backgroundColor: "rgba(211, 47, 47, 0.1)",
         Icon: Refresh
       };
   }
 };
 
+// Quote a CSV field only when it contains a delimiter, quote, or newline,
+// escaping embedded quotes by doubling them (RFC 4180).
+const escapeCSVField = (value: string) =>
+  /[",\r\n]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
+
 const convertToCSV = (data: TableData) => {
-  let result = `${data.cols}\r\n`;
-  for (let i = 0; i < data.rows.length; i += 1) {
-    result += `${data.rows[i]}\r\n`;
-  }
-  return result;
+  const toRow = (cells: string[]) =>
+    data.cols.map((_, colIdx) => escapeCSVField(cells[colIdx] || "")).join(",");
+
+  const header = data.cols.map(escapeCSVField).join(",");
+  const body = data.rows.map(toRow);
+  return [header, ...body].join("\r\n");
 };
 
 const convertToJSON = (data: TableData) => {

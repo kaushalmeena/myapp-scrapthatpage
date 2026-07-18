@@ -28,7 +28,7 @@ function Sidebar() {
         }
       }}
     >
-      <Box marginY={1} display="flex" justifyContent="center">
+      <Box sx={{ marginY: 1, display: "flex", justifyContent: "center" }}>
         <IconButton title="Home" onClick={() => navigate("/")}>
           <FindInPage
             color={pathname === "/" ? "primary" : "inherit"}

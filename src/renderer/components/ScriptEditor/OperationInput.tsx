@@ -38,19 +38,21 @@ function OperationInput({ path }: OperationInputProps) {
           value={input.value}
           error={Boolean(input.error)}
           onChange={handleInputChange}
-          InputProps={{
-            ...input.inputProps,
-            endAdornment: input.variablePicker && (
-              <InputAdornment position="end">
-                <IconButton
-                  title="Show variable picker"
-                  size="small"
-                  onClick={handlePickerOpen}
-                >
-                  <ControlPointDuplicate fontSize="small" />
-                </IconButton>
-              </InputAdornment>
-            )
+          slotProps={{
+            input: {
+              ...input.inputProps,
+              endAdornment: input.variablePicker && (
+                <InputAdornment position="end">
+                  <IconButton
+                    title="Show variable picker"
+                    size="small"
+                    onClick={handlePickerOpen}
+                  >
+                    <ControlPointDuplicate fontSize="small" />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
           }}
         />
       );

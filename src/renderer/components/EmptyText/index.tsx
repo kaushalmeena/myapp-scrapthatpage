@@ -2,7 +2,9 @@ import { Typography } from "@mui/material";
 
 function EmptyText() {
   return (
-    <Typography margin={1} textAlign="center" color="text.secondary">
+    <Typography
+      sx={{ margin: 1, textAlign: "center", color: "text.secondary" }}
+    >
       &lt; Empty &gt;
     </Typography>
   );

@@ -6,7 +6,10 @@ type PageNameProps = {
 
 function PageName({ name }: PageNameProps) {
   return (
-    <Typography component="div" marginBottom={2} fontSize={28} fontWeight="400">
+    <Typography
+      component="div"
+      sx={{ marginBottom: 2, fontSize: 28, fontWeight: "400" }}
+    >
       {name}
     </Typography>
   );

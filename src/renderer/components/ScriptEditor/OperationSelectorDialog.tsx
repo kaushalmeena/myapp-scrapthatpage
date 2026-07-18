@@ -38,7 +38,7 @@ function OperationSelectorDialog() {
       onClose={handleModalClose}
     >
       <DialogTitle>Select Operation</DialogTitle>
-      <Box overflow="scroll">
+      <Box sx={{ overflow: "scroll" }}>
         <List disablePadding>
           {LARGE_OPERATIONS.map((operation) => (
             <ListItemButton

@@ -17,10 +17,13 @@ const processOperation = async (
       break;
     case "extract":
       {
+        // Values are JSON-encoded before being embedded in the injected script
+        // so selectors/attributes containing quotes can't break out of the
+        // string literal or inject arbitrary code.
         const rawData = await scraper.executeJavascript(`
-          Array.from(document.querySelectorAll("${operation.selector}")).map(
-            (query) => query["${operation.attribute}"]
-          );
+          Array.from(document.querySelectorAll(${JSON.stringify(
+            operation.selector
+          )})).map((element) => element[${JSON.stringify(operation.attribute)}]);
         `);
         result = {
           ...operation,
@@ -31,12 +34,14 @@ const processOperation = async (
       break;
     case "click":
       await scraper.executeJavascript(`
-          document.querySelector("${operation.selector}").click();
+          document.querySelector(${JSON.stringify(operation.selector)}).click();
         `);
       break;
     case "type":
       await scraper.executeJavascript(`
-          document.querySelector("${operation.selector}").value = "${operation.text}";
+          document.querySelector(${JSON.stringify(
+            operation.selector
+          )}).value = ${JSON.stringify(operation.text)};
         `);
       break;
   }
@@ -57,7 +62,10 @@ export const executeOperation = async (
   } catch (err) {
     return {
       status: "error",
-      message: "Error occurred in executing operation"
+      message:
+        err instanceof Error
+          ? err.message
+          : "Error occurred in executing operation"
     };
   }
 };
