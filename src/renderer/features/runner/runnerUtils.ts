@@ -6,7 +6,7 @@ import type {
   ExtractOperationResult,
   ScraperOperation
 } from "../../../common/types/scraper";
-import type { SmallOperation } from "../../../common/types/smallOperation";
+import type { StoredOperation } from "../../../common/types/storedOperation";
 import type { VariableMapping } from "../../../common/types/variable";
 import { INITIAL_TABLE_DATA } from "./constants";
 import type {
@@ -40,7 +40,7 @@ const replaceFormatWithVariables = (
 // evaluated here in the renderer and don't yield; if/while recurse into their
 // nested operations, sharing the same mutable `variables` map.
 export function* getRunnerGenerator(
-  operations: SmallOperation[],
+  operations: StoredOperation[],
   variables: VariableMapping = {}
 ): RunnerGenerator {
   for (let i = 0; i < operations.length; i += 1) {

@@ -11,10 +11,10 @@ export type InputAttributes = {
   type?: "text" | "number";
 };
 
-// "Large" operations are the editor-facing form of a script action. On top of
+// "Form" operations are the editor-facing form of a script action. On top of
 // the raw value they carry everything the editor UI needs: labels, layout width,
 // validation rules/errors, a display format string, and variable picker/setter
-// config. They are converted to the compact "Small" form (see smallOperation.ts)
+// config. They are converted to the compact "Stored" form (see storedOperation.ts)
 // for storage and execution in common/utils/operation.ts.
 
 export type SelectOption = {
@@ -22,7 +22,7 @@ export type SelectOption = {
   value: string;
 };
 
-export type LargeTextInput = {
+export type FormTextInput = {
   label: string;
   type: "text";
   width: InputWidth;
@@ -37,7 +37,7 @@ export type LargeTextInput = {
   rules: ValidationRule[];
 };
 
-export type LargeSelectInput = {
+export type FormSelectInput = {
   label: string;
   type: "select";
   width: InputWidth;
@@ -48,123 +48,120 @@ export type LargeSelectInput = {
   rules: ValidationRule[];
 };
 
-export type LargeOperationBoxInput = {
+export type FormOperationBoxInput = {
   label: string;
   type: "operation_box";
-  operations: LargeOperation[];
+  operations: FormOperation[];
 };
 
-type LargeOpenOperation = {
+type FormOpenOperation = {
   name: string;
   description: string;
   format: string;
   type: "open";
-  inputs: [LargeTextInput];
+  inputs: [FormTextInput];
 };
 
-type LargeExtractOperation = {
+type FormExtractOperation = {
   name: string;
   description: string;
   format: string;
   type: "extract";
-  inputs: [LargeTextInput, LargeTextInput, LargeSelectInput];
+  inputs: [FormTextInput, FormTextInput, FormSelectInput];
 };
 
-type LargeClickOperation = {
+type FormClickOperation = {
   name: string;
   description: string;
   format: string;
   type: "click";
-  inputs: [LargeTextInput];
+  inputs: [FormTextInput];
 };
 
-type LargeTypeOperation = {
+type FormTypeOperation = {
   name: string;
   description: string;
   format: string;
   type: "type";
-  inputs: [LargeTextInput, LargeTextInput];
+  inputs: [FormTextInput, FormTextInput];
 };
 
-type LargeSetOperation = {
+type FormSetOperation = {
   name: string;
   description: string;
   format: string;
   type: "set";
-  inputs: [LargeTextInput, LargeSelectInput, LargeTextInput];
+  inputs: [FormTextInput, FormSelectInput, FormTextInput];
 };
 
-type LargeIncreaseOperation = {
+type FormIncreaseOperation = {
   name: string;
   description: string;
   format: string;
   type: "increase";
-  inputs: [LargeTextInput, LargeTextInput];
+  inputs: [FormTextInput, FormTextInput];
 };
 
-type LargeDecreaseOperation = {
+type FormDecreaseOperation = {
   name: string;
   description: string;
   format: string;
   type: "decrease";
-  inputs: [LargeTextInput, LargeTextInput];
+  inputs: [FormTextInput, FormTextInput];
 };
 
-type LargeIfOperation = {
+type FormIfOperation = {
   name: string;
   description: string;
   format: string;
   type: "if";
-  inputs: [LargeTextInput, LargeOperationBoxInput];
+  inputs: [FormTextInput, FormOperationBoxInput];
 };
 
-type LargeWhileOperation = {
+type FormWhileOperation = {
   name: string;
   description: string;
   format: string;
   type: "while";
-  inputs: [LargeTextInput, LargeOperationBoxInput];
+  inputs: [FormTextInput, FormOperationBoxInput];
 };
 
-type LargeWaitOperation = {
+type FormWaitOperation = {
   name: string;
   description: string;
   format: string;
   type: "wait";
-  inputs: [LargeTextInput, LargeTextInput];
+  inputs: [FormTextInput, FormTextInput];
 };
 
-type LargeDelayOperation = {
+type FormDelayOperation = {
   name: string;
   description: string;
   format: string;
   type: "delay";
-  inputs: [LargeTextInput];
+  inputs: [FormTextInput];
 };
 
-type LargeScrollOperation = {
+type FormScrollOperation = {
   name: string;
   description: string;
   format: string;
   type: "scroll";
-  inputs: [LargeTextInput];
+  inputs: [FormTextInput];
 };
 
-export type LargeInput =
-  | LargeTextInput
-  | LargeSelectInput
-  | LargeOperationBoxInput;
+export type FormInput = FormTextInput | FormSelectInput | FormOperationBoxInput;
 
-export type LargeOperation =
-  | LargeOpenOperation
-  | LargeExtractOperation
-  | LargeClickOperation
-  | LargeTypeOperation
-  | LargeSetOperation
-  | LargeIncreaseOperation
-  | LargeDecreaseOperation
-  | LargeIfOperation
-  | LargeWhileOperation
-  | LargeWaitOperation
-  | LargeDelayOperation
-  | LargeScrollOperation;
+export type FormOperation =
+  | FormOpenOperation
+  | FormExtractOperation
+  | FormClickOperation
+  | FormTypeOperation
+  | FormSetOperation
+  | FormIncreaseOperation
+  | FormDecreaseOperation
+  | FormIfOperation
+  | FormWhileOperation
+  | FormWaitOperation
+  | FormDelayOperation
+  | FormScrollOperation;

@@ -1,6 +1,6 @@
-import type { LargeOperation } from "../types/largeOperation";
+import type { FormOperation } from "../types/formOperation";
 
-export const LARGE_OPERATIONS: LargeOperation[] = [
+export const OPERATION_FORMS: FormOperation[] = [
   {
     name: "Open page",
     type: "open",

@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { OPERATION_ICONS } from "@/features/editor/operationIcons";
-import { LARGE_OPERATIONS } from "../../../common/constants/largeOperations";
-import type { SmallOperation } from "../../../common/types/smallOperation";
+import { OPERATION_FORMS } from "../../../common/constants/operationForms";
+import type { StoredOperation } from "../../../common/types/storedOperation";
 import {
   hasAnyInputValue,
   replaceFormatWithInputs
@@ -9,16 +9,16 @@ import {
 
 // Template lookup: stored operations only keep { type, inputs }, so the
 // display name/format comes from the operation catalog.
-const templateFor = (type: SmallOperation["type"]) =>
-  LARGE_OPERATIONS.find((operation) => operation.type === type);
+const templateFor = (type: StoredOperation["type"]) =>
+  OPERATION_FORMS.find((operation) => operation.type === type);
 
 // Widened view of inputs: each operation type carries a specific tuple, so a
 // direct `input.type === "operation_box"` check doesn't type-check across the
-// whole SmallOperation union.
-const nestedStepCount = (operation: SmallOperation): number => {
+// whole StoredOperation union.
+const nestedStepCount = (operation: StoredOperation): number => {
   const inputs = operation.inputs as ReadonlyArray<{
     type: string;
-    operations?: SmallOperation[];
+    operations?: StoredOperation[];
   }>;
   let count = 0;
   for (const input of inputs) {
@@ -34,7 +34,7 @@ const nestedStepCount = (operation: SmallOperation): number => {
 export default function StepsPreview({
   operations
 }: {
-  operations: SmallOperation[];
+  operations: StoredOperation[];
 }) {
   return (
     <Card className="gap-0 overflow-hidden p-0">

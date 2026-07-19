@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Script } from "@/types/script";
-import type { SmallOperation } from "../../common/types/smallOperation";
+import type { StoredOperation } from "../../common/types/storedOperation";
 
 // Version stamped onto every script written to IndexedDB. Bump it (and add a
 // migration to `parseStoredScript`) whenever the stored shape changes.
@@ -19,11 +19,11 @@ const selectInputSchema = z.object({
 const operationBoxInputSchema = z.object({
   type: z.literal("operation_box"),
   get operations() {
-    return z.array(smallOperationSchema);
+    return z.array(storedOperationSchema);
   }
 });
 
-const smallOperationSchemaInternal = z.discriminatedUnion("type", [
+const storedOperationSchemaInternal = z.discriminatedUnion("type", [
   z.object({ type: z.literal("open"), inputs: z.tuple([textInputSchema]) }),
   z.object({
     type: z.literal("extract"),
@@ -68,21 +68,21 @@ const smallOperationSchemaInternal = z.discriminatedUnion("type", [
   })
 ]);
 
-// Compile-time lockstep check: every member of the SmallOperation union must
+// Compile-time lockstep check: every member of the StoredOperation union must
 // be accepted by the schema, so adding a new operation type without updating
 // the schema stops compiling. (The reverse check isn't expressible because
 // zod v4 infers tuples with optional/rest elements; exactness of each tuple is
 // still enforced at runtime and covered by tests.)
-true satisfies SmallOperation extends z.infer<
-  typeof smallOperationSchemaInternal
+true satisfies StoredOperation extends z.infer<
+  typeof storedOperationSchemaInternal
 >
   ? true
   : false;
 
-export const smallOperationSchema =
-  smallOperationSchemaInternal as unknown as z.ZodType<
-    SmallOperation,
-    SmallOperation
+export const storedOperationSchema =
+  storedOperationSchemaInternal as unknown as z.ZodType<
+    StoredOperation,
+    StoredOperation
   >;
 
 // Typed as ZodType<Script, Script> so the hand-written TS types remain the
@@ -93,7 +93,7 @@ export const scriptSchema: z.ZodType<Script, Script> = z.object({
   favorite: z.boolean(),
   name: z.string().min(1),
   description: z.string(),
-  operations: z.array(smallOperationSchema)
+  operations: z.array(storedOperationSchema)
 });
 
 // Validates a record read from IndexedDB. Version-based migrations go here as

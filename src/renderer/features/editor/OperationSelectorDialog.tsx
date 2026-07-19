@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/command";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { LARGE_OPERATIONS } from "../../../common/constants/largeOperations";
-import type { LargeOperation } from "../../../common/types/largeOperation";
+import { OPERATION_FORMS } from "../../../common/constants/operationForms";
+import type { FormOperation } from "../../../common/types/formOperation";
 import { OPERATION_ICONS } from "./operationIcons";
 import {
   appendOperation,
@@ -29,7 +29,7 @@ export default function OperationSelectorDialog() {
     }
   };
 
-  const handleSelect = (operation: LargeOperation) => {
+  const handleSelect = (operation: FormOperation) => {
     dispatch(appendOperation(operation));
     dispatch(hideOperationSelector());
   };
@@ -45,7 +45,7 @@ export default function OperationSelectorDialog() {
       <CommandList>
         <CommandEmpty>No matching steps.</CommandEmpty>
         <CommandGroup heading="Steps">
-          {LARGE_OPERATIONS.map((operation) => {
+          {OPERATION_FORMS.map((operation) => {
             const Icon = OPERATION_ICONS[operation.type];
             return (
               <CommandItem

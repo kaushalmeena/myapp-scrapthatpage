@@ -13,11 +13,11 @@ import {
   Timer,
   Variable
 } from "lucide-react";
-import type { SmallOperation } from "../../../common/types/smallOperation";
+import type { StoredOperation } from "../../../common/types/storedOperation";
 
 // One icon per step type, shared by the step cards and the step picker so
 // each operation stays visually recognizable across the editor.
-export const OPERATION_ICONS: Record<SmallOperation["type"], LucideIcon> = {
+export const OPERATION_ICONS: Record<StoredOperation["type"], LucideIcon> = {
   open: Globe,
   extract: ScanText,
   click: MousePointerClick,

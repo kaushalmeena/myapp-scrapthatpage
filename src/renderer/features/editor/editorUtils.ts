@@ -1,11 +1,11 @@
 import { produce } from "immer";
 import { cloneDeep } from "lodash";
 import type { Script } from "@/types/script";
-import { LARGE_OPERATIONS } from "../../../common/constants/largeOperations";
+import { OPERATION_FORMS } from "../../../common/constants/operationForms";
 import type {
-  SmallInput,
-  SmallOperation
-} from "../../../common/types/smallOperation";
+  StoredInput,
+  StoredOperation
+} from "../../../common/types/storedOperation";
 import { validateWithRules } from "../../../common/utils/operation";
 import {
   createEditorOperation,
@@ -13,8 +13,8 @@ import {
   type ScriptEditorState
 } from "./scriptEditorSlice";
 
-const getOperationTemplate = (type: SmallOperation["type"]) => {
-  const template = LARGE_OPERATIONS.find((item) => item.type === type);
+const getOperationTemplate = (type: StoredOperation["type"]) => {
+  const template = OPERATION_FORMS.find((item) => item.type === type);
   if (!template) {
     throw new Error(`Operation type of ${type} not found.`);
   }
@@ -27,25 +27,25 @@ const getOperationTemplate = (type: SmallOperation["type"]) => {
 export const normalizeScript = (script: Script): ScriptEditorState => {
   const state = cloneDeep(initialScriptEditorState);
 
-  const addOperation = (small: SmallOperation): string => {
-    const operation = createEditorOperation(getOperationTemplate(small.type));
+  const addOperation = (stored: StoredOperation): string => {
+    const operation = createEditorOperation(getOperationTemplate(stored.type));
     // Cast: calling forEach on a union of tuple types collapses the element
-    // type; SmallInput is the true union of all input shapes.
-    (small.inputs as SmallInput[]).forEach((smallInput, index) => {
+    // type; StoredInput is the true union of all input shapes.
+    (stored.inputs as StoredInput[]).forEach((storedInput, index) => {
       const editorInput = operation.inputs[index];
-      if (smallInput.type === "operation_box") {
+      if (storedInput.type === "operation_box") {
         if (editorInput.type === "operation_box") {
-          editorInput.operationIds = smallInput.operations.map(addOperation);
+          editorInput.operationIds = storedInput.operations.map(addOperation);
         }
       } else if (editorInput.type !== "operation_box") {
-        editorInput.value = smallInput.value;
+        editorInput.value = storedInput.value;
       }
     });
-    if (small.type === "set") {
+    if (stored.type === "set") {
       state.variables.push({
         ownerId: operation.id,
-        name: small.inputs[0].value,
-        type: small.inputs[1].value
+        name: stored.inputs[0].value,
+        type: stored.inputs[1].value
       });
     }
     state.operations[operation.id] = operation;
@@ -64,20 +64,20 @@ export const normalizeScript = (script: Script): ScriptEditorState => {
 
 // Converts the normalized editor state back into the compact stored form.
 export const denormalizeState = (state: ScriptEditorState): Script => {
-  const toSmall = (id: string): SmallOperation => {
+  const toStored = (id: string): StoredOperation => {
     const operation = state.operations[id];
     const inputs = operation.inputs.map((input) =>
       input.type === "operation_box"
         ? {
             type: "operation_box" as const,
-            operations: input.operationIds.map(toSmall)
+            operations: input.operationIds.map(toStored)
           }
         : { type: input.type, value: input.value }
     );
     // The inputs are rebuilt in template order, so the tuple shape per
     // operation type is guaranteed by construction (and re-checked by the
     // zod schema when the script is written to the database).
-    return { type: operation.type, inputs } as SmallOperation;
+    return { type: operation.type, inputs } as StoredOperation;
   };
 
   return {
@@ -86,7 +86,7 @@ export const denormalizeState = (state: ScriptEditorState): Script => {
     favorite: state.favorite,
     name: state.information.name.value,
     description: state.information.description.value,
-    operations: state.rootIds.map(toSmall)
+    operations: state.rootIds.map(toStored)
   };
 };
 

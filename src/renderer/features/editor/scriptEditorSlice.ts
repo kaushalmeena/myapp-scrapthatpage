@@ -8,11 +8,11 @@ import {
 import { cloneDeep } from "lodash";
 import type { RootState } from "@/app/store";
 import type {
-  LargeOperation,
-  LargeSelectInput,
-  LargeTextInput
-} from "../../../common/types/largeOperation";
-import type { SmallOperation } from "../../../common/types/smallOperation";
+  FormOperation,
+  FormSelectInput,
+  FormTextInput
+} from "../../../common/types/formOperation";
+import type { StoredOperation } from "../../../common/types/storedOperation";
 import type { ValidationRule } from "../../../common/types/validation";
 import type {
   Variable,
@@ -26,8 +26,8 @@ import { validateWithRules } from "../../../common/utils/operation";
 // input as (operationId, inputIndex) instead of a fragile lodash path, and
 // moving/deleting an operation is list surgery instead of tree surgery.
 
-export type EditorTextInput = LargeTextInput;
-export type EditorSelectInput = LargeSelectInput;
+export type EditorTextInput = FormTextInput;
+export type EditorSelectInput = FormSelectInput;
 
 export type EditorBoxInput = {
   label: string;
@@ -39,7 +39,7 @@ export type EditorInput = EditorTextInput | EditorSelectInput | EditorBoxInput;
 
 export type EditorOperation = {
   id: string;
-  type: SmallOperation["type"];
+  type: StoredOperation["type"];
   name: string;
   description: string;
   format: string;
@@ -182,9 +182,9 @@ export const getListIds = (
 };
 
 // Builds a fresh editor operation from an operation template
-// (LARGE_OPERATIONS), assigning it a new id.
+// (OPERATION_FORMS), assigning it a new id.
 export const createEditorOperation = (
-  template: LargeOperation
+  template: FormOperation
 ): EditorOperation => ({
   id: nanoid(),
   type: template.type,
@@ -293,7 +293,7 @@ const scriptEditorSlice = createSlice({
       field.error = validateWithRules(value, field.rules);
       field.value = value;
     },
-    appendOperation(state, action: PayloadAction<LargeOperation>) {
+    appendOperation(state, action: PayloadAction<FormOperation>) {
       const target = state.operationSelector.target;
       if (!target) {
         return;

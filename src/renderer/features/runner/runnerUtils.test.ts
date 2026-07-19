@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ExtractOperationResult } from "../../../common/types/scraper";
-import type { SmallOperation } from "../../../common/types/smallOperation";
+import type { StoredOperation } from "../../../common/types/storedOperation";
 import {
   downloadAsCSV,
   getRunnerGenerator,
   getRunnerTableData
 } from "./runnerUtils";
 
-const setOperation = (name: string, value: string): SmallOperation => ({
+const setOperation = (name: string, value: string): StoredOperation => ({
   type: "set",
   inputs: [
     { type: "text", value: name },
@@ -18,7 +18,7 @@ const setOperation = (name: string, value: string): SmallOperation => ({
 
 describe("getRunnerGenerator", () => {
   it("yields browser operations with variables substituted", () => {
-    const operations: SmallOperation[] = [
+    const operations: StoredOperation[] = [
       setOperation("page", "1"),
       {
         type: "while",
@@ -54,7 +54,7 @@ describe("getRunnerGenerator", () => {
   });
 
   it("yields wait/delay/scroll operations with numeric coercion", () => {
-    const operations: SmallOperation[] = [
+    const operations: StoredOperation[] = [
       setOperation("n", "2"),
       {
         type: "wait",
@@ -75,7 +75,7 @@ describe("getRunnerGenerator", () => {
   });
 
   it("throws instead of looping forever on a constant condition", () => {
-    const operations: SmallOperation[] = [
+    const operations: StoredOperation[] = [
       {
         type: "while",
         inputs: [

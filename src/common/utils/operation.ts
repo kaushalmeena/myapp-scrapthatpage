@@ -4,8 +4,7 @@ import type { ValidationRule } from "../types/validation";
 // Builds an operation's human-readable subheader from its `format` string by
 // substituting single-brace, index-based tokens (e.g. "Open {0}") with the
 // corresponding input's value. Distinct from the runtime `{{name}}` variable
-// tokens resolved in the ScriptRunner. Structurally typed so stored (Small),
-// template (Large) and editor input shapes all work.
+// tokens resolved in the ScriptRunner. Structurally typed so form, stored and editor input shapes all work.
 export const replaceFormatWithInputs = (
   format: string,
   inputs: ReadonlyArray<unknown>

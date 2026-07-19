@@ -1,4 +1,4 @@
-import type { SmallOperation } from "../../common/types/smallOperation";
+import type { StoredOperation } from "../../common/types/storedOperation";
 
 export type Script = {
   id?: number;
@@ -7,5 +7,5 @@ export type Script = {
   favorite: boolean;
   name: string;
   description: string;
-  operations: SmallOperation[];
+  operations: StoredOperation[];
 };
