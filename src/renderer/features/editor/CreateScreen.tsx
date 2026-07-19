@@ -5,7 +5,7 @@ import db from "@/database";
 import { INITIAL_SCRIPT } from "@/lib/constants";
 import { TOAST_MESSAGES } from "@/lib/messages";
 import type { Script } from "@/types/script";
-import ScriptEditor from "./ScriptEditor";
+import ScriptEditor from "./components/ScriptEditor";
 
 export default function CreateScreen() {
   const navigate = useNavigate();

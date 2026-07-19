@@ -8,13 +8,13 @@ import {
 } from "@/components/ui/dialog";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import type { Variable } from "../../../common/types/variable";
+import type { Variable } from "../../../../common/types/variable";
 import {
   hideVariableSelector,
   selectVariableSelector,
   selectVariables,
   updateInputWithVariable
-} from "./scriptEditorSlice";
+} from "../scriptEditorSlice";
 
 export default function VariableSelectorDialog() {
   const dispatch = useAppDispatch();

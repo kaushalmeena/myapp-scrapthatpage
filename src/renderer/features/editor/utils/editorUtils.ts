@@ -1,17 +1,17 @@
 import { produce } from "immer";
 import { cloneDeep } from "lodash";
 import type { Script } from "@/types/script";
-import { OPERATION_FORMS } from "../../../common/constants/operationForms";
+import { OPERATION_FORMS } from "../../../../common/constants/operationForms";
 import type {
   StoredInput,
   StoredOperation
-} from "../../../common/types/storedOperation";
-import { validateWithRules } from "../../../common/utils/operation";
+} from "../../../../common/types/storedOperation";
+import { validateWithRules } from "../../../../common/utils/operation";
 import {
   createEditorOperation,
   initialScriptEditorState,
   type ScriptEditorState
-} from "./scriptEditorSlice";
+} from "../scriptEditorSlice";
 
 const getOperationTemplate = (type: StoredOperation["type"]) => {
   const template = OPERATION_FORMS.find((item) => item.type === type);

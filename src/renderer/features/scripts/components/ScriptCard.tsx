@@ -20,7 +20,7 @@ import db from "@/database";
 import { TOAST_MESSAGES } from "@/lib/messages";
 import { cn } from "@/lib/utils";
 import type { Script } from "@/types/script";
-import { exportScriptToJSON } from "./scriptTransfer";
+import { exportScriptToJSON } from "../utils/scriptTransfer";
 
 export default function ScriptCard({ script }: { script: Script }) {
   const navigate = useNavigate();

@@ -5,17 +5,17 @@ import { evaluate } from "mathjs";
 import type {
   ExtractOperationResult,
   ScraperOperation
-} from "../../../common/types/scraper";
-import type { StoredOperation } from "../../../common/types/storedOperation";
-import type { VariableMapping } from "../../../common/types/variable";
-import { INITIAL_TABLE_DATA } from "./constants";
+} from "../../../../common/types/scraper";
+import type { StoredOperation } from "../../../../common/types/storedOperation";
+import type { VariableMapping } from "../../../../common/types/variable";
+import { INITIAL_TABLE_DATA } from "../constants/table";
 import type {
   RunnerCardInfo,
   RunnerGenerator,
   RunnerHeaderInfo,
   RunnerStatus,
   TableData
-} from "./types";
+} from "../types";
 
 // Upper bound on `while` loop iterations to prevent an ill-formed condition
 // from locking up the renderer.

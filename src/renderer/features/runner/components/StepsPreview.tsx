@@ -1,11 +1,11 @@
 import { Card } from "@/components/ui/card";
-import { OPERATION_ICONS } from "@/features/editor/operationIcons";
-import { OPERATION_FORMS } from "../../../common/constants/operationForms";
-import type { StoredOperation } from "../../../common/types/storedOperation";
+import { OPERATION_ICONS } from "@/features/editor/constants/operationIcons";
+import { OPERATION_FORMS } from "../../../../common/constants/operationForms";
+import type { StoredOperation } from "../../../../common/types/storedOperation";
 import {
   hasAnyInputValue,
   replaceFormatWithInputs
-} from "../../../common/utils/operation";
+} from "../../../../common/utils/operation";
 
 // Template lookup: stored operations only keep { type, inputs }, so the
 // display name/format comes from the operation catalog.

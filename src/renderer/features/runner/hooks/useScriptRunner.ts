@@ -7,13 +7,13 @@ import {
 import { useAppSelector } from "@/hooks/useAppSelector";
 import type { Run, RunLogEntry } from "@/types/run";
 import type { Script } from "@/types/script";
-import type { ScraperResult } from "../../../common/types/scraper";
+import type { ScraperResult } from "../../../../common/types/scraper";
+import type { RunnerGenerator, RunnerStatus, TableData } from "../types";
 import {
   getRunnerGenerator,
   getRunnerHeaderInfo,
   getRunnerTableData
-} from "./runnerUtils";
-import type { RunnerGenerator, RunnerStatus, TableData } from "./types";
+} from "../utils/runnerUtils";
 
 type HookReturnType = {
   status: RunnerStatus;

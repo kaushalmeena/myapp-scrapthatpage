@@ -5,8 +5,8 @@ import FadeIn from "@/components/FadeIn";
 import PageHeader from "@/components/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import db from "@/database";
-import ResultTable from "@/features/runner/ResultTable";
-import RunLogPanel from "@/features/runner/RunLogPanel";
+import ResultTable from "@/features/runner/components/ResultTable";
+import RunLogPanel from "@/features/runner/components/RunLogPanel";
 import { cn } from "@/lib/utils";
 
 export default function LogsScreen() {

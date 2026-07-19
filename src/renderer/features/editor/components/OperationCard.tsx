@@ -13,14 +13,14 @@ import {
   hasAnyInputValue,
   isOperationValid,
   replaceFormatWithInputs
-} from "../../../common/utils/operation";
-import OperationInput from "./OperationInput";
-import { OPERATION_ICONS } from "./operationIcons";
+} from "../../../../common/utils/operation";
+import { OPERATION_ICONS } from "../constants/operationIcons";
 import {
   deleteOperation,
   duplicateOperation,
   type OperationListRef
-} from "./scriptEditorSlice";
+} from "../scriptEditorSlice";
+import OperationInput from "./OperationInput";
 
 const INPUT_WIDTH_CLASSES: Record<number, string> = {
   4: "col-span-12 md:col-span-4",

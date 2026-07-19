@@ -10,21 +10,21 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import type { Script } from "@/types/script";
 import {
-  denormalizeState,
-  normalizeScript,
-  validateEditorState
-} from "./editorUtils";
-import InformationPanel from "./InformationPanel";
-import OperationSelectorDialog from "./OperationSelectorDialog";
-import OperationsPanel from "./OperationsPanel";
-import {
   getListIds,
   redo,
   replaceState,
   selectCanRedo,
   selectCanUndo,
   undo
-} from "./scriptEditorSlice";
+} from "../scriptEditorSlice";
+import {
+  denormalizeState,
+  normalizeScript,
+  validateEditorState
+} from "../utils/editorUtils";
+import InformationPanel from "./InformationPanel";
+import OperationSelectorDialog from "./OperationSelectorDialog";
+import OperationsPanel from "./OperationsPanel";
 import VariableSelectorDialog from "./VariableSelectorDialog";
 
 export default function ScriptEditor({

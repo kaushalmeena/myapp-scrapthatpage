@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import type { ExtractOperationResult } from "../../../common/types/scraper";
-import type { StoredOperation } from "../../../common/types/storedOperation";
+import type { ExtractOperationResult } from "../../../../common/types/scraper";
+import type { StoredOperation } from "../../../../common/types/storedOperation";
 import {
   downloadAsCSV,
   getRunnerGenerator,

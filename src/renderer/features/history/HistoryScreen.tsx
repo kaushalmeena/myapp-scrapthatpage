@@ -5,7 +5,7 @@ import EmptyState from "@/components/EmptyState";
 import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import db from "@/database";
-import HistoryCard from "./HistoryCard";
+import HistoryCard from "./components/HistoryCard";
 
 export default function HistoryScreen() {
   const runs = useLiveQuery(() => db.getRecentRuns(), []);

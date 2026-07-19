@@ -13,7 +13,7 @@ import {
   Timer,
   Variable
 } from "lucide-react";
-import type { StoredOperation } from "../../../common/types/storedOperation";
+import type { StoredOperation } from "../../../../common/types/storedOperation";
 
 // One icon per step type, shared by the step cards and the step picker so
 // each operation stays visually recognizable across the editor.

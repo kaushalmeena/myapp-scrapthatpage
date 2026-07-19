@@ -8,7 +8,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { type EditorSelectInput, updateInput } from "./scriptEditorSlice";
+import { type EditorSelectInput, updateInput } from "../scriptEditorSlice";
 
 export default function OperationSelectInput({
   operationId,

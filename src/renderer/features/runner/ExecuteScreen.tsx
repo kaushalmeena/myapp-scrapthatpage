@@ -3,15 +3,15 @@ import AsyncContent from "@/components/AsyncContent";
 import FadeIn from "@/components/FadeIn";
 import PageHeader from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
-import { useScriptById } from "@/features/scripts/useScriptById";
+import { useScriptById } from "@/features/scripts/hooks/useScriptById";
 import { cn } from "@/lib/utils";
 import type { Script } from "@/types/script";
-import ActionButton from "./ActionButton";
-import ResultTable from "./ResultTable";
-import RunLogPanel from "./RunLogPanel";
-import { getRunnerCardInfo } from "./runnerUtils";
-import StepsPreview from "./StepsPreview";
-import { useScriptRunner } from "./useScriptRunner";
+import ActionButton from "./components/ActionButton";
+import ResultTable from "./components/ResultTable";
+import RunLogPanel from "./components/RunLogPanel";
+import StepsPreview from "./components/StepsPreview";
+import { useScriptRunner } from "./hooks/useScriptRunner";
+import { getRunnerCardInfo } from "./utils/runnerUtils";
 
 // "1:07"-style duration for the live stats strip.
 const formatElapsed = (ms: number) => {

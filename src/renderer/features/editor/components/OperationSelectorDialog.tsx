@@ -8,14 +8,14 @@ import {
 } from "@/components/ui/command";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { OPERATION_FORMS } from "../../../common/constants/operationForms";
-import type { FormOperation } from "../../../common/types/formOperation";
-import { OPERATION_ICONS } from "./operationIcons";
+import { OPERATION_FORMS } from "../../../../common/constants/operationForms";
+import type { FormOperation } from "../../../../common/types/formOperation";
+import { OPERATION_ICONS } from "../constants/operationIcons";
 import {
   appendOperation,
   hideOperationSelector,
   selectOperationSelector
-} from "./scriptEditorSlice";
+} from "../scriptEditorSlice";
 
 // Searchable step picker (same command-palette interaction as Cmd+K):
 // type to filter, Enter or click to add the step.

@@ -16,8 +16,8 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
+import type { TableData } from "../types";
 import TableToolbar from "./TableToolbar";
-import type { TableData } from "./types";
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
 

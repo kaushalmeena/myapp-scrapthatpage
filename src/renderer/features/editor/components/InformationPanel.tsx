@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { selectInformation, updateInformation } from "./scriptEditorSlice";
+import { selectInformation, updateInformation } from "../scriptEditorSlice";
 
 export default function InformationPanel() {
   const dispatch = useAppDispatch();

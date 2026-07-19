@@ -5,12 +5,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { cn } from "@/lib/utils";
-import ElementPickerDialog from "./ElementPickerDialog";
 import {
   type EditorTextInput,
   showVariableSelector,
   updateInput
-} from "./scriptEditorSlice";
+} from "../scriptEditorSlice";
+import ElementPickerDialog from "./ElementPickerDialog";
 
 export default function OperationTextInput({
   operationId,

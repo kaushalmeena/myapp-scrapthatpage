@@ -2,7 +2,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import AsyncContent from "@/components/AsyncContent";
 import PageHeader from "@/components/PageHeader";
 import db from "@/database";
-import ScriptList from "./ScriptList";
+import ScriptList from "./components/ScriptList";
 
 export default function FavoritesScreen() {
   const scripts = useLiveQuery(() => db.getFavoriteScripts(), []);

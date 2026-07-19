@@ -20,13 +20,13 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import OperationCard from "./OperationCard";
 import {
   getListIds,
   type OperationListRef,
   reorderOperation,
   showOperationSelector
-} from "./scriptEditorSlice";
+} from "../scriptEditorSlice";
+import OperationCard from "./OperationCard";
 
 export default function OperationsPanel({
   listRef,

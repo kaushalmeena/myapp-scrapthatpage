@@ -1,7 +1,7 @@
 import { Loader2, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { ActionButtonColor } from "./types";
+import type { ActionButtonColor } from "../types";
 
 export default function ActionButton({
   spinning,

@@ -8,13 +8,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import type { TableData } from "../types";
 import {
   copyTableToClipboard,
   downloadAsCSV,
   downloadAsJSON,
   downloadAsXLSX
-} from "./runnerUtils";
-import type { TableData } from "./types";
+} from "../utils/runnerUtils";
 
 export default function TableToolbar({ data }: { data: TableData }) {
   const handleCSVDownload = () => downloadAsCSV(data);

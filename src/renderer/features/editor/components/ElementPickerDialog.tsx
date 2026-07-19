@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { selectFirstOpenUrl } from "./scriptEditorSlice";
+import { selectFirstOpenUrl } from "../scriptEditorSlice";
 
 // Prompts for a URL, opens it in the scraper window, then lets the user click
 // an element there and reports back its CSS selector.

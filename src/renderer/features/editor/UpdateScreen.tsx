@@ -3,10 +3,10 @@ import { toast } from "sonner";
 import AsyncContent from "@/components/AsyncContent";
 import PageHeader from "@/components/PageHeader";
 import db from "@/database";
-import { useScriptById } from "@/features/scripts/useScriptById";
+import { useScriptById } from "@/features/scripts/hooks/useScriptById";
 import { TOAST_MESSAGES } from "@/lib/messages";
 import type { Script } from "@/types/script";
-import ScriptEditor from "./ScriptEditor";
+import ScriptEditor from "./components/ScriptEditor";
 
 export default function UpdateScreen() {
   const navigate = useNavigate();
