@@ -485,3 +485,20 @@ export const selectCanUndo = (state: RootState) =>
   state.scriptEditor.past.length > 0;
 export const selectCanRedo = (state: RootState) =>
   state.scriptEditor.future.length > 0;
+
+// URL of the first root-level "open" step, used to pre-fill the element
+// picker so it targets the page the script actually scrapes.
+export const selectFirstOpenUrl = (state: RootState): string => {
+  const { operations, rootIds } = state.scriptEditor;
+  for (const id of rootIds) {
+    const operation = operations[id];
+    if (operation?.type === "open") {
+      const urlInput = operation.inputs[0];
+      // The URL is a text input; guard the union so `value` is accessible.
+      return urlInput && urlInput.type !== "operation_box"
+        ? urlInput.value
+        : "";
+    }
+  }
+  return "";
+};

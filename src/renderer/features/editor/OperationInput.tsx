@@ -1,7 +1,15 @@
 import { CopyPlus, Crosshair } from "lucide-react";
-import { type ChangeEvent, useId, useState } from "react";
+import { type ChangeEvent, type KeyboardEvent, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -15,7 +23,11 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { cn } from "@/lib/utils";
 import OperationsPanel from "./OperationsPanel";
-import { showVariableSelector, updateInput } from "./scriptEditorSlice";
+import {
+  selectFirstOpenUrl,
+  showVariableSelector,
+  updateInput
+} from "./scriptEditorSlice";
 
 export default function OperationInput({
   operationId,
@@ -29,11 +41,17 @@ export default function OperationInput({
 }) {
   const dispatch = useAppDispatch();
   const inputId = useId();
+  const urlInputId = useId();
   const input = useAppSelector(
     (s) => s.scriptEditor.operations[operationId]?.inputs[inputIndex]
   );
+  // Pre-fill the picker's URL with the script's first "open" step, so picking
+  // usually targets the same page the script scrapes.
+  const defaultPickUrl = useAppSelector(selectFirstOpenUrl);
 
   const [picking, setPicking] = useState(false);
+  const [urlDialogOpen, setUrlDialogOpen] = useState(false);
+  const [pickUrl, setPickUrl] = useState("");
 
   if (!input) {
     return null;
@@ -47,12 +65,25 @@ export default function OperationInput({
   const handleSelectChange = (value: string) =>
     dispatch(updateInput({ operationId, inputIndex, value }));
 
-  const handlePickerOpen = () =>
+  const handleVariablePickerOpen = () =>
     dispatch(showVariableSelector({ operationId, inputIndex }));
 
+  const handleElementPickerOpen = () => {
+    setPickUrl(defaultPickUrl);
+    setUrlDialogOpen(true);
+  };
+
   const handleElementPick = async () => {
+    const raw = pickUrl.trim();
+    if (!raw) {
+      return;
+    }
+    // Accept bare hosts like "example.com" by defaulting to https.
+    const url = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    setUrlDialogOpen(false);
     setPicking(true);
     try {
+      await window.scraper.loadURL(url);
       const res = await window.scraper.pickElement();
       if (res.status === "success") {
         dispatch(updateInput({ operationId, inputIndex, value: res.selector }));
@@ -60,8 +91,17 @@ export default function OperationInput({
       } else {
         toast.error(res.message);
       }
+    } catch {
+      toast.error("Couldn't open that page. Check the URL and try again.");
     } finally {
       setPicking(false);
+    }
+  };
+
+  const handleUrlKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleElementPick();
     }
   };
 
@@ -96,7 +136,7 @@ export default function OperationInput({
                 size="icon-xs"
                 title="Show variable picker"
                 className="absolute top-1 right-1"
-                onClick={handlePickerOpen}
+                onClick={handleVariablePickerOpen}
               >
                 <CopyPlus className="size-4" />
               </Button>
@@ -112,7 +152,7 @@ export default function OperationInput({
                   hasVariablePicker ? "right-8" : "right-1"
                 )}
                 disabled={picking}
-                onClick={handleElementPick}
+                onClick={handleElementPickerOpen}
               >
                 <Crosshair className="size-4" />
               </Button>
@@ -121,6 +161,37 @@ export default function OperationInput({
           {input.error && (
             <p className="text-xs text-destructive">{input.error}</p>
           )}
+          <Dialog open={urlDialogOpen} onOpenChange={setUrlDialogOpen}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Pick an element</DialogTitle>
+                <DialogDescription>
+                  Enter the page to open. The scraper window will load it — then
+                  click the element you want and its selector fills in here.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor={urlInputId}>Page URL</Label>
+                {/* biome-ignore lint/a11y/noAutofocus: focusing the sole field on open is expected */}
+                <Input
+                  id={urlInputId}
+                  autoFocus
+                  placeholder="https://example.com"
+                  value={pickUrl}
+                  onChange={(event) => setPickUrl(event.target.value)}
+                  onKeyDown={handleUrlKeyDown}
+                />
+              </div>
+              <DialogFooter>
+                <Button variant="ghost" onClick={() => setUrlDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button disabled={!pickUrl.trim()} onClick={handleElementPick}>
+                  Open &amp; pick
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       );
     }

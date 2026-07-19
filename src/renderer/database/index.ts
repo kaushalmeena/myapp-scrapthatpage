@@ -56,15 +56,11 @@ class AppDatabase extends Dexie {
   updateScript = (script: Script): PromiseExtended<number> =>
     this.scripts.put(prepareScriptForWrite(script));
 
-  deleteScript = (id: number): PromiseExtended<void> =>
-    this.scripts.delete(id);
+  deleteScript = (id: number): PromiseExtended<void> => this.scripts.delete(id);
 
   // Uses get + put instead of Dexie's `update`, whose `UpdateSpec` deep-maps
   // the recursive SmallOperation union and fails to type-check.
-  setScriptFavorite = async (
-    id: number,
-    value: boolean
-  ): Promise<void> => {
+  setScriptFavorite = async (id: number, value: boolean): Promise<void> => {
     const script = await this.scripts.get(id);
     if (script) {
       await this.scripts.put({ ...script, favorite: value });
