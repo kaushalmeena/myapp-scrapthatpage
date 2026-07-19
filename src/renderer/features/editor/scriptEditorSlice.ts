@@ -5,14 +5,13 @@ import {
   nanoid,
   type PayloadAction
 } from "@reduxjs/toolkit";
-import { cloneDeep } from "lodash";
 import type { RootState } from "@/app/store";
+import type { DataOperation } from "../../../common/types/dataOperation";
 import type {
   FormOperation,
   FormSelectInput,
   FormTextInput
 } from "../../../common/types/formOperation";
-import type { StoredOperation } from "../../../common/types/storedOperation";
 import type { ValidationRule } from "../../../common/types/validation";
 import type {
   Variable,
@@ -21,33 +20,38 @@ import type {
 } from "../../../common/types/variable";
 import { validateWithRules } from "../../../common/utils/operation";
 
-// The editor holds operations NORMALIZED: a flat id -> operation map plus id
-// lists (the root list and one per operation_box input). Components address an
-// input as (operationId, inputIndex) instead of a fragile lodash path, and
-// moving/deleting an operation is list surgery instead of tree surgery.
+/**
+ * The editor holds operations NORMALIZED: a flat id -> operation map plus id
+ * lists (the root list and one per block input). Components address an
+ * input as (operationId, inputIndex) instead of a fragile nested path, and
+ * moving/deleting an operation is list surgery instead of tree surgery.
+ */
 
 export type EditorTextInput = FormTextInput;
 export type EditorSelectInput = FormSelectInput;
 
-export type EditorBoxInput = {
+export type EditorBlockInput = {
   label: string;
-  type: "operation_box";
+  type: "block";
   operationIds: string[];
 };
 
-export type EditorInput = EditorTextInput | EditorSelectInput | EditorBoxInput;
+export type EditorInput =
+  | EditorTextInput
+  | EditorSelectInput
+  | EditorBlockInput;
 
 export type EditorOperation = {
   id: string;
-  type: StoredOperation["type"];
+  type: DataOperation["type"];
   name: string;
   description: string;
   format: string;
   inputs: EditorInput[];
 };
 
-// Identifies one operation list: the root list (parentId null) or an
-// operation_box input of a parent operation.
+// Identifies one operation list: the root list (parentId null) or a
+// block input of a parent operation.
 export type OperationListRef = {
   parentId: string | null;
   inputIndex?: number;
@@ -85,10 +89,10 @@ export type ScriptEditorState = {
   future: EditorSnapshot[];
   // Coalescing key so continuous typing into one field is a single undo step.
   lastEdit: string | null;
-  operationSelector: {
+  operationPicker: {
     target: OperationListRef | null;
   };
-  variableSelector: {
+  variablePicker: {
     target: { operationId: string; inputIndex: number } | null;
     filterType: VariableType;
     updateMode: VariablePickerMode;
@@ -115,10 +119,10 @@ export const initialScriptEditorState: ScriptEditorState = {
   past: [],
   future: [],
   lastEdit: null,
-  operationSelector: {
+  operationPicker: {
     target: null
   },
-  variableSelector: {
+  variablePicker: {
     target: null,
     filterType: "any",
     updateMode: "set"
@@ -167,7 +171,7 @@ const commitHistory = (
   state.lastEdit = editKey;
 };
 
-export const getListIds = (
+export const getOperationIds = (
   state: ScriptEditorState | Draft<ScriptEditorState>,
   ref: OperationListRef
 ): string[] => {
@@ -175,14 +179,14 @@ export const getListIds = (
     return state.rootIds;
   }
   const input = state.operations[ref.parentId]?.inputs[ref.inputIndex ?? -1];
-  if (input?.type !== "operation_box") {
-    throw new Error("Operation list ref does not point at an operation_box");
+  if (input?.type !== "block") {
+    throw new Error("Operation list ref does not point at a block");
   }
   return input.operationIds;
 };
 
 // Builds a fresh editor operation from an operation template
-// (OPERATION_FORMS), assigning it a new id.
+// (FORM_OPERATIONS), assigning it a new id.
 export const createEditorOperation = (
   template: FormOperation
 ): EditorOperation => ({
@@ -193,13 +197,13 @@ export const createEditorOperation = (
   format: template.format,
   inputs: template.inputs.map(
     (input): EditorInput =>
-      input.type === "operation_box"
+      input.type === "block"
         ? {
             label: input.label,
-            type: "operation_box",
+            type: "block",
             operationIds: [] as string[]
           }
-        : cloneDeep(input)
+        : structuredClone(input)
   )
 });
 
@@ -244,7 +248,7 @@ const applyInputValue = (
 ) => {
   const operation = state.operations[operationId];
   const input = operation?.inputs[inputIndex];
-  if (!input || input.type === "operation_box") {
+  if (!input || input.type === "block") {
     return;
   }
   input.error = validateWithRules(value, input.rules);
@@ -259,8 +263,8 @@ const applyInputValue = (
   }
 };
 
-// Collects an operation's id plus every descendant id (through its
-// operation_box inputs).
+// Collects an operation's id plus every descendant id (through its block
+// inputs).
 const collectOperationIds = (
   state: Draft<ScriptEditorState>,
   id: string,
@@ -268,7 +272,7 @@ const collectOperationIds = (
 ) => {
   acc.push(id);
   for (const input of state.operations[id]?.inputs ?? []) {
-    if (input.type === "operation_box") {
+    if (input.type === "block") {
       for (const childId of input.operationIds) {
         collectOperationIds(state, childId, acc);
       }
@@ -294,21 +298,21 @@ const scriptEditorSlice = createSlice({
       field.value = value;
     },
     appendOperation(state, action: PayloadAction<FormOperation>) {
-      const target = state.operationSelector.target;
+      const target = state.operationPicker.target;
       if (!target) {
         return;
       }
       commitHistory(state);
       const operation = createEditorOperation(action.payload);
       state.operations[operation.id] = operation;
-      getListIds(state, target).push(operation.id);
+      getOperationIds(state, target).push(operation.id);
     },
     deleteOperation(
       state,
       action: PayloadAction<{ listRef: OperationListRef; id: string }>
     ) {
       const { listRef, id } = action.payload;
-      const ids = getListIds(state, listRef);
+      const ids = getOperationIds(state, listRef);
       const index = ids.indexOf(id);
       if (index === -1) {
         return;
@@ -329,7 +333,7 @@ const scriptEditorSlice = createSlice({
       action: PayloadAction<{ listRef: OperationListRef; id: string }>
     ) {
       const { listRef, id } = action.payload;
-      const ids = getListIds(state, listRef);
+      const ids = getOperationIds(state, listRef);
       const index = ids.indexOf(id);
       if (index === -1) {
         return;
@@ -339,12 +343,14 @@ const scriptEditorSlice = createSlice({
       // duplicating any variables owned by cloned "set" operations.
       const cloneSubtree = (sourceId: string): string => {
         const source = state.operations[sourceId];
+        // current() unwraps the immer draft to a plain snapshot;
+        // structuredClone then gives a fully mutable deep copy to re-id.
         const copy: EditorOperation = {
-          ...cloneDeep({ ...source }),
+          ...structuredClone(current(source)),
           id: nanoid()
         };
         copy.inputs = copy.inputs.map((input) =>
-          input.type === "operation_box"
+          input.type === "block"
             ? { ...input, operationIds: input.operationIds.map(cloneSubtree) }
             : input
         );
@@ -368,7 +374,7 @@ const scriptEditorSlice = createSlice({
       }>
     ) {
       const { listRef, from, to } = action.payload;
-      const ids = getListIds(state, listRef);
+      const ids = getOperationIds(state, listRef);
       if (
         from === to ||
         from < 0 ||
@@ -413,43 +419,43 @@ const scriptEditorSlice = createSlice({
       applyInputValue(state, operationId, inputIndex, value);
     },
     updateInputWithVariable(state, action: PayloadAction<Variable>) {
-      const target = state.variableSelector.target;
+      const target = state.variablePicker.target;
       if (!target) {
         return;
       }
       const input =
         state.operations[target.operationId]?.inputs[target.inputIndex];
-      if (!input || input.type === "operation_box") {
+      if (!input || input.type === "block") {
         return;
       }
       commitHistory(state);
       const newValue = getUpdatedInputValueWithVariable(
         input.value,
-        state.variableSelector.updateMode,
+        state.variablePicker.updateMode,
         action.payload
       );
       applyInputValue(state, target.operationId, target.inputIndex, newValue);
     },
-    showOperationSelector(state, action: PayloadAction<OperationListRef>) {
-      state.operationSelector.target = action.payload;
+    showOperationPicker(state, action: PayloadAction<OperationListRef>) {
+      state.operationPicker.target = action.payload;
     },
-    hideOperationSelector(state) {
-      state.operationSelector.target = null;
+    hideOperationPicker(state) {
+      state.operationPicker.target = null;
     },
-    showVariableSelector(
+    showVariablePicker(
       state,
       action: PayloadAction<{ operationId: string; inputIndex: number }>
     ) {
       const { operationId, inputIndex } = action.payload;
       const input = state.operations[operationId]?.inputs[inputIndex];
       if (input && "variablePicker" in input && input.variablePicker) {
-        state.variableSelector.target = { operationId, inputIndex };
-        state.variableSelector.filterType = input.variablePicker.type;
-        state.variableSelector.updateMode = input.variablePicker.mode;
+        state.variablePicker.target = { operationId, inputIndex };
+        state.variablePicker.filterType = input.variablePicker.type;
+        state.variablePicker.updateMode = input.variablePicker.mode;
       }
     },
-    hideVariableSelector(state) {
-      state.variableSelector.target = null;
+    hideVariablePicker(state) {
+      state.variablePicker.target = null;
     }
   }
 });
@@ -465,20 +471,20 @@ export const {
   redo,
   updateInput,
   updateInputWithVariable,
-  showOperationSelector,
-  hideOperationSelector,
-  showVariableSelector,
-  hideVariableSelector
+  showOperationPicker,
+  hideOperationPicker,
+  showVariablePicker,
+  hideVariablePicker
 } = scriptEditorSlice.actions;
 
 export const scriptEditorReducer = scriptEditorSlice.reducer;
 
 export const selectInformation = (state: RootState) =>
   state.scriptEditor.information;
-export const selectOperationSelector = (state: RootState) =>
-  state.scriptEditor.operationSelector;
-export const selectVariableSelector = (state: RootState) =>
-  state.scriptEditor.variableSelector;
+export const selectOperationPicker = (state: RootState) =>
+  state.scriptEditor.operationPicker;
+export const selectVariablePicker = (state: RootState) =>
+  state.scriptEditor.variablePicker;
 export const selectVariables = (state: RootState) =>
   state.scriptEditor.variables;
 export const selectCanUndo = (state: RootState) =>
@@ -495,9 +501,7 @@ export const selectFirstOpenUrl = (state: RootState): string => {
     if (operation?.type === "open") {
       const urlInput = operation.inputs[0];
       // The URL is a text input; guard the union so `value` is accessible.
-      return urlInput && urlInput.type !== "operation_box"
-        ? urlInput.value
-        : "";
+      return urlInput && urlInput.type !== "block" ? urlInput.value : "";
     }
   }
   return "";

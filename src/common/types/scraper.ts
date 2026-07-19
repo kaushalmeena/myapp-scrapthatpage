@@ -66,6 +66,7 @@ export type ScraperOperation =
 
 export type PickElementResponse =
   | { status: "success"; selector: string }
+  | { status: "cancelled" }
   | { status: "error"; message: string };
 
 export type ExtractOperationResult = {

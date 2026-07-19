@@ -10,7 +10,7 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import type { Script } from "@/types/script";
 import {
-  getListIds,
+  getOperationIds,
   redo,
   replaceState,
   selectCanRedo,
@@ -23,9 +23,9 @@ import {
   validateEditorState
 } from "../utils/editorUtils";
 import InformationPanel from "./InformationPanel";
-import OperationSelectorDialog from "./OperationSelectorDialog";
+import OperationPickerDialog from "./OperationPickerDialog";
 import OperationsPanel from "./OperationsPanel";
-import VariableSelectorDialog from "./VariableSelectorDialog";
+import VariablePickerDialog from "./VariablePickerDialog";
 
 export default function ScriptEditor({
   script,
@@ -42,7 +42,7 @@ export default function ScriptEditor({
   const canUndo = useAppSelector(selectCanUndo);
   const canRedo = useAppSelector(selectCanRedo);
   const stepCount = useAppSelector(
-    (state) => getListIds(state.scriptEditor, { parentId: null }).length
+    (state) => getOperationIds(state.scriptEditor, { parentId: null }).length
   );
 
   // Standard editor shortcuts: Cmd/Ctrl+Z undoes, Shift+Cmd/Ctrl+Z redoes.
@@ -152,8 +152,8 @@ export default function ScriptEditor({
         </Card>
       </div>
 
-      <OperationSelectorDialog />
-      <VariableSelectorDialog />
+      <OperationPickerDialog />
+      <VariablePickerDialog />
     </>
   );
 }

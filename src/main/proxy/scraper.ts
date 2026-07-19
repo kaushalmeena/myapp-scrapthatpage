@@ -6,6 +6,7 @@ import {
   type ScraperOperation
 } from "../../common/types/scraper";
 import type Scraper from "../lib/Scraper";
+import { PickCancelledError } from "../lib/Scraper/DebuggerPage";
 import { executeOperation } from "../utils/scraper";
 
 const SCRAPER_OPERATION_TYPES = [
@@ -73,6 +74,9 @@ export const connectScraperProxy = (scraper: Scraper) => {
         const selector = await scraper.pickElement();
         return { status: "success", selector };
       } catch (err) {
+        if (err instanceof PickCancelledError) {
+          return { status: "cancelled" };
+        }
         return {
           status: "error",
           message:

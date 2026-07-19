@@ -19,7 +19,7 @@ import {
   selectOperationDelayMs,
   selectShowScraperWindow,
   selectTheme,
-  type ThemeType,
+  type Theme,
   updateOperationDelayMs,
   updateShowScraperWindow,
   updateTheme
@@ -32,7 +32,7 @@ export default function SettingsScreen() {
   const operationDelayMs = useAppSelector(selectOperationDelayMs);
 
   const handleThemeChange = (value: string) => {
-    dispatch(updateTheme(value as ThemeType));
+    dispatch(updateTheme(value as Theme));
   };
 
   const handleShowScraperWindowChange = (value: boolean) => {

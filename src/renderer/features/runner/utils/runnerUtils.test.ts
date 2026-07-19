@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
+import type { DataOperation } from "../../../../common/types/dataOperation";
 import type { ExtractOperationResult } from "../../../../common/types/scraper";
-import type { StoredOperation } from "../../../../common/types/storedOperation";
 import {
   downloadAsCSV,
   getRunnerGenerator,
   getRunnerTableData
 } from "./runnerUtils";
 
-const setOperation = (name: string, value: string): StoredOperation => ({
+const setOperation = (name: string, value: string): DataOperation => ({
   type: "set",
   inputs: [
     { type: "text", value: name },
@@ -18,15 +18,15 @@ const setOperation = (name: string, value: string): StoredOperation => ({
 
 describe("getRunnerGenerator", () => {
   it("yields browser operations with variables substituted", () => {
-    const operations: StoredOperation[] = [
+    const operations: DataOperation[] = [
       setOperation("page", "1"),
       {
         type: "while",
         inputs: [
           { type: "text", value: "{{page}} < 3" },
           {
-            type: "operation_box",
-            operations: [
+            type: "block",
+            steps: [
               {
                 type: "open",
                 inputs: [
@@ -54,7 +54,7 @@ describe("getRunnerGenerator", () => {
   });
 
   it("yields wait/delay/scroll operations with numeric coercion", () => {
-    const operations: StoredOperation[] = [
+    const operations: DataOperation[] = [
       setOperation("n", "2"),
       {
         type: "wait",
@@ -75,12 +75,12 @@ describe("getRunnerGenerator", () => {
   });
 
   it("throws instead of looping forever on a constant condition", () => {
-    const operations: StoredOperation[] = [
+    const operations: DataOperation[] = [
       {
         type: "while",
         inputs: [
           { type: "text", value: "1 == 1" },
-          { type: "operation_box", operations: [setOperation("x", "1")] }
+          { type: "block", steps: [setOperation("x", "1")] }
         ]
       }
     ];

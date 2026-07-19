@@ -7,7 +7,7 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { cn } from "@/lib/utils";
 import {
   type EditorTextInput,
-  showVariableSelector,
+  showVariablePicker,
   updateInput
 } from "../scriptEditorSlice";
 import ElementPickerDialog from "./ElementPickerDialog";
@@ -40,7 +40,7 @@ export default function OperationTextInput({
     );
 
   const handleVariablePickerOpen = () =>
-    dispatch(showVariableSelector({ operationId, inputIndex }));
+    dispatch(showVariablePicker({ operationId, inputIndex }));
 
   const handlePicked = (selector: string) =>
     dispatch(updateInput({ operationId, inputIndex, value: selector }));

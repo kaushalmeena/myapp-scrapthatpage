@@ -1,10 +1,13 @@
 import { VALIDATION_FUNCTION } from "../constants/validation";
 import type { ValidationRule } from "../types/validation";
 
-// Builds an operation's human-readable subheader from its `format` string by
-// substituting single-brace, index-based tokens (e.g. "Open {0}") with the
-// corresponding input's value. Distinct from the runtime `{{name}}` variable
-// tokens resolved in the ScriptRunner. Structurally typed so form, stored and editor input shapes all work.
+/**
+ * Builds an operation's human-readable subheader from its `format` string by
+ * substituting single-brace, index-based tokens (e.g. "Open {0}") with the
+ * corresponding input's value. Distinct from the runtime `{{name}}` variable
+ * tokens resolved in the ScriptRunner. Structurally typed so form, stored and
+ * editor input shapes all work.
+ */
 export const replaceFormatWithInputs = (
   format: string,
   inputs: ReadonlyArray<unknown>
@@ -28,7 +31,7 @@ export const hasAnyInputValue = (inputs: ReadonlyArray<unknown>) =>
   );
 
 // An operation is valid when none of its value-carrying inputs hold a
-// validation error (operation_box inputs have no error field and are skipped).
+// validation error (block inputs have no error field and are skipped).
 export const isOperationValid = (operation: {
   inputs: ReadonlyArray<unknown>;
 }) =>

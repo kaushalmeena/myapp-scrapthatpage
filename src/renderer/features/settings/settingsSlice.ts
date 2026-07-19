@@ -1,11 +1,11 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "@/app/store";
 
-export type ThemeType = "light" | "dark";
+export type Theme = "light" | "dark";
 
 const THEME_STORAGE_KEY = "theme";
 
-const loadInitialTheme = (): ThemeType => {
+const loadInitialTheme = (): Theme => {
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
   if (stored === "light" || stored === "dark") {
     return stored;
@@ -14,7 +14,7 @@ const loadInitialTheme = (): ThemeType => {
 };
 
 export type SettingsState = {
-  theme: ThemeType;
+  theme: Theme;
   // Show the scraper window while a script runs (false = headless run).
   showScraperWindow: boolean;
   // Pause inserted between operations, for politeness towards scraped sites.
@@ -66,7 +66,7 @@ const settingsSlice = createSlice({
     ...loadScraperSettings()
   }),
   reducers: {
-    updateTheme(state, action: PayloadAction<ThemeType>) {
+    updateTheme(state, action: PayloadAction<Theme>) {
       state.theme = action.payload;
       localStorage.setItem(THEME_STORAGE_KEY, action.payload);
     },

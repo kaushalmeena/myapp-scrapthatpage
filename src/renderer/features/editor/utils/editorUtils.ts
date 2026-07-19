@@ -1,51 +1,70 @@
 import { produce } from "immer";
-import { cloneDeep } from "lodash";
 import type { Script } from "@/types/script";
-import { OPERATION_FORMS } from "../../../../common/constants/operationForms";
+import { FORM_OPERATIONS } from "../../../../common/constants/formOperations";
 import type {
-  StoredInput,
-  StoredOperation
-} from "../../../../common/types/storedOperation";
+  DataInput,
+  DataOperation
+} from "../../../../common/types/dataOperation";
 import { validateWithRules } from "../../../../common/utils/operation";
 import {
   createEditorOperation,
+  type EditorInput,
+  type EditorOperation,
   initialScriptEditorState,
   type ScriptEditorState
 } from "../scriptEditorSlice";
 
-const getOperationTemplate = (type: StoredOperation["type"]) => {
-  const template = OPERATION_FORMS.find((item) => item.type === type);
-  if (!template) {
+/**
+ * Looks up the form template (labels, validation, layout) for an operation
+ * type from the FORM_OPERATIONS catalog.
+ *
+ * @throws if the type has no matching template.
+ */
+const getOperationForm = (type: DataOperation["type"]) => {
+  const form = FORM_OPERATIONS.find((item) => item.type === type);
+  if (!form) {
     throw new Error(`Operation type of ${type} not found.`);
   }
-  return template;
+  return form;
 };
 
-// Builds the normalized editor state from a stored script: every operation
-// gets an id and lands in the flat map, nesting becomes id lists, and
-// variables are derived from "set" operations.
-export const normalizeScript = (script: Script): ScriptEditorState => {
-  const state = cloneDeep(initialScriptEditorState);
+/**
+ * Copies a stored input's data onto its editor counterpart. Inputs line up by
+ * index (both built in template order), so the paired shapes always match —
+ * the type guards are only there to satisfy the compiler's per-index union.
+ */
+const applyDataInput = (
+  editorInput: EditorInput,
+  dataInput: DataInput,
+  addOperation: (data: DataOperation) => string
+): void => {
+  if (editorInput.type === "block" && dataInput.type === "block") {
+    editorInput.operationIds = dataInput.steps.map(addOperation);
+  } else if (editorInput.type !== "block" && dataInput.type !== "block") {
+    editorInput.value = dataInput.value;
+  }
+};
 
-  const addOperation = (stored: StoredOperation): string => {
-    const operation = createEditorOperation(getOperationTemplate(stored.type));
-    // Cast: calling forEach on a union of tuple types collapses the element
-    // type; StoredInput is the true union of all input shapes.
-    (stored.inputs as StoredInput[]).forEach((storedInput, index) => {
-      const editorInput = operation.inputs[index];
-      if (storedInput.type === "operation_box") {
-        if (editorInput.type === "operation_box") {
-          editorInput.operationIds = storedInput.operations.map(addOperation);
-        }
-      } else if (editorInput.type !== "operation_box") {
-        editorInput.value = storedInput.value;
-      }
+/**
+ * Builds the normalized editor state from a stored script: every operation
+ * gets an id and lands in the flat `operations` map, nesting is expressed as
+ * id lists, and variables are derived from "set" operations.
+ */
+export const normalizeScript = (script: Script): ScriptEditorState => {
+  const state = structuredClone(initialScriptEditorState);
+
+  const addOperation = (data: DataOperation): string => {
+    const operation = createEditorOperation(getOperationForm(data.type));
+    // Cast: forEach over a union of input tuples collapses the element type;
+    // DataInput is the true union of every input shape.
+    (data.inputs as DataInput[]).forEach((dataInput, index) => {
+      applyDataInput(operation.inputs[index], dataInput, addOperation);
     });
-    if (stored.type === "set") {
+    if (data.type === "set") {
       state.variables.push({
         ownerId: operation.id,
-        name: stored.inputs[0].value,
-        type: stored.inputs[1].value
+        name: data.inputs[0].value,
+        type: data.inputs[1].value
       });
     }
     state.operations[operation.id] = operation;
@@ -62,36 +81,48 @@ export const normalizeScript = (script: Script): ScriptEditorState => {
   return state;
 };
 
-// Converts the normalized editor state back into the compact stored form.
-export const denormalizeState = (state: ScriptEditorState): Script => {
-  const toStored = (id: string): StoredOperation => {
-    const operation = state.operations[id];
-    const inputs = operation.inputs.map((input) =>
-      input.type === "operation_box"
-        ? {
-            type: "operation_box" as const,
-            operations: input.operationIds.map(toStored)
-          }
-        : { type: input.type, value: input.value }
-    );
-    // The inputs are rebuilt in template order, so the tuple shape per
-    // operation type is guaranteed by construction (and re-checked by the
-    // zod schema when the script is written to the database).
-    return { type: operation.type, inputs } as StoredOperation;
-  };
-
-  return {
-    id: state.id,
-    version: state.version,
-    favorite: state.favorite,
-    name: state.information.name.value,
-    description: state.information.description.value,
-    operations: state.rootIds.map(toStored)
-  };
+/**
+ * Serializes one editor operation (and its descendants) into the compact
+ * stored form.
+ */
+const toDataOperation = (
+  operations: Record<string, EditorOperation>,
+  id: string
+): DataOperation => {
+  const operation = operations[id];
+  const inputs = operation.inputs.map((input) =>
+    input.type === "block"
+      ? {
+          type: "block" as const,
+          steps: input.operationIds.map((childId) =>
+            toDataOperation(operations, childId)
+          )
+        }
+      : { type: input.type, value: input.value }
+  );
+  // Inputs are rebuilt in template order, so the per-type tuple shape holds by
+  // construction (and is re-checked by the zod schema on write).
+  return { type: operation.type, inputs } as DataOperation;
 };
 
-// Computes the display number ("2.3" = third child of the second root
-// operation) for every operation in tree order.
+/**
+ * Converts the normalized editor state back into a storable script.
+ */
+export const denormalizeState = (state: ScriptEditorState): Script => ({
+  id: state.id,
+  version: state.version,
+  favorite: state.favorite,
+  name: state.information.name.value,
+  description: state.information.description.value,
+  operations: state.rootIds.map((id) => toDataOperation(state.operations, id))
+});
+
+/**
+ * Computes each operation's display number in tree order — e.g. "2.3" is the
+ * third child of the second root operation.
+ *
+ * @returns a map of operation id to its display number.
+ */
 export const computeOperationNumbers = (
   state: Pick<ScriptEditorState, "operations" | "rootIds">
 ): Record<string, string> => {
@@ -102,7 +133,7 @@ export const computeOperationNumbers = (
       const number = prefix ? `${prefix}.${index + 1}` : `${index + 1}`;
       numbers[id] = number;
       for (const input of state.operations[id]?.inputs ?? []) {
-        if (input.type === "operation_box") {
+        if (input.type === "block") {
           walk(input.operationIds, number);
         }
       }
@@ -113,8 +144,13 @@ export const computeOperationNumbers = (
   return numbers;
 };
 
-// Validates the whole editor state, returning the error messages plus a copy
-// of the state with per-field error strings filled in.
+/**
+ * Validates the whole editor state.
+ *
+ * @returns the collected error messages (in the order the user sees the
+ *   fields/cards) plus a copy of the state with per-field error strings filled
+ *   in for display.
+ */
 export const validateEditorState = (state: ScriptEditorState) => {
   const errors: string[] = [];
   const numbers = computeOperationNumbers(state);
@@ -128,7 +164,7 @@ export const validateEditorState = (state: ScriptEditorState) => {
       }
     }
 
-    // Tree order keeps error messages in the order the user sees the cards.
+    // Tree order keeps error messages aligned with how the cards are shown.
     const orderedIds = Object.keys(numbers).sort((a, b) =>
       numbers[a].localeCompare(numbers[b], undefined, { numeric: true })
     );
@@ -136,7 +172,7 @@ export const validateEditorState = (state: ScriptEditorState) => {
       const operation = draft.operations[id];
       let hasError = false;
       for (const input of operation.inputs) {
-        if (input.type === "operation_box") {
+        if (input.type === "block") {
           continue;
         }
         input.error = validateWithRules(input.value, input.rules);

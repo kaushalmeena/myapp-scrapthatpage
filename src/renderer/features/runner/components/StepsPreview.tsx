@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { OPERATION_ICONS } from "@/features/editor/constants/operationIcons";
-import { OPERATION_FORMS } from "../../../../common/constants/operationForms";
-import type { StoredOperation } from "../../../../common/types/storedOperation";
+import { FORM_OPERATIONS } from "../../../../common/constants/formOperations";
+import type { DataOperation } from "../../../../common/types/dataOperation";
 import {
   hasAnyInputValue,
   replaceFormatWithInputs
@@ -9,21 +9,21 @@ import {
 
 // Template lookup: stored operations only keep { type, inputs }, so the
 // display name/format comes from the operation catalog.
-const templateFor = (type: StoredOperation["type"]) =>
-  OPERATION_FORMS.find((operation) => operation.type === type);
+const templateFor = (type: DataOperation["type"]) =>
+  FORM_OPERATIONS.find((operation) => operation.type === type);
 
 // Widened view of inputs: each operation type carries a specific tuple, so a
-// direct `input.type === "operation_box"` check doesn't type-check across the
-// whole StoredOperation union.
-const nestedStepCount = (operation: StoredOperation): number => {
+// direct `input.type === "block"` check doesn't type-check across the
+// whole DataOperation union.
+const nestedStepCount = (operation: DataOperation): number => {
   const inputs = operation.inputs as ReadonlyArray<{
     type: string;
-    operations?: StoredOperation[];
+    steps?: DataOperation[];
   }>;
   let count = 0;
   for (const input of inputs) {
-    if (input.type === "operation_box" && input.operations) {
-      count += input.operations.length;
+    if (input.type === "block" && input.steps) {
+      count += input.steps.length;
     }
   }
   return count;
@@ -34,7 +34,7 @@ const nestedStepCount = (operation: StoredOperation): number => {
 export default function StepsPreview({
   operations
 }: {
-  operations: StoredOperation[];
+  operations: DataOperation[];
 }) {
   return (
     <Card className="gap-0 overflow-hidden p-0">

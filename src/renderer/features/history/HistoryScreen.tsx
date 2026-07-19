@@ -5,6 +5,7 @@ import EmptyState from "@/components/EmptyState";
 import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import db from "@/database";
+import { TOAST_MESSAGES } from "@/lib/messages";
 import HistoryCard from "./components/HistoryCard";
 
 export default function HistoryScreen() {
@@ -13,10 +14,10 @@ export default function HistoryScreen() {
   const handleClearClick = () => {
     db.clearRuns()
       .then(() => {
-        toast.success("History cleared");
+        toast.success(TOAST_MESSAGES.RUNS_CLEAR_SUCCESS);
       })
       .catch(() => {
-        toast.error("Failed to clear history");
+        toast.error(TOAST_MESSAGES.RUNS_CLEAR_FAILURE);
       });
   };
 

@@ -1,6 +1,6 @@
 import type { FormOperation } from "../types/formOperation";
 
-export const OPERATION_FORMS: FormOperation[] = [
+export const FORM_OPERATIONS: FormOperation[] = [
   {
     name: "Open page",
     type: "open",
@@ -340,8 +340,8 @@ export const OPERATION_FORMS: FormOperation[] = [
       },
       {
         label: "If Block",
-        type: "operation_box",
-        operations: []
+        type: "block",
+        steps: []
       }
     ]
   },
@@ -370,8 +370,8 @@ export const OPERATION_FORMS: FormOperation[] = [
       },
       {
         label: "While Block",
-        type: "operation_box",
-        operations: []
+        type: "block",
+        steps: []
       }
     ]
   },

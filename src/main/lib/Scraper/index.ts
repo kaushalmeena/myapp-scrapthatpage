@@ -1,98 +1,28 @@
 import { BrowserWindow } from "electron";
 import type { ScraperConfig } from "../../../common/types/scraper";
-import CdpPage from "./CdpPage";
+import DebuggerPage from "./DebuggerPage";
 
 // Auto-wait budget for an element to appear before an operation acts on it.
 const ACTION_TIMEOUT_MS = 10000;
 
-// Injected into the scraped page for the element picker. Highlights the hovered
-// element and, on click, stores a CSS selector for it on window.__pickerResult
-// (polled from the main process). Skips framework-generated class names so
-// picked selectors survive redeploys.
-const PICKER_SCRIPT = `
-(() => {
-  if (window.__pickerActive) return;
-  window.__pickerActive = true;
-  window.__pickerResult = null;
-  const prev = { el: null, outline: "" };
-  const isStableClass = (c) => {
-    if (/^(sc-|css-|jsx-|emotion-)/.test(c)) return false;
-    if (/^[a-z]+-[0-9a-f]{5,}$/i.test(c)) return false;
-    if (/[A-Z]/.test(c) && !/[-_]/.test(c) && c.length <= 8) return false;
-    return true;
-  };
-  const segmentFor = (node) => {
-    let seg = node.tagName.toLowerCase();
-    const classes = Array.from(node.classList).filter(isStableClass).slice(0, 2);
-    if (classes.length > 0) {
-      seg += "." + classes.map((c) => CSS.escape(c)).join(".");
-    }
-    const parent = node.parentElement;
-    if (parent) {
-      const sameTag = Array.from(parent.children).filter((c) => c.tagName === node.tagName);
-      if (sameTag.length > 1) {
-        seg += ":nth-of-type(" + (sameTag.indexOf(node) + 1) + ")";
-      }
-    }
-    return seg;
-  };
-  const selectorFor = (el) => {
-    const parts = [];
-    for (let node = el; node && node.nodeType === 1 && node.tagName !== "HTML"; node = node.parentElement) {
-      if (node.id && document.querySelectorAll("#" + CSS.escape(node.id)).length === 1) {
-        parts.unshift("#" + CSS.escape(node.id));
-        return parts.join(" > ");
-      }
-      parts.unshift(segmentFor(node));
-      const candidate = parts.join(" > ");
-      const matches = document.querySelectorAll(candidate);
-      if (matches.length === 1 && matches[0] === el) {
-        return candidate;
-      }
-    }
-    return parts.join(" > ");
-  };
-  const restore = () => {
-    if (prev.el) prev.el.style.outline = prev.outline;
-    prev.el = null;
-  };
-  const cleanup = () => {
-    restore();
-    document.removeEventListener("mouseover", over, true);
-    document.removeEventListener("click", click, true);
-    window.__pickerActive = false;
-  };
-  const over = (e) => {
-    restore();
-    prev.el = e.target;
-    prev.outline = e.target.style.outline;
-    e.target.style.outline = "2px solid #e11d48";
-  };
-  const click = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    window.__pickerResult = selectorFor(e.target);
-    cleanup();
-  };
-  document.addEventListener("mouseover", over, true);
-  document.addEventListener("click", click, true);
-  window.__pickerCancel = cleanup;
-})();
-`;
+// How long the element picker waits for the user to click something.
+const PICK_TIMEOUT_MS = 60000;
 
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-// Drives a dedicated child BrowserWindow over the Chrome DevTools Protocol via
-// webContents.debugger (in-process — works in packaged/signed builds, unlike a
-// remote debugging port). CdpPage supplies Puppeteer-style auto-waiting
-// primitives, so operations tolerate content that renders after navigation.
+/**
+ * Drives a dedicated child BrowserWindow over the Chrome DevTools Protocol via
+ * webContents.debugger (in-process — works in packaged/signed builds, unlike a
+ * remote debugging port). DebuggerPage supplies Puppeteer-style auto-waiting
+ * primitives, so operations tolerate content that renders after navigation.
+ */
 export default class Scraper {
   private mainWindow: BrowserWindow;
 
   private scraperWindow?: BrowserWindow;
 
-  private page?: CdpPage;
+  private page?: DebuggerPage;
 
   private config: ScraperConfig = { showWindow: true };
 
@@ -143,7 +73,7 @@ export default class Scraper {
   }
 
   // Returns the CDP page bound to the scraper window, attaching lazily.
-  private async getPage(): Promise<CdpPage> {
+  private async getPage(): Promise<DebuggerPage> {
     const window = this.ensureWindow();
     // A fresh window has no committed document yet, and CDP commands sent to
     // it never resolve (same quirk puppeteer-in-electron works around with
@@ -152,7 +82,7 @@ export default class Scraper {
       await window.webContents.loadURL("about:blank");
     }
     if (!this.page) {
-      this.page = new CdpPage(window.webContents);
+      this.page = new DebuggerPage(window.webContents);
     }
     await this.page.attach();
     return this.page;
@@ -271,7 +201,8 @@ export default class Scraper {
   }
 
   // Lets the user click an element in the scraper window and returns a CSS
-  // selector for it. Times out after 60s or if the window closes.
+  // selector for it, using Chromium's native "inspect element" overlay. Times
+  // out after PICK_TIMEOUT_MS or if the window closes.
   async pickElement(): Promise<string> {
     if (!this.getActiveURL()) {
       throw new Error("Open a page in the scraper window before picking.");
@@ -279,25 +210,15 @@ export default class Scraper {
     const page = await this.getPage();
     this.scraperWindow?.show();
     this.scraperWindow?.focus();
-    await page.evaluate(PICKER_SCRIPT);
-    const deadline = Date.now() + 60000;
     try {
-      while (Date.now() < deadline) {
-        if (!this.scraperWindow || this.scraperWindow.isDestroyed()) {
-          throw new Error("Scraper window was closed while picking.");
-        }
-        const result = await page.evaluate("window.__pickerResult");
-        if (typeof result === "string" && result.length > 0) {
-          await page.evaluate("window.__pickerResult = null");
-          return result;
-        }
-        await sleep(250);
-      }
-      throw new Error("Timed out waiting for an element to be picked.");
+      return await page.pickElement(PICK_TIMEOUT_MS);
     } finally {
-      await page
-        .evaluate("window.__pickerCancel && window.__pickerCancel()")
-        .catch((): undefined => undefined);
+      // Dismiss the scraper window once picking ends (picked or cancelled) so
+      // it doesn't linger over the editor. Hidden, not closed, so the next
+      // pick reuses the warm window/page.
+      if (this.scraperWindow && !this.scraperWindow.isDestroyed()) {
+        this.scraperWindow.hide();
+      }
     }
   }
 

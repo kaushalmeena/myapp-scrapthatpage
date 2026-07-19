@@ -26,8 +26,8 @@ const script: Script = {
       inputs: [
         { type: "text", value: "{{page}} < 3" },
         {
-          type: "operation_box",
-          operations: [
+          type: "block",
+          steps: [
             {
               type: "open",
               inputs: [{ type: "text", value: "https://example.com" }]
@@ -57,7 +57,7 @@ describe("normalizeScript / denormalizeState", () => {
     expect(Object.keys(state.operations)).toHaveLength(4);
     const whileOp = state.operations[state.rootIds[1]];
     const box = whileOp.inputs[1];
-    expect(box.type === "operation_box" && box.operationIds).toHaveLength(2);
+    expect(box.type === "block" && box.operationIds).toHaveLength(2);
   });
 
   it("derives variables from set operations", () => {
@@ -74,7 +74,7 @@ describe("computeOperationNumbers", () => {
     const numbers = computeOperationNumbers(state);
     const whileOp = state.operations[state.rootIds[1]];
     const box = whileOp.inputs[1];
-    const childIds = box.type === "operation_box" ? box.operationIds : [];
+    const childIds = box.type === "block" ? box.operationIds : [];
 
     expect(numbers[state.rootIds[0]]).toBe("1");
     expect(numbers[state.rootIds[1]]).toBe("2");
@@ -96,10 +96,8 @@ describe("validateEditorState", () => {
           inputs: [
             { type: "text", value: "1 == 1" },
             {
-              type: "operation_box",
-              operations: [
-                { type: "click", inputs: [{ type: "text", value: "" }] }
-              ]
+              type: "block",
+              steps: [{ type: "click", inputs: [{ type: "text", value: "" }] }]
             }
           ]
         }

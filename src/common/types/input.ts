@@ -1,1 +1,1 @@
-export type InputType = "text" | "select" | "operation_box";
+export type InputType = "text" | "select" | "block";

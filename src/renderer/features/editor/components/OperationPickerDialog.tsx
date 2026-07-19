@@ -8,30 +8,30 @@ import {
 } from "@/components/ui/command";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { OPERATION_FORMS } from "../../../../common/constants/operationForms";
+import { FORM_OPERATIONS } from "../../../../common/constants/formOperations";
 import type { FormOperation } from "../../../../common/types/formOperation";
 import { OPERATION_ICONS } from "../constants/operationIcons";
 import {
   appendOperation,
-  hideOperationSelector,
-  selectOperationSelector
+  hideOperationPicker,
+  selectOperationPicker
 } from "../scriptEditorSlice";
 
 // Searchable step picker (same command-palette interaction as Cmd+K):
 // type to filter, Enter or click to add the step.
-export default function OperationSelectorDialog() {
+export default function OperationPickerDialog() {
   const dispatch = useAppDispatch();
-  const selector = useAppSelector(selectOperationSelector);
+  const selector = useAppSelector(selectOperationPicker);
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      dispatch(hideOperationSelector());
+      dispatch(hideOperationPicker());
     }
   };
 
   const handleSelect = (operation: FormOperation) => {
     dispatch(appendOperation(operation));
-    dispatch(hideOperationSelector());
+    dispatch(hideOperationPicker());
   };
 
   return (
@@ -45,7 +45,7 @@ export default function OperationSelectorDialog() {
       <CommandList>
         <CommandEmpty>No matching steps.</CommandEmpty>
         <CommandGroup heading="Steps">
-          {OPERATION_FORMS.map((operation) => {
+          {FORM_OPERATIONS.map((operation) => {
             const Icon = OPERATION_ICONS[operation.type];
             return (
               <CommandItem

@@ -21,10 +21,10 @@ import { Button } from "@/components/ui/button";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import {
-  getListIds,
+  getOperationIds,
   type OperationListRef,
   reorderOperation,
-  showOperationSelector
+  showOperationPicker
 } from "../scriptEditorSlice";
 import OperationCard from "./OperationCard";
 
@@ -41,7 +41,7 @@ export default function OperationsPanel({
   // Immer keeps untouched arrays referentially stable, so the default
   // reference equality only re-renders this list when it actually changes.
   const ids = useAppSelector((state) =>
-    getListIds(state.scriptEditor, listRef)
+    getOperationIds(state.scriptEditor, listRef)
   );
 
   // A small activation distance keeps plain clicks (expand, buttons) from
@@ -53,7 +53,7 @@ export default function OperationsPanel({
     })
   );
 
-  const handleAddClick = () => dispatch(showOperationSelector(listRef));
+  const handleAddClick = () => dispatch(showOperationPicker(listRef));
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;

@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { TOAST_MESSAGES } from "@/lib/messages";
 import type { TableData } from "../types";
 import {
   copyTableToClipboard,
@@ -22,12 +23,14 @@ export default function TableToolbar({ data }: { data: TableData }) {
   const handleJSONDownload = () => downloadAsJSON(data);
 
   const handleXLSXDownload = () =>
-    downloadAsXLSX(data).catch(() => toast.error("Export failed"));
+    downloadAsXLSX(data).catch(() =>
+      toast.error(TOAST_MESSAGES.RESULTS_EXPORT_FAILURE)
+    );
 
   const handleCopyToClipboard = () =>
     copyTableToClipboard(data)
-      .then(() => toast.success("Copied to clipboard"))
-      .catch(() => toast.error("Export failed"));
+      .then(() => toast.success(TOAST_MESSAGES.RESULTS_COPY_SUCCESS))
+      .catch(() => toast.error(TOAST_MESSAGES.RESULTS_COPY_FAILURE));
 
   return (
     <div className="flex flex-row items-center justify-between border-b px-4 py-2.5">

@@ -2,11 +2,11 @@ import ExcelJS from "exceljs";
 import { produce } from "immer";
 import { Play, RotateCw, Square } from "lucide-react";
 import { evaluate } from "mathjs";
+import type { DataOperation } from "../../../../common/types/dataOperation";
 import type {
   ExtractOperationResult,
   ScraperOperation
 } from "../../../../common/types/scraper";
-import type { StoredOperation } from "../../../../common/types/storedOperation";
 import type { VariableMapping } from "../../../../common/types/variable";
 import { INITIAL_TABLE_DATA } from "../constants/table";
 import type {
@@ -40,7 +40,7 @@ const replaceFormatWithVariables = (
 // evaluated here in the renderer and don't yield; if/while recurse into their
 // nested operations, sharing the same mutable `variables` map.
 export function* getRunnerGenerator(
-  operations: StoredOperation[],
+  operations: DataOperation[],
   variables: VariableMapping = {}
 ): RunnerGenerator {
   for (let i = 0; i < operations.length; i += 1) {
@@ -120,7 +120,7 @@ export function* getRunnerGenerator(
       case "if":
         {
           const condition = operation.inputs[0].value;
-          const { operations: nestedOperations } = operation.inputs[1];
+          const { steps: nestedOperations } = operation.inputs[1];
           const formattedCondition = replaceFormatWithVariables(
             condition,
             variables
@@ -134,7 +134,7 @@ export function* getRunnerGenerator(
       case "while":
         {
           const condition = operation.inputs[0].value;
-          const { operations: nestedOperations } = operation.inputs[1];
+          const { steps: nestedOperations } = operation.inputs[1];
           let formattedCondition = replaceFormatWithVariables(
             condition,
             variables

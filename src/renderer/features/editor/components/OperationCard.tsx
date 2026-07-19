@@ -3,7 +3,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { ChevronDown, Copy, GripVertical, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
@@ -94,10 +93,15 @@ export default function OperationCard({
         </button>
         <button
           type="button"
-          className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 py-2.5 pr-3 pl-1 text-left transition-colors hover:bg-accent"
+          className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 py-2.5 pr-3 pl-2 text-left transition-colors hover:bg-accent"
           title={expanded ? "Hide step settings" : "Edit step settings"}
           onClick={handleExpandToggle}
         >
+          {/* Fixed-width, right-aligned number so 1/2/3 form an aligned column
+              regardless of step-name length (2.1 etc. for nested steps). */}
+          <span className="min-w-6 shrink-0 text-right text-xs font-medium text-muted-foreground tabular-nums">
+            {number}
+          </span>
           <span
             className={cn(
               "flex size-7 shrink-0 items-center justify-center rounded-md",
@@ -109,16 +113,8 @@ export default function OperationCard({
             <TypeIcon className="size-4" />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="flex items-center gap-2">
-              <span className="truncate text-sm font-medium">
-                {operation.name}
-              </span>
-              <Badge
-                variant="outline"
-                className="px-1.5 py-0 text-[10px] text-muted-foreground"
-              >
-                {number}
-              </Badge>
+            <span className="block truncate text-sm font-medium">
+              {operation.name}
             </span>
             <span className="block truncate text-sm text-muted-foreground">
               {operationSubheader.trim() || operation.description}

@@ -10,26 +10,26 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import type { Variable } from "../../../../common/types/variable";
 import {
-  hideVariableSelector,
-  selectVariableSelector,
+  hideVariablePicker,
+  selectVariablePicker,
   selectVariables,
   updateInputWithVariable
 } from "../scriptEditorSlice";
 
-export default function VariableSelectorDialog() {
+export default function VariablePickerDialog() {
   const dispatch = useAppDispatch();
-  const selector = useAppSelector(selectVariableSelector);
+  const selector = useAppSelector(selectVariablePicker);
   const variables = useAppSelector(selectVariables);
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      dispatch(hideVariableSelector());
+      dispatch(hideVariablePicker());
     }
   };
 
   const handleSelect = (variable: Variable) => {
     dispatch(updateInputWithVariable(variable));
-    dispatch(hideVariableSelector());
+    dispatch(hideVariablePicker());
   };
 
   const filteredVariables =

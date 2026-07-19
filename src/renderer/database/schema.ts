@@ -1,99 +1,22 @@
 import { z } from "zod";
 import type { Script } from "@/types/script";
-import type { StoredOperation } from "../../common/types/storedOperation";
+import { dataOperationSchema } from "../../common/types/dataOperation";
 
 // Version stamped onto every script written to IndexedDB. Bump it (and add a
 // migration to `parseStoredScript`) whenever the stored shape changes.
 export const SCRIPT_SCHEMA_VERSION = 1;
 
-const textInputSchema = z.object({
-  type: z.literal("text"),
-  value: z.string()
-});
-
-const selectInputSchema = z.object({
-  type: z.literal("select"),
-  value: z.string()
-});
-
-const operationBoxInputSchema = z.object({
-  type: z.literal("operation_box"),
-  get operations() {
-    return z.array(storedOperationSchema);
-  }
-});
-
-const storedOperationSchemaInternal = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("open"), inputs: z.tuple([textInputSchema]) }),
-  z.object({
-    type: z.literal("extract"),
-    inputs: z.tuple([textInputSchema, textInputSchema, selectInputSchema])
-  }),
-  z.object({ type: z.literal("click"), inputs: z.tuple([textInputSchema]) }),
-  z.object({
-    type: z.literal("type"),
-    inputs: z.tuple([textInputSchema, textInputSchema])
-  }),
-  z.object({
-    type: z.literal("set"),
-    inputs: z.tuple([textInputSchema, selectInputSchema, textInputSchema])
-  }),
-  z.object({
-    type: z.literal("increase"),
-    inputs: z.tuple([textInputSchema, textInputSchema])
-  }),
-  z.object({
-    type: z.literal("decrease"),
-    inputs: z.tuple([textInputSchema, textInputSchema])
-  }),
-  z.object({
-    type: z.literal("if"),
-    inputs: z.tuple([textInputSchema, operationBoxInputSchema])
-  }),
-  z.object({
-    type: z.literal("while"),
-    inputs: z.tuple([textInputSchema, operationBoxInputSchema])
-  }),
-  z.object({
-    type: z.literal("wait"),
-    inputs: z.tuple([textInputSchema, textInputSchema])
-  }),
-  z.object({
-    type: z.literal("delay"),
-    inputs: z.tuple([textInputSchema])
-  }),
-  z.object({
-    type: z.literal("scroll"),
-    inputs: z.tuple([textInputSchema])
-  })
-]);
-
-// Compile-time lockstep check: every member of the StoredOperation union must
-// be accepted by the schema, so adding a new operation type without updating
-// the schema stops compiling. (The reverse check isn't expressible because
-// zod v4 infers tuples with optional/rest elements; exactness of each tuple is
-// still enforced at runtime and covered by tests.)
-true satisfies StoredOperation extends z.infer<
-  typeof storedOperationSchemaInternal
->
-  ? true
-  : false;
-
-export const storedOperationSchema =
-  storedOperationSchemaInternal as unknown as z.ZodType<
-    StoredOperation,
-    StoredOperation
-  >;
-
-// Typed as ZodType<Script, Script> so the hand-written TS types remain the
-// single source of truth and this schema is checked against them.
+// Typed as ZodType<Script, Script> so the hand-written Script type stays the
+// single source of truth for the record shape and this schema is checked
+// against it. (The operation shapes come from dataOperationSchema, which is
+// itself the source of truth for the DataOperation types.)
 export const scriptSchema: z.ZodType<Script, Script> = z.object({
   id: z.number().optional(),
   version: z.number().optional(),
   favorite: z.boolean(),
   name: z.string().min(1),
   description: z.string(),
-  operations: z.array(storedOperationSchema)
+  operations: z.array(dataOperationSchema)
 });
 
 // Validates a record read from IndexedDB. Version-based migrations go here as

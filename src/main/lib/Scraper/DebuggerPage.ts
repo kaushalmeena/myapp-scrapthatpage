@@ -1,15 +1,22 @@
 import type { WebContents } from "electron";
 
-// Minimal Puppeteer-style Page driver built on Electron's in-process CDP
-// (webContents.debugger). Unlike puppeteer-in-electron this needs no
-// --remote-debugging-port, so it works in signed/packaged builds where the OS
-// blocks remote debugging. The techniques mirror puppeteer-core's cdp/ layer:
-//  - goto: Page.navigate + lifecycle tracking per loaderId (LifecycleWatcher)
-//  - waitForSelector: polling that swallows transient context-destroyed errors
-//  - click: scrollIntoView + getClientRects center + Input.dispatchMouseEvent
-//  - type: Input.dispatchKeyEvent for ASCII, Input.insertText for the rest
+/**
+ * Minimal Puppeteer-style Page driver built on Electron's in-process debugger
+ * (webContents.debugger, which speaks the Chrome DevTools Protocol). Unlike
+ * puppeteer-in-electron this needs no --remote-debugging-port, so it works in
+ * signed/packaged builds where the OS blocks remote debugging. The techniques
+ * mirror puppeteer-core's cdp/ layer:
+ *  - goto: Page.navigate + lifecycle tracking per loaderId (LifecycleWatcher)
+ *  - waitForSelector: polling that swallows transient context-destroyed errors
+ *  - click: scrollIntoView + getClientRects center + Input.dispatchMouseEvent
+ *  - type: Input.dispatchKeyEvent for ASCII, Input.insertText for the rest
+ */
 
 export class TimeoutError extends Error {}
+
+// Thrown when the user presses Esc during an element pick — a deliberate abort,
+// not a failure, so callers can stay silent instead of showing an error.
+export class PickCancelledError extends Error {}
 
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -36,7 +43,101 @@ interface WaitForSelectorOptions {
   visible?: boolean;
 }
 
-export default class CdpPage {
+// One caller awaiting a single CDP event (see waitForEvent). Kept in a set so
+// they can all be rejected at once if the debugger detaches mid-wait.
+interface EventWaiter {
+  method: string;
+  resolve: (params: Record<string, unknown>) => void;
+  reject: (error: Error) => void;
+}
+
+// Colors for Chromium's native inspect overlay, matching DevTools' element
+// inspector (blue content, green padding, orange margin) so the picker looks
+// like the tool users already know.
+const INSPECT_HIGHLIGHT = {
+  showInfo: true,
+  contentColor: { r: 111, g: 168, b: 220, a: 0.66 },
+  paddingColor: { r: 147, g: 196, b: 125, a: 0.55 },
+  borderColor: { r: 255, g: 229, b: 153, a: 0.66 },
+  marginColor: { r: 246, g: 178, b: 107, a: 0.66 }
+};
+
+// Runs on the picked element (bound as `this` via Runtime.callFunctionOn) and
+// builds the shortest unique CSS selector for it. Framework-generated class
+// names are skipped so picked selectors survive redeploys; a unique id short-
+// circuits to "#id", otherwise it walks up appending tag/class/:nth-of-type
+// segments until the selector matches exactly one node.
+const SELECTOR_FUNCTION = `function () {
+  const isStableClass = (c) => {
+    if (/^(sc-|css-|jsx-|emotion-)/.test(c)) return false;
+    if (/^[a-z]+-[0-9a-f]{5,}$/i.test(c)) return false;
+    if (/[A-Z]/.test(c) && !/[-_]/.test(c) && c.length <= 8) return false;
+    return true;
+  };
+  const segmentFor = (node) => {
+    let seg = node.tagName.toLowerCase();
+    const classes = Array.from(node.classList).filter(isStableClass).slice(0, 2);
+    if (classes.length > 0) {
+      seg += "." + classes.map((c) => CSS.escape(c)).join(".");
+    }
+    const parent = node.parentElement;
+    if (parent) {
+      const sameTag = Array.from(parent.children).filter((c) => c.tagName === node.tagName);
+      if (sameTag.length > 1) {
+        seg += ":nth-of-type(" + (sameTag.indexOf(node) + 1) + ")";
+      }
+    }
+    return seg;
+  };
+  const parts = [];
+  for (let node = this; node && node.nodeType === 1 && node.tagName !== "HTML"; node = node.parentElement) {
+    if (node.id && document.querySelectorAll("#" + CSS.escape(node.id)).length === 1) {
+      parts.unshift("#" + CSS.escape(node.id));
+      return parts.join(" > ");
+    }
+    parts.unshift(segmentFor(node));
+    const candidate = parts.join(" > ");
+    const matches = document.querySelectorAll(candidate);
+    if (matches.length === 1 && matches[0] === this) {
+      return candidate;
+    }
+  }
+  return parts.join(" > ");
+}`;
+
+// Injected banner shown across the top of the scraped page while picking, since
+// that window shows a third-party site and can't render our own UI. Keyboard
+// hints match the before-input-event handlers in pickElement. pointerEvents is
+// "none" so the banner is never itself highlighted or picked, and clicks/hover
+// hit-test straight through to the elements beneath it.
+const PICK_HINT_ID = "__stp_pick_hint";
+const PICK_HINT_SCRIPT = `(() => {
+  if (document.getElementById(${JSON.stringify(PICK_HINT_ID)})) return;
+  const bar = document.createElement("div");
+  bar.id = ${JSON.stringify(PICK_HINT_ID)};
+  bar.textContent = "Click an element to capture its selector  ·  Hold Shift to interact with the page (scroll, follow links)  ·  Esc to cancel";
+  Object.assign(bar.style, {
+    position: "fixed", top: "0", left: "0", right: "0",
+    zIndex: "2147483647", padding: "10px 16px",
+    background: "#1447E6", color: "#ffffff",
+    font: "600 13px system-ui, -apple-system, sans-serif",
+    textAlign: "center", letterSpacing: ".01em",
+    pointerEvents: "none", boxShadow: "0 1px 6px rgba(0,0,0,.35)"
+  });
+  (document.body || document.documentElement).appendChild(bar);
+})();`;
+const PICK_HINT_REMOVE = `(() => {
+  const el = document.getElementById(${JSON.stringify(PICK_HINT_ID)});
+  if (el) el.remove();
+})();`;
+
+// Electron before-input-event payload (only the fields the picker reads).
+interface KeyInput {
+  type: string;
+  key: string;
+}
+
+export default class DebuggerPage {
   private webContents: WebContents;
 
   private attachPromise?: Promise<void>;
@@ -48,6 +149,9 @@ export default class CdpPage {
   // Lifecycle event names seen per loaderId (document load). Puppeteer's
   // LifecycleWatcher keeps the same structure on its Frame objects.
   private lifecycle = new Map<string, Set<string>>();
+
+  // Callers parked in waitForEvent, awaiting a one-shot CDP event.
+  private pendingEvents = new Set<EventWaiter>();
 
   constructor(webContents: WebContents) {
     this.webContents = webContents;
@@ -99,7 +203,45 @@ export default class CdpPage {
         this.lifecycle.set(this.currentLoaderId, events);
       }
     }
+    // Fan the raw event out to any one-shot waiters (e.g. the element picker
+    // parked on Overlay.inspectNodeRequested).
+    for (const waiter of [...this.pendingEvents]) {
+      if (waiter.method === method) {
+        waiter.resolve(params);
+      }
+    }
   };
+
+  // Resolves with the params of the next `method` event, or rejects if the
+  // debugger detaches or the timeout elapses first.
+  private waitForEvent<T>(method: string, timeoutMs: number): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      let timer: ReturnType<typeof setTimeout>;
+      const waiter: EventWaiter = {
+        method,
+        resolve: (params) => {
+          clearTimeout(timer);
+          this.pendingEvents.delete(waiter);
+          resolve(params as T);
+        },
+        reject: (error) => {
+          clearTimeout(timer);
+          this.pendingEvents.delete(waiter);
+          reject(error);
+        }
+      };
+      timer = setTimeout(
+        () =>
+          waiter.reject(
+            new TimeoutError(
+              `Timed out waiting for ${method} after ${timeoutMs} ms`
+            )
+          ),
+        timeoutMs
+      );
+      this.pendingEvents.add(waiter);
+    });
+  }
 
   // Attach the in-process debugger and enable the domains goto/evaluate need.
   // Idempotent; safe to call before every operation.
@@ -114,6 +256,13 @@ export default class CdpPage {
             this.handleMessage
           );
           this.attachPromise = undefined;
+          // Nothing more will arrive; fail any parked waiters (e.g. a picker
+          // still running when the scraper window is closed).
+          for (const waiter of [...this.pendingEvents]) {
+            waiter.reject(
+              new Error("Scraper window was closed while picking.")
+            );
+          }
         });
         await Promise.all([
           this.send("Page.enable"),
@@ -331,6 +480,102 @@ export default class CdpPage {
       } else {
         await this.send("Input.insertText", { text: char });
       }
+    }
+  }
+
+  private armInspect(): Promise<void> {
+    return this.send<void>("Overlay.setInspectMode", {
+      mode: "searchForNode",
+      highlightConfig: INSPECT_HIGHLIGHT
+    }).catch((): undefined => undefined);
+  }
+
+  private disarmInspect(): Promise<void> {
+    // mode "none" still requires highlightConfig in this Chromium build, or the
+    // command is rejected and inspect mode stays armed.
+    return this.send<void>("Overlay.setInspectMode", {
+      mode: "none",
+      highlightConfig: INSPECT_HIGHLIGHT
+    }).catch((): undefined => undefined);
+  }
+
+  // Turn on Chromium's native "inspect element" mode — the same overlay
+  // DevTools shows — and resolve with a CSS selector for the element the user
+  // clicks. Unlike an injected highlighter this paints the overlay out of
+  // process, so it never mutates the page or fights its styles.
+  //
+  // Holding Shift disarms inspect mode so clicks fall through to the page
+  // (scroll, expand menus, follow links) instead of selecting; releasing it
+  // re-arms. Esc cancels. A pointer-events:none banner (re-injected after
+  // navigations) explains this in the scraper window itself. Rejects on
+  // timeout, on Esc, or if the window is closed mid-pick.
+  async pickElement(timeoutMs: number): Promise<string> {
+    await this.attach();
+    await Promise.all([this.send("DOM.enable"), this.send("Overlay.enable")]);
+
+    let passthrough = false;
+    let cancel: (() => void) | undefined;
+    const injectHint = () =>
+      this.evaluate(PICK_HINT_SCRIPT).catch((): undefined => undefined);
+
+    const onInput = (_event: unknown, input: KeyInput): void => {
+      if (input.key === "Shift") {
+        const wantPassthrough = input.type === "keyDown";
+        if (wantPassthrough !== passthrough) {
+          passthrough = wantPassthrough;
+          void (wantPassthrough ? this.disarmInspect() : this.armInspect());
+        }
+      } else if (input.key === "Escape" && input.type === "keyDown") {
+        cancel?.();
+      }
+    };
+    // A navigation swaps the document, dropping the banner and the overlay; put
+    // both back (unless the user is mid-interaction with Shift held).
+    const onDomReady = (): void => {
+      void injectHint();
+      if (!passthrough) {
+        void this.armInspect();
+      }
+    };
+    this.webContents.on("before-input-event", onInput);
+    this.webContents.on("dom-ready", onDomReady);
+
+    try {
+      await injectHint();
+      await this.armInspect();
+      const backendNodeId = await new Promise<number>((resolve, reject) => {
+        cancel = () =>
+          reject(new PickCancelledError("Element pick cancelled."));
+        this.waitForEvent<{ backendNodeId: number }>(
+          "Overlay.inspectNodeRequested",
+          timeoutMs
+        ).then((params) => resolve(params.backendNodeId), reject);
+      });
+      // Resolve the picked node to a JS handle and compute its selector in the
+      // page, reusing document.querySelectorAll to verify uniqueness.
+      const { object } = await this.send<{ object: { objectId: string } }>(
+        "DOM.resolveNode",
+        { backendNodeId }
+      );
+      const response = await this.send<EvaluateResponse>(
+        "Runtime.callFunctionOn",
+        {
+          objectId: object.objectId,
+          functionDeclaration: SELECTOR_FUNCTION,
+          returnByValue: true
+        }
+      );
+      const selector = response.result?.value;
+      if (typeof selector !== "string" || selector.length === 0) {
+        throw new Error("Could not build a selector for the picked element.");
+      }
+      return selector;
+    } finally {
+      this.webContents.removeListener("before-input-event", onInput);
+      this.webContents.removeListener("dom-ready", onDomReady);
+      await this.evaluate(PICK_HINT_REMOVE).catch((): undefined => undefined);
+      await this.disarmInspect();
+      await this.send("Overlay.disable").catch((): undefined => undefined);
     }
   }
 }

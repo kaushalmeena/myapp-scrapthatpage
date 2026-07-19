@@ -11,11 +11,13 @@ export type InputAttributes = {
   type?: "text" | "number";
 };
 
-// "Form" operations are the editor-facing form of a script action. On top of
-// the raw value they carry everything the editor UI needs: labels, layout width,
-// validation rules/errors, a display format string, and variable picker/setter
-// config. They are converted to the compact "Stored" form (see storedOperation.ts)
-// for storage and execution in common/utils/operation.ts.
+/**
+ * "Form" operations are the editor-facing form of a script action. On top of
+ * the raw value they carry everything the editor UI needs: labels, layout
+ * width, validation rules/errors, a display format string, and variable
+ * picker/setter config. They are converted to the compact "Data" form (see
+ * dataOperation.ts) for storage and execution in common/utils/operation.ts.
+ */
 
 export type SelectOption = {
   label: string;
@@ -48,10 +50,10 @@ export type FormSelectInput = {
   rules: ValidationRule[];
 };
 
-export type FormOperationBoxInput = {
+export type FormBlockInput = {
   label: string;
-  type: "operation_box";
-  operations: FormOperation[];
+  type: "block";
+  steps: FormOperation[];
 };
 
 type FormOpenOperation = {
@@ -115,7 +117,7 @@ type FormIfOperation = {
   description: string;
   format: string;
   type: "if";
-  inputs: [FormTextInput, FormOperationBoxInput];
+  inputs: [FormTextInput, FormBlockInput];
 };
 
 type FormWhileOperation = {
@@ -123,7 +125,7 @@ type FormWhileOperation = {
   description: string;
   format: string;
   type: "while";
-  inputs: [FormTextInput, FormOperationBoxInput];
+  inputs: [FormTextInput, FormBlockInput];
 };
 
 type FormWaitOperation = {
@@ -150,7 +152,7 @@ type FormScrollOperation = {
   inputs: [FormTextInput];
 };
 
-export type FormInput = FormTextInput | FormSelectInput | FormOperationBoxInput;
+export type FormInput = FormTextInput | FormSelectInput | FormBlockInput;
 
 export type FormOperation =
   | FormOpenOperation

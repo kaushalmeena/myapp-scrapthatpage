@@ -40,7 +40,7 @@ export default function OperationInput({
           input={input}
         />
       );
-    case "operation_box":
+    case "block":
       return (
         <OperationsPanel
           listRef={{ parentId: operationId, inputIndex }}

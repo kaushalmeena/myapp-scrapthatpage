@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import db from "@/database";
+import { TOAST_MESSAGES } from "@/lib/messages";
 import type { Run } from "@/types/run";
 
 function StatusIcon({ status }: { status: Run["status"] }) {
@@ -28,10 +29,10 @@ export default function HistoryCard({ run }: { run: Run }) {
     if (run.id === undefined) return;
     db.deleteRun(run.id)
       .then(() => {
-        toast.success("Run deleted");
+        toast.success(TOAST_MESSAGES.RUN_DELETE_SUCCESS);
       })
       .catch(() => {
-        toast.error("Failed to delete run");
+        toast.error(TOAST_MESSAGES.RUN_DELETE_FAILURE);
       });
   };
 

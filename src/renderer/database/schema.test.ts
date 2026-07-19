@@ -36,6 +36,27 @@ describe("parseStoredScript", () => {
     });
   });
 
+  it("accepts a nested block operation (if with a child step)", () => {
+    const withBlock: Script = {
+      favorite: false,
+      name: "Nested",
+      description: "",
+      operations: [
+        {
+          type: "if",
+          inputs: [
+            { type: "text", value: "1 == 1" },
+            {
+              type: "block",
+              steps: [{ type: "open", inputs: [{ type: "text", value: "x" }] }]
+            }
+          ]
+        }
+      ]
+    };
+    expect(parseStoredScript(withBlock)).toEqual(withBlock);
+  });
+
   it("returns null for corrupt records instead of throwing", () => {
     expect(parseStoredScript({ favorite: 2, name: 1 })).toBeNull();
     expect(

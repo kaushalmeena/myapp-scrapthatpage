@@ -50,9 +50,6 @@ importers:
       immer:
         specifier: ^11.1.15
         version: 11.1.15
-      lodash:
-        specifier: ^4.18.1
-        version: 4.18.1
       lucide-react:
         specifier: ^1.25.0
         version: 1.25.0(react@19.2.7)
@@ -138,9 +135,6 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.1)
-      '@types/lodash':
-        specifier: ^4.17.24
-        version: 4.17.24
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.1
@@ -1630,9 +1624,6 @@ packages:
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
-
-  '@types/lodash@4.17.24':
-    resolution: {integrity: sha512-gIW7lQLZbue7lRSWEFql49QJJWThrTFFeIMJdp3eH4tKoxm1OvEPg02rm4wCCSHS0cL3/Fizimb35b7k8atwsQ==}
 
   '@types/minimatch@5.1.2':
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
@@ -5981,8 +5972,6 @@ snapshots:
     dependencies:
       '@types/node': 26.1.1
 
-  '@types/lodash@4.17.24': {}
-
   '@types/minimatch@5.1.2':
     optional: true
 
@@ -7360,7 +7349,8 @@ snapshots:
 
   lodash.uniq@4.5.0: {}
 
-  lodash@4.18.1: {}
+  lodash@4.18.1:
+    optional: true
 
   log-symbols@4.1.0:
     dependencies:
