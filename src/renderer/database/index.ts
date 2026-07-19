@@ -59,7 +59,7 @@ class AppDatabase extends Dexie {
   deleteScript = (id: number): PromiseExtended<void> => this.scripts.delete(id);
 
   // Uses get + put instead of Dexie's `update`, whose `UpdateSpec` deep-maps
-  // the recursive DataOperation union and fails to type-check.
+  // the recursive Operation union and fails to type-check.
   setScriptFavorite = async (id: number, value: boolean): Promise<void> => {
     const script = await this.scripts.get(id);
     if (script) {

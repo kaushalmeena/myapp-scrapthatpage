@@ -96,7 +96,7 @@ function RunnerSection({ script }: { script: Script }) {
       )}
       {log.length > 0 && (
         <FadeIn delay={0.05}>
-          <RunLogPanel log={log} />
+          <RunLogPanel data={log} />
         </FadeIn>
       )}
     </div>

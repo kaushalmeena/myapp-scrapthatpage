@@ -1,11 +1,8 @@
+import { OPERATION_SCHEMA } from "@common/constants/operationSchema";
+import type { Input, Operation } from "@common/types/operation";
+import { validateWithRules } from "@common/utils/operation";
 import { produce } from "immer";
 import type { Script } from "@/types/script";
-import { FORM_OPERATIONS } from "../../../../common/constants/formOperations";
-import type {
-  DataInput,
-  DataOperation
-} from "../../../../common/types/dataOperation";
-import { validateWithRules } from "../../../../common/utils/operation";
 import {
   createEditorOperation,
   type EditorInput,
@@ -15,33 +12,19 @@ import {
 } from "../scriptEditorSlice";
 
 /**
- * Looks up the form template (labels, validation, layout) for an operation
- * type from the FORM_OPERATIONS catalog.
- *
- * @throws if the type has no matching template.
- */
-const getOperationForm = (type: DataOperation["type"]) => {
-  const form = FORM_OPERATIONS.find((item) => item.type === type);
-  if (!form) {
-    throw new Error(`Operation type of ${type} not found.`);
-  }
-  return form;
-};
-
-/**
  * Copies a stored input's data onto its editor counterpart. Inputs line up by
  * index (both built in template order), so the paired shapes always match —
  * the type guards are only there to satisfy the compiler's per-index union.
  */
-const applyDataInput = (
+const applyInput = (
   editorInput: EditorInput,
-  dataInput: DataInput,
-  addOperation: (data: DataOperation) => string
+  input: Input,
+  addOperation: (operation: Operation) => string
 ): void => {
-  if (editorInput.type === "block" && dataInput.type === "block") {
-    editorInput.operationIds = dataInput.steps.map(addOperation);
-  } else if (editorInput.type !== "block" && dataInput.type !== "block") {
-    editorInput.value = dataInput.value;
+  if (editorInput.type === "block" && input.type === "block") {
+    editorInput.operationIds = input.steps.map(addOperation);
+  } else if (editorInput.type !== "block" && input.type !== "block") {
+    editorInput.value = input.value;
   }
 };
 
@@ -53,12 +36,12 @@ const applyDataInput = (
 export const normalizeScript = (script: Script): ScriptEditorState => {
   const state = structuredClone(initialScriptEditorState);
 
-  const addOperation = (data: DataOperation): string => {
-    const operation = createEditorOperation(getOperationForm(data.type));
+  const addOperation = (data: Operation): string => {
+    const operation = createEditorOperation(data.type);
     // Cast: forEach over a union of input tuples collapses the element type;
-    // DataInput is the true union of every input shape.
-    (data.inputs as DataInput[]).forEach((dataInput, index) => {
-      applyDataInput(operation.inputs[index], dataInput, addOperation);
+    // Input is the true union of every input shape.
+    (data.inputs as Input[]).forEach((input, index) => {
+      applyInput(operation.inputs[index], input, addOperation);
     });
     if (data.type === "set") {
       state.variables.push({
@@ -85,24 +68,24 @@ export const normalizeScript = (script: Script): ScriptEditorState => {
  * Serializes one editor operation (and its descendants) into the compact
  * stored form.
  */
-const toDataOperation = (
+const toOperation = (
   operations: Record<string, EditorOperation>,
   id: string
-): DataOperation => {
+): Operation => {
   const operation = operations[id];
   const inputs = operation.inputs.map((input) =>
     input.type === "block"
       ? {
           type: "block" as const,
           steps: input.operationIds.map((childId) =>
-            toDataOperation(operations, childId)
+            toOperation(operations, childId)
           )
         }
       : { type: input.type, value: input.value }
   );
   // Inputs are rebuilt in template order, so the per-type tuple shape holds by
   // construction (and is re-checked by the zod schema on write).
-  return { type: operation.type, inputs } as DataOperation;
+  return { type: operation.type, inputs } as Operation;
 };
 
 /**
@@ -114,7 +97,7 @@ export const denormalizeState = (state: ScriptEditorState): Script => ({
   favorite: state.favorite,
   name: state.information.name.value,
   description: state.information.description.value,
-  operations: state.rootIds.map((id) => toDataOperation(state.operations, id))
+  operations: state.rootIds.map((id) => toOperation(state.operations, id))
 });
 
 /**
@@ -141,6 +124,7 @@ export const computeOperationNumbers = (
   };
 
   walk(state.rootIds, "");
+
   return numbers;
 };
 
@@ -168,18 +152,24 @@ export const validateEditorState = (state: ScriptEditorState) => {
     const orderedIds = Object.keys(numbers).sort((a, b) =>
       numbers[a].localeCompare(numbers[b], undefined, { numeric: true })
     );
+    
     for (const id of orderedIds) {
       const operation = draft.operations[id];
+      const schema = OPERATION_SCHEMA[operation.type];
       let hasError = false;
-      for (const input of operation.inputs) {
+      operation.inputs.forEach((input, index) => {
         if (input.type === "block") {
-          continue;
+          return;
         }
-        input.error = validateWithRules(input.value, input.rules);
+        const inputSchema = schema.inputs[index];
+        if (inputSchema.type === "block") {
+          return;
+        }
+        input.error = validateWithRules(input.value, inputSchema.rules);
         if (input.error) {
           hasError = true;
         }
-      }
+      });
       if (hasError) {
         errors.push(`Please fix error in operation ${numbers[id]}`);
       }

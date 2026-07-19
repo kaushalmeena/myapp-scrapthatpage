@@ -1,3 +1,4 @@
+import type { Variable } from "@common/types/variable";
 import EmptyState from "@/components/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -8,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import type { Variable } from "../../../../common/types/variable";
 import {
   hideVariablePicker,
   selectVariablePicker,

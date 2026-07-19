@@ -1,3 +1,4 @@
+import type { TextInputSchema } from "@common/types/operationSchema";
 import { CopyPlus, Crosshair } from "lucide-react";
 import { type ChangeEvent, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -5,28 +6,28 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { cn } from "@/lib/utils";
-import {
-  type EditorTextInput,
-  showVariablePicker,
-  updateInput
-} from "../scriptEditorSlice";
+import { showVariablePicker, updateInput } from "../scriptEditorSlice";
 import ElementPickerDialog from "./ElementPickerDialog";
 
-export default function OperationTextInput({
+export default function TextInput({
   operationId,
   inputIndex,
-  input
+  value,
+  error,
+  schema
 }: {
   operationId: string;
   inputIndex: number;
-  input: EditorTextInput;
+  value: string;
+  error: string;
+  schema: TextInputSchema;
 }) {
   const dispatch = useAppDispatch();
   const inputId = useId();
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  const hasVariablePicker = Boolean(input.variablePicker);
-  const hasElementPicker = Boolean(input.elementPicker);
+  const hasVariablePicker = Boolean(schema.variablePicker);
+  const hasElementPicker = Boolean(schema.elementPicker);
   const inputPadding =
     hasVariablePicker && hasElementPicker
       ? "pr-14"
@@ -47,16 +48,16 @@ export default function OperationTextInput({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor={inputId}>{input.label}</Label>
+      <Label htmlFor={inputId}>{schema.label}</Label>
       <div className="relative">
         <Input
           id={inputId}
           className={cn("h-8", inputPadding)}
-          value={input.value}
-          readOnly={input.inputProps?.readOnly}
-          placeholder={input.inputProps?.placeholder}
-          type={input.inputProps?.type}
-          aria-invalid={Boolean(input.error)}
+          value={value}
+          readOnly={schema.inputProps?.readOnly}
+          placeholder={schema.inputProps?.placeholder}
+          type={schema.inputProps?.type}
+          aria-invalid={Boolean(error)}
           onChange={handleChange}
         />
         {hasVariablePicker && (
@@ -87,7 +88,7 @@ export default function OperationTextInput({
           </Button>
         )}
       </div>
-      {input.error && <p className="text-xs text-destructive">{input.error}</p>}
+      {error && <p className="text-xs text-destructive">{error}</p>}
       {hasElementPicker && (
         <ElementPickerDialog
           open={pickerOpen}

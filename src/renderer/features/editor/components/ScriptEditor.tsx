@@ -24,7 +24,7 @@ import {
 } from "../utils/editorUtils";
 import InformationPanel from "./InformationPanel";
 import OperationPickerDialog from "./OperationPickerDialog";
-import OperationsPanel from "./OperationsPanel";
+import OperationPanel from "./OperationPanel";
 import VariablePickerDialog from "./VariablePickerDialog";
 
 export default function ScriptEditor({
@@ -42,7 +42,7 @@ export default function ScriptEditor({
   const canUndo = useAppSelector(selectCanUndo);
   const canRedo = useAppSelector(selectCanRedo);
   const stepCount = useAppSelector(
-    (state) => getOperationIds(state.scriptEditor, { parentId: null }).length
+    (s) => getOperationIds(s.scriptEditor, { parentId: null }).length
   );
 
   // Standard editor shortcuts: Cmd/Ctrl+Z undoes, Shift+Cmd/Ctrl+Z redoes.
@@ -73,7 +73,7 @@ export default function ScriptEditor({
     dispatch(replaceState(normalizeScript(script)));
   }, [dispatch, script]);
 
-  const handleSubmit = () => {
+  const handleSubmitClick = () => {
     const currentState = store.getState().scriptEditor;
     const { errors, validatedState } = validateEditorState(currentState);
     if (errors.length > 0) {
@@ -84,11 +84,11 @@ export default function ScriptEditor({
     }
   };
 
-  const handleUndo = () => dispatch(undo());
+  const handleUndoClick = () => dispatch(undo());
 
-  const handleRedo = () => dispatch(redo());
+  const handleRedoClick = () => dispatch(redo());
 
-  const handleCancel = () => navigate(-1);
+  const handleCancelClick = () => navigate(-1);
 
   return (
     <>
@@ -100,7 +100,7 @@ export default function ScriptEditor({
             className="text-muted-foreground"
             title="Undo (Cmd/Ctrl+Z)"
             disabled={!canUndo}
-            onClick={handleUndo}
+            onClick={handleUndoClick}
           >
             <Undo2 className="size-4" />
           </Button>
@@ -110,16 +110,16 @@ export default function ScriptEditor({
             className="text-muted-foreground"
             title="Redo (Shift+Cmd/Ctrl+Z)"
             disabled={!canRedo}
-            onClick={handleRedo}
+            onClick={handleRedoClick}
           >
             <Redo2 className="size-4" />
           </Button>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" onClick={handleCancel}>
+          <Button variant="ghost" onClick={handleCancelClick}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>{submitLabel}</Button>
+          <Button onClick={handleSubmitClick}>{submitLabel}</Button>
         </div>
       </div>
 
@@ -147,7 +147,7 @@ export default function ScriptEditor({
             </p>
           </div>
           <div className="p-4">
-            <OperationsPanel listRef={{ parentId: null }} numberPrefix="" />
+            <OperationPanel listRef={{ parentId: null }} numberPrefix="" />
           </div>
         </Card>
       </div>

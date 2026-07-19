@@ -1,13 +1,13 @@
+import type { Operation } from "@common/types/operation";
+import type {
+  ExtractOperationResult,
+  ScraperOperation
+} from "@common/types/scraper";
+import type { VariableMapping } from "@common/types/variable";
 import ExcelJS from "exceljs";
 import { produce } from "immer";
 import { Play, RotateCw, Square } from "lucide-react";
 import { evaluate } from "mathjs";
-import type { DataOperation } from "../../../../common/types/dataOperation";
-import type {
-  ExtractOperationResult,
-  ScraperOperation
-} from "../../../../common/types/scraper";
-import type { VariableMapping } from "../../../../common/types/variable";
 import { INITIAL_TABLE_DATA } from "../constants/table";
 import type {
   RunnerCardInfo,
@@ -39,8 +39,8 @@ const replaceFormatWithVariables = (
 // Control-flow and variable operations (set/increase/decrease/if/while) are
 // evaluated here in the renderer and don't yield; if/while recurse into their
 // nested operations, sharing the same mutable `variables` map.
-export function* getRunnerGenerator(
-  operations: DataOperation[],
+export function* createRunnerGenerator(
+  operations: Operation[],
   variables: VariableMapping = {}
 ): RunnerGenerator {
   for (let i = 0; i < operations.length; i += 1) {
@@ -127,7 +127,7 @@ export function* getRunnerGenerator(
           );
           const evaluatedValue = evaluate(formattedCondition);
           if (evaluatedValue) {
-            yield* getRunnerGenerator(nestedOperations, variables);
+            yield* createRunnerGenerator(nestedOperations, variables);
           }
         }
         break;
@@ -150,7 +150,7 @@ export function* getRunnerGenerator(
                 `"while" loop exceeded ${MAX_WHILE_ITERATIONS} iterations`
               );
             }
-            yield* getRunnerGenerator(nestedOperations, variables);
+            yield* createRunnerGenerator(nestedOperations, variables);
             formattedCondition = replaceFormatWithVariables(
               condition,
               variables

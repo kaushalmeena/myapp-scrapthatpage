@@ -12,7 +12,8 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "paths": {
-      "@/*": ["./src/renderer/*"]
+      "@/*": ["./src/renderer/*"],
+      "@common/*": ["./src/common/*"]
     },
     "types": ["vite/client", "@testing-library/jest-dom"],
     "strict": true

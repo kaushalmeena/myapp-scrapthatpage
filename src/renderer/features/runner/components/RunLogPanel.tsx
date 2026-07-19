@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import type { RunLogEntry } from "@/types/run";
 
-export default function RunLogPanel({ log }: { log: RunLogEntry[] }) {
+export default function RunLogPanel({ data }: { data: RunLogEntry[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Follow the newest entry while a run appends to the log. The entry count is
@@ -13,9 +13,9 @@ export default function RunLogPanel({ log }: { log: RunLogEntry[] }) {
     if (el) {
       el.scrollTop = el.scrollHeight;
     }
-  }, [log.length]);
+  }, [data.length]);
 
-  if (log.length === 0) {
+  if (data.length === 0) {
     return null;
   }
 
@@ -24,14 +24,14 @@ export default function RunLogPanel({ log }: { log: RunLogEntry[] }) {
       <div className="flex items-center justify-between border-b px-4 py-2.5">
         <h2 className="text-sm font-semibold">Run log</h2>
         <span className="text-xs text-muted-foreground">
-          {log.length} {log.length === 1 ? "event" : "events"}
+          {data.length} {data.length === 1 ? "event" : "events"}
         </span>
       </div>
       <div
         ref={scrollRef}
         className="flex max-h-64 flex-col overflow-y-auto p-2"
       >
-        {log.map((entry, index) => (
+        {data.map((entry, index) => (
           <div
             key={`entry-${index}-${entry.timestamp}`}
             className="flex items-baseline gap-2.5 rounded px-2 py-1 text-sm"

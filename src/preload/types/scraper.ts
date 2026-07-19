@@ -3,7 +3,7 @@ import type {
   PickElementResponse,
   ScraperConfig,
   ScraperOperation
-} from "../../common/types/scraper";
+} from "@common/types/scraper";
 
 export type ScraperAPI = {
   openWindow: () => void;

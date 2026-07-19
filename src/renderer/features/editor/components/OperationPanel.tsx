@@ -28,7 +28,7 @@ import {
 } from "../scriptEditorSlice";
 import OperationCard from "./OperationCard";
 
-export default function OperationsPanel({
+export default function OperationPanel({
   listRef,
   numberPrefix
 }: {
@@ -40,8 +40,8 @@ export default function OperationsPanel({
   const dispatch = useAppDispatch();
   // Immer keeps untouched arrays referentially stable, so the default
   // reference equality only re-renders this list when it actually changes.
-  const ids = useAppSelector((state) =>
-    getOperationIds(state.scriptEditor, listRef)
+  const ids = useAppSelector((s) =>
+    getOperationIds(s.scriptEditor, listRef)
   );
 
   // A small activation distance keeps plain clicks (expand, buttons) from

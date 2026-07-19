@@ -1,3 +1,12 @@
+import { OPERATION_SCHEMA } from "@common/constants/operationSchema";
+import type { OperationType } from "@common/types/operation";
+import type { ValidationRule } from "@common/types/validation";
+import type {
+  Variable,
+  VariablePickerMode,
+  VariableType
+} from "@common/types/variable";
+import { validateWithRules } from "@common/utils/operation";
 import {
   createSlice,
   current,
@@ -6,47 +15,35 @@ import {
   type PayloadAction
 } from "@reduxjs/toolkit";
 import type { RootState } from "@/app/store";
-import type { DataOperation } from "../../../common/types/dataOperation";
-import type {
-  FormOperation,
-  FormSelectInput,
-  FormTextInput
-} from "../../../common/types/formOperation";
-import type { ValidationRule } from "../../../common/types/validation";
-import type {
-  Variable,
-  VariablePickerMode,
-  VariableType
-} from "../../../common/types/variable";
-import { validateWithRules } from "../../../common/utils/operation";
 
 /**
  * The editor holds operations NORMALIZED: a flat id -> operation map plus id
  * lists (the root list and one per block input). Components address an
  * input as (operationId, inputIndex) instead of a fragile nested path, and
  * moving/deleting an operation is list surgery instead of tree surgery.
+ *
+ * Each node is as thin as the stored Operation: just the type and per-input
+ * value/error (blocks hold child ids). All static metadata — labels, layout,
+ * validation rules, picker config — is looked up from OPERATION_SCHEMA by type.
  */
 
-export type EditorTextInput = FormTextInput;
-export type EditorSelectInput = FormSelectInput;
+// A value-carrying input (text or select). `error` is transient display state.
+export type EditorScalarInput = {
+  type: "text" | "select";
+  value: string;
+  error: string;
+};
 
 export type EditorBlockInput = {
-  label: string;
   type: "block";
   operationIds: string[];
 };
 
-export type EditorInput =
-  | EditorTextInput
-  | EditorSelectInput
-  | EditorBlockInput;
+export type EditorInput = EditorScalarInput | EditorBlockInput;
 
 export type EditorOperation = {
   id: string;
-  type: DataOperation["type"];
-  name: string;
-  description: string;
-  format: string;
+  type: OperationType;
   inputs: EditorInput[];
 };
 
@@ -185,25 +182,18 @@ export const getOperationIds = (
   return input.operationIds;
 };
 
-// Builds a fresh editor operation from an operation template
-// (FORM_OPERATIONS), assigning it a new id.
+// Builds a fresh editor operation of the given type, seeding each input with
+// its schema default and assigning a new id.
 export const createEditorOperation = (
-  template: FormOperation
+  type: OperationType
 ): EditorOperation => ({
   id: nanoid(),
-  type: template.type,
-  name: template.name,
-  description: template.description,
-  format: template.format,
-  inputs: template.inputs.map(
+  type,
+  inputs: OPERATION_SCHEMA[type].inputs.map(
     (input): EditorInput =>
       input.type === "block"
-        ? {
-            label: input.label,
-            type: "block",
-            operationIds: [] as string[]
-          }
-        : structuredClone(input)
+        ? { type: "block", operationIds: [] }
+        : { type: input.type, value: input.defaultValue, error: "" }
   )
 });
 
@@ -248,16 +238,20 @@ const applyInputValue = (
 ) => {
   const operation = state.operations[operationId];
   const input = operation?.inputs[inputIndex];
-  if (!input || input.type === "block") {
+  if (!operation || !input || input.type === "block") {
     return;
   }
-  input.error = validateWithRules(value, input.rules);
+  const schema = OPERATION_SCHEMA[operation.type].inputs[inputIndex];
+  if (schema.type === "block") {
+    return;
+  }
+  input.error = validateWithRules(value, schema.rules);
   input.value = value;
-  if ("variableSetter" in input && input.variableSetter) {
+  if (schema.variableSetter) {
     syncVariableForOperation(
       state,
       operationId,
-      input.variableSetter.mode,
+      schema.variableSetter.mode,
       value
     );
   }
@@ -297,7 +291,7 @@ const scriptEditorSlice = createSlice({
       field.error = validateWithRules(value, field.rules);
       field.value = value;
     },
-    appendOperation(state, action: PayloadAction<FormOperation>) {
+    appendOperation(state, action: PayloadAction<OperationType>) {
       const target = state.operationPicker.target;
       if (!target) {
         return;
@@ -447,11 +441,15 @@ const scriptEditorSlice = createSlice({
       action: PayloadAction<{ operationId: string; inputIndex: number }>
     ) {
       const { operationId, inputIndex } = action.payload;
-      const input = state.operations[operationId]?.inputs[inputIndex];
-      if (input && "variablePicker" in input && input.variablePicker) {
+      const operation = state.operations[operationId];
+      if (!operation) {
+        return;
+      }
+      const schema = OPERATION_SCHEMA[operation.type].inputs[inputIndex];
+      if (schema.type === "text" && schema.variablePicker) {
         state.variablePicker.target = { operationId, inputIndex };
-        state.variablePicker.filterType = input.variablePicker.type;
-        state.variablePicker.updateMode = input.variablePicker.mode;
+        state.variablePicker.filterType = schema.variablePicker.type;
+        state.variablePicker.updateMode = schema.variablePicker.mode;
       }
     },
     hideVariablePicker(state) {

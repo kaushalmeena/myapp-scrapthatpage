@@ -1,4 +1,9 @@
 import {
+  OPERATION_SCHEMA,
+  OPERATION_TYPES
+} from "@common/constants/operationSchema";
+import type { OperationType } from "@common/types/operation";
+import {
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -8,8 +13,6 @@ import {
 } from "@/components/ui/command";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { FORM_OPERATIONS } from "../../../../common/constants/formOperations";
-import type { FormOperation } from "../../../../common/types/formOperation";
 import { OPERATION_ICONS } from "../constants/operationIcons";
 import {
   appendOperation,
@@ -29,8 +32,8 @@ export default function OperationPickerDialog() {
     }
   };
 
-  const handleSelect = (operation: FormOperation) => {
-    dispatch(appendOperation(operation));
+  const handleSelect = (type: OperationType) => {
+    dispatch(appendOperation(type));
     dispatch(hideOperationPicker());
   };
 
@@ -45,21 +48,20 @@ export default function OperationPickerDialog() {
       <CommandList>
         <CommandEmpty>No matching steps.</CommandEmpty>
         <CommandGroup heading="Steps">
-          {FORM_OPERATIONS.map((operation) => {
-            const Icon = OPERATION_ICONS[operation.type];
+          {OPERATION_TYPES.map((type) => {
+            const schema = OPERATION_SCHEMA[type];
+            const Icon = OPERATION_ICONS[type];
             return (
               <CommandItem
-                key={`operation-${operation.type}`}
-                value={`${operation.name} ${operation.description}`}
-                onSelect={() => handleSelect(operation)}
+                key={`operation-${type}`}
+                value={`${schema.name} ${schema.description}`}
+                onSelect={() => handleSelect(type)}
               >
                 <Icon className="size-4" />
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">
-                    {operation.name}
-                  </p>
+                  <p className="truncate text-sm font-medium">{schema.name}</p>
                   <p className="truncate text-xs text-muted-foreground">
-                    {operation.description}
+                    {schema.description}
                   </p>
                 </div>
               </CommandItem>

@@ -1,10 +1,13 @@
+import { OPERATION_SCHEMA } from "@common/constants/operationSchema";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import OperationSelectInput from "./OperationSelectInput";
-import OperationsPanel from "./OperationsPanel";
-import OperationTextInput from "./OperationTextInput";
+import OperationPanel from "./OperationPanel";
+import SelectInput from "./SelectInput";
+import TextInput from "./TextInput";
 
-// Renders one operation input by its type: a text field (with variable/element
-// pickers), a select, or a nested operation list.
+// Renders one operation input by its schema type: a text field (with
+// variable/element pickers), a select, or a nested operation list. The value
+// and error come from the normalized editor node; the labels, options and
+// picker config come from OPERATION_SCHEMA (looked up by operation type).
 export default function OperationInput({
   operationId,
   inputIndex,
@@ -12,37 +15,50 @@ export default function OperationInput({
 }: {
   operationId: string;
   inputIndex: number;
-  // Number prefix for nested operation lists rendered by box inputs.
+  // Number prefix for nested operation lists rendered by block inputs.
   numberPrefix: string;
 }) {
+  // Selecting type and input separately keeps this component from re-rendering
+  // when a sibling input in the same operation changes.
+  const type = useAppSelector(
+    (s) => s.scriptEditor.operations[operationId]?.type
+  );
   const input = useAppSelector(
     (s) => s.scriptEditor.operations[operationId]?.inputs[inputIndex]
   );
 
-  if (!input) {
+  if (!type || !input) {
     return null;
   }
 
-  switch (input.type) {
+  const inputSchema = OPERATION_SCHEMA[type].inputs[inputIndex];
+
+  switch (inputSchema.type) {
     case "text":
-      return (
-        <OperationTextInput
+      // input is a scalar here (node and schema are index-aligned); the guard
+      // only narrows the union for the compiler.
+      return input.type === "block" ? null : (
+        <TextInput
           operationId={operationId}
           inputIndex={inputIndex}
-          input={input}
+          value={input.value}
+          error={input.error}
+          schema={inputSchema}
         />
       );
     case "select":
-      return (
-        <OperationSelectInput
+      return input.type === "block" ? null : (
+        <SelectInput
           operationId={operationId}
           inputIndex={inputIndex}
-          input={input}
+          value={input.value}
+          error={input.error}
+          schema={inputSchema}
         />
       );
     case "block":
       return (
-        <OperationsPanel
+        <OperationPanel
           listRef={{ parentId: operationId, inputIndex }}
           numberPrefix={numberPrefix}
         />

@@ -1,24 +1,19 @@
-import { Card } from "@/components/ui/card";
-import { OPERATION_ICONS } from "@/features/editor/constants/operationIcons";
-import { FORM_OPERATIONS } from "../../../../common/constants/formOperations";
-import type { DataOperation } from "../../../../common/types/dataOperation";
+import { OPERATION_SCHEMA } from "@common/constants/operationSchema";
+import type { Operation } from "@common/types/operation";
 import {
   hasAnyInputValue,
   replaceFormatWithInputs
-} from "../../../../common/utils/operation";
-
-// Template lookup: stored operations only keep { type, inputs }, so the
-// display name/format comes from the operation catalog.
-const templateFor = (type: DataOperation["type"]) =>
-  FORM_OPERATIONS.find((operation) => operation.type === type);
+} from "@common/utils/operation";
+import { Card } from "@/components/ui/card";
+import { OPERATION_ICONS } from "@/features/editor/constants/operationIcons";
 
 // Widened view of inputs: each operation type carries a specific tuple, so a
 // direct `input.type === "block"` check doesn't type-check across the
-// whole DataOperation union.
-const nestedStepCount = (operation: DataOperation): number => {
+// whole Operation union.
+const nestedStepCount = (operation: Operation): number => {
   const inputs = operation.inputs as ReadonlyArray<{
     type: string;
-    steps?: DataOperation[];
+    steps?: Operation[];
   }>;
   let count = 0;
   for (const input of inputs) {
@@ -34,7 +29,7 @@ const nestedStepCount = (operation: DataOperation): number => {
 export default function StepsPreview({
   operations
 }: {
-  operations: DataOperation[];
+  operations: Operation[];
 }) {
   return (
     <Card className="gap-0 overflow-hidden p-0">
@@ -48,14 +43,11 @@ export default function StepsPreview({
       </div>
       <div className="flex flex-col p-1.5">
         {operations.map((operation, index) => {
-          const template = templateFor(operation.type);
-          if (!template) {
-            return null;
-          }
+          const schema = OPERATION_SCHEMA[operation.type];
           const Icon = OPERATION_ICONS[operation.type];
           const detail = hasAnyInputValue(operation.inputs)
-            ? replaceFormatWithInputs(template.format, operation.inputs)
-            : template.description;
+            ? replaceFormatWithInputs(schema.format, operation.inputs)
+            : schema.description;
           const nested = nestedStepCount(operation);
           return (
             <div
@@ -70,7 +62,7 @@ export default function StepsPreview({
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-sm font-medium">
-                  {template.name}
+                  {schema.name}
                   {nested > 0 && (
                     <span className="ml-2 text-xs font-normal text-muted-foreground">
                       {nested} nested {nested === 1 ? "step" : "steps"}

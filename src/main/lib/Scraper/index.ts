@@ -1,5 +1,5 @@
+import type { ScraperConfig } from "@common/types/scraper";
 import { BrowserWindow } from "electron";
-import type { ScraperConfig } from "../../../common/types/scraper";
 import DebuggerPage from "./DebuggerPage";
 
 // Auto-wait budget for an element to appear before an operation acts on it.

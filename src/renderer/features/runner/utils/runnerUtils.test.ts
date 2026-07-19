@@ -1,13 +1,13 @@
+import type { Operation } from "@common/types/operation";
+import type { ExtractOperationResult } from "@common/types/scraper";
 import { describe, expect, it, vi } from "vitest";
-import type { DataOperation } from "../../../../common/types/dataOperation";
-import type { ExtractOperationResult } from "../../../../common/types/scraper";
 import {
+  createRunnerGenerator,
   downloadAsCSV,
-  getRunnerGenerator,
   getRunnerTableData
 } from "./runnerUtils";
 
-const setOperation = (name: string, value: string): DataOperation => ({
+const setOperation = (name: string, value: string): Operation => ({
   type: "set",
   inputs: [
     { type: "text", value: name },
@@ -18,7 +18,7 @@ const setOperation = (name: string, value: string): DataOperation => ({
 
 describe("getRunnerGenerator", () => {
   it("yields browser operations with variables substituted", () => {
-    const operations: DataOperation[] = [
+    const operations: Operation[] = [
       setOperation("page", "1"),
       {
         type: "while",
@@ -46,7 +46,7 @@ describe("getRunnerGenerator", () => {
       }
     ];
 
-    const yielded = [...getRunnerGenerator(operations)];
+    const yielded = [...createRunnerGenerator(operations)];
     expect(yielded).toEqual([
       { type: "open", url: "https://example.com?p=1" },
       { type: "open", url: "https://example.com?p=2" }
@@ -54,7 +54,7 @@ describe("getRunnerGenerator", () => {
   });
 
   it("yields wait/delay/scroll operations with numeric coercion", () => {
-    const operations: DataOperation[] = [
+    const operations: Operation[] = [
       setOperation("n", "2"),
       {
         type: "wait",
@@ -67,7 +67,7 @@ describe("getRunnerGenerator", () => {
       { type: "scroll", inputs: [{ type: "text", value: "" }] }
     ];
 
-    expect([...getRunnerGenerator(operations)]).toEqual([
+    expect([...createRunnerGenerator(operations)]).toEqual([
       { type: "wait", selector: ".item-2", timeoutMs: 5000 },
       { type: "delay", ms: 0 },
       { type: "scroll", selector: "" }
@@ -75,7 +75,7 @@ describe("getRunnerGenerator", () => {
   });
 
   it("throws instead of looping forever on a constant condition", () => {
-    const operations: DataOperation[] = [
+    const operations: Operation[] = [
       {
         type: "while",
         inputs: [
@@ -85,7 +85,7 @@ describe("getRunnerGenerator", () => {
       }
     ];
 
-    expect(() => [...getRunnerGenerator(operations)]).toThrow(/iterations/);
+    expect(() => [...createRunnerGenerator(operations)]).toThrow(/iterations/);
   });
 });
 

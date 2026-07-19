@@ -50,7 +50,7 @@ export default function LogsScreen() {
               </FadeIn>
             )}
             <FadeIn className="mt-6" delay={0.05}>
-              <RunLogPanel log={run.log} />
+              <RunLogPanel data={run.log} />
             </FadeIn>
           </>
         )}

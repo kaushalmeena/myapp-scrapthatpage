@@ -1,3 +1,9 @@
+import { OPERATION_SCHEMA } from "@common/constants/operationSchema";
+import {
+  hasAnyInputValue,
+  isOperationValid,
+  replaceFormatWithInputs
+} from "@common/utils/operation";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ChevronDown, Copy, GripVertical, X } from "lucide-react";
@@ -8,11 +14,6 @@ import { Card } from "@/components/ui/card";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { cn } from "@/lib/utils";
-import {
-  hasAnyInputValue,
-  isOperationValid,
-  replaceFormatWithInputs
-} from "../../../../common/utils/operation";
 import { OPERATION_ICONS } from "../constants/operationIcons";
 import {
   deleteOperation,
@@ -62,11 +63,12 @@ export default function OperationCard({
 
   const handleDeleteClick = () => dispatch(deleteOperation({ listRef, id }));
 
+  const schema = OPERATION_SCHEMA[operation.type];
   // Until the user fills something in, the format string is all placeholders;
   // show the step description instead so new steps stay self-explanatory.
   const operationSubheader = hasAnyInputValue(operation.inputs)
-    ? replaceFormatWithInputs(operation.format, operation.inputs)
-    : operation.description;
+    ? replaceFormatWithInputs(schema.format, operation.inputs)
+    : schema.description;
 
   const TypeIcon = OPERATION_ICONS[operation.type];
   const invalid = !isOperationValid(operation);
@@ -114,10 +116,10 @@ export default function OperationCard({
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-medium">
-              {operation.name}
+              {schema.name}
             </span>
             <span className="block truncate text-sm text-muted-foreground">
-              {operationSubheader.trim() || operation.description}
+              {operationSubheader.trim() || schema.description}
             </span>
           </span>
         </button>
@@ -170,20 +172,22 @@ export default function OperationCard({
           >
             <div className="border-t p-4">
               <div className="grid grid-cols-12 gap-3">
-                {operation.inputs.map((input, inputIndex) => (
-                  <div
-                    key={`${id}-input-${inputIndex}`}
-                    className={
-                      INPUT_WIDTH_CLASSES["width" in input ? input.width : 12]
-                    }
-                  >
-                    <OperationInput
-                      operationId={id}
-                      inputIndex={inputIndex}
-                      numberPrefix={`${number}.`}
-                    />
-                  </div>
-                ))}
+                {schema.inputs.map((inputSchema, inputIndex) => {
+                  const width =
+                    inputSchema.type === "block" ? 12 : inputSchema.width;
+                  return (
+                    <div
+                      key={`${id}-input-${inputIndex}`}
+                      className={INPUT_WIDTH_CLASSES[width]}
+                    >
+                      <OperationInput
+                        operationId={id}
+                        inputIndex={inputIndex}
+                        numberPrefix={`${number}.`}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </motion.div>

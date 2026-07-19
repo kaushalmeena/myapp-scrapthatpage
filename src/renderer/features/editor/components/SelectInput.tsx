@@ -1,3 +1,4 @@
+import type { SelectInputSchema } from "@common/types/operationSchema";
 import { useId } from "react";
 import { Label } from "@/components/ui/label";
 import {
@@ -8,37 +9,41 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { type EditorSelectInput, updateInput } from "../scriptEditorSlice";
+import { updateInput } from "../scriptEditorSlice";
 
-export default function OperationSelectInput({
+export default function SelectInput({
   operationId,
   inputIndex,
-  input
+  value,
+  error,
+  schema
 }: {
   operationId: string;
   inputIndex: number;
-  input: EditorSelectInput;
+  value: string;
+  error: string;
+  schema: SelectInputSchema;
 }) {
   const dispatch = useAppDispatch();
   const inputId = useId();
 
-  const handleChange = (value: string) =>
-    dispatch(updateInput({ operationId, inputIndex, value }));
+  const handleChange = (next: string) =>
+    dispatch(updateInput({ operationId, inputIndex, value: next }));
 
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor={inputId}>{input.label}</Label>
-      <Select value={input.value} onValueChange={handleChange}>
+      <Label htmlFor={inputId}>{schema.label}</Label>
+      <Select value={value} onValueChange={handleChange}>
         <SelectTrigger
           id={inputId}
           size="sm"
           className="w-full"
-          aria-invalid={Boolean(input.error)}
+          aria-invalid={Boolean(error)}
         >
-          <SelectValue placeholder={input.label} />
+          <SelectValue placeholder={schema.label} />
         </SelectTrigger>
         <SelectContent>
-          {input.options.map((option) => (
+          {schema.options.map((option) => (
             <SelectItem
               key={`${operationId}-${inputIndex}-${option.value}`}
               value={option.value}
@@ -48,7 +53,7 @@ export default function OperationSelectInput({
           ))}
         </SelectContent>
       </Select>
-      {input.error && <p className="text-xs text-destructive">{input.error}</p>}
+      {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
 }

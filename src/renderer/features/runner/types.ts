@@ -1,5 +1,5 @@
+import type { ScraperOperation } from "@common/types/scraper";
 import type { LucideIcon } from "lucide-react";
-import type { ScraperOperation } from "../../../common/types/scraper";
 
 // TNext is unset (unknown): the generator never reads the value passed to
 // next(), and typing it as ScraperOperation made spread/for-of illegal under

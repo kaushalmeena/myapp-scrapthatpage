@@ -1,3 +1,4 @@
+import type { ScraperResult } from "@common/types/scraper";
 import { useEffect, useRef, useState } from "react";
 import db from "@/database";
 import {
@@ -7,10 +8,9 @@ import {
 import { useAppSelector } from "@/hooks/useAppSelector";
 import type { Run, RunLogEntry } from "@/types/run";
 import type { Script } from "@/types/script";
-import type { ScraperResult } from "../../../../common/types/scraper";
 import type { RunnerGenerator, RunnerStatus, TableData } from "../types";
 import {
-  getRunnerGenerator,
+  createRunnerGenerator,
   getRunnerHeaderInfo,
   getRunnerTableData
 } from "../utils/runnerUtils";
@@ -172,7 +172,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   const start = () => {
     window.scraper.configure({ showWindow: showScraperWindow });
     statusRef.current = "started";
-    generatorRef.current = getRunnerGenerator(script.operations);
+    generatorRef.current = createRunnerGenerator(script.operations);
     resultRef.current = null;
     logRef.current = [];
     // `start` is only ever invoked from click handlers, never during render,

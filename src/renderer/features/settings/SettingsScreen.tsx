@@ -31,15 +31,15 @@ export default function SettingsScreen() {
   const showScraperWindow = useAppSelector(selectShowScraperWindow);
   const operationDelayMs = useAppSelector(selectOperationDelayMs);
 
-  const handleThemeChange = (value: string) => {
+  const changeTheme = (value: string) => {
     dispatch(updateTheme(value as Theme));
   };
 
-  const handleShowScraperWindowChange = (value: boolean) => {
+  const changeShowScraperWindow = (value: boolean) => {
     dispatch(updateShowScraperWindow(value));
   };
 
-  const handleOperationDelayChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const changeOperationDelay = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(updateOperationDelayMs(Number(event.target.value) || 0));
   };
 
@@ -53,7 +53,7 @@ export default function SettingsScreen() {
         <div className="flex items-center gap-4">
           <Palette className="size-5 text-muted-foreground" />
           <Label className="flex-1">Theme</Label>
-          <Select value={theme} onValueChange={handleThemeChange}>
+          <Select value={theme} onValueChange={changeTheme}>
             <SelectTrigger size="sm">
               <SelectValue />
             </SelectTrigger>
@@ -75,7 +75,7 @@ export default function SettingsScreen() {
           </div>
           <Switch
             checked={showScraperWindow}
-            onCheckedChange={handleShowScraperWindowChange}
+            onCheckedChange={changeShowScraperWindow}
           />
         </div>
         <Separator />
@@ -93,7 +93,7 @@ export default function SettingsScreen() {
             className="h-8 w-24"
             min={0}
             value={operationDelayMs}
-            onChange={handleOperationDelayChange}
+            onChange={changeOperationDelay}
           />
         </div>
       </Card>

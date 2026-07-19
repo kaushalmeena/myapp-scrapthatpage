@@ -1,3 +1,4 @@
+import type { OperationType } from "@common/types/operation";
 import {
   GitBranch,
   Globe,
@@ -13,11 +14,10 @@ import {
   Timer,
   Variable
 } from "lucide-react";
-import type { DataOperation } from "../../../../common/types/dataOperation";
 
 // One icon per step type, shared by the step cards and the step picker so
 // each operation stays visually recognizable across the editor.
-export const OPERATION_ICONS: Record<DataOperation["type"], LucideIcon> = {
+export const OPERATION_ICONS: Record<OperationType, LucideIcon> = {
   open: Globe,
   extract: ScanText,
   click: MousePointerClick,

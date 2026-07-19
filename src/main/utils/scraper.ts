@@ -2,7 +2,7 @@ import type {
   ExecuteResponse,
   ScraperOperation,
   ScraperResult
-} from "../../common/types/scraper";
+} from "@common/types/scraper";
 import type Scraper from "../lib/Scraper";
 
 const processOperation = async (
