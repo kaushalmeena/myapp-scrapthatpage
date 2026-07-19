@@ -12,8 +12,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { TOAST_MESSAGES } from "@/lib/messages";
 import db from "@/database";
 import { Script } from "@/types/script";
@@ -62,38 +64,60 @@ function ScriptCard({ script }: ScriptCardProps) {
       });
   };
 
+  const operationCount = script.operations.length;
+
   return (
-    <Card className="flex flex-row items-center gap-2 p-3">
+    <Card className="flex flex-row items-stretch gap-0 overflow-hidden p-0 transition-shadow hover:shadow-md">
+      {/* The whole text block is the primary target: clicking it runs the
+          script, and the hover highlight fills the row edge-to-edge. */}
       <button
         type="button"
-        className="min-w-0 flex-1 cursor-pointer rounded-md px-2 py-1 text-left transition-colors hover:bg-accent"
+        className="flex min-w-0 flex-1 cursor-pointer flex-col justify-center gap-0.5 px-4 py-3 text-left transition-colors hover:bg-accent"
+        title="Execute script"
         onClick={handleExecuteClick}
       >
-        <p className="truncate font-medium">{script.name}</p>
+        <div className="flex min-w-0 items-center gap-2">
+          <p className="truncate font-medium">{script.name}</p>
+          {script.favorite ? (
+            <Heart className="size-3.5 shrink-0 fill-red-500 text-red-500" />
+          ) : null}
+        </div>
         <p className="truncate text-sm text-muted-foreground">
-          {script.description}
+          {script.description || "No description"}
         </p>
       </button>
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-0.5 pr-2 pl-1">
+        <Badge
+          variant="secondary"
+          className="mr-1 font-normal text-muted-foreground"
+        >
+          {operationCount} {operationCount === 1 ? "step" : "steps"}
+        </Badge>
         <Button
           variant="ghost"
           size="icon"
+          className="text-muted-foreground hover:text-primary"
           title="Execute script"
           onClick={handleExecuteClick}
         >
-          <Play className="size-4 text-primary" />
+          <Play className="size-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
+          className="text-muted-foreground hover:text-primary"
           title="Update script"
           onClick={handleUpdateClick}
         >
-          <Pencil className="size-4 text-primary" />
+          <Pencil className="size-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
+          className={cn(
+            "text-muted-foreground hover:text-red-500",
+            script.favorite && "text-red-500"
+          )}
           title={
             script.favorite
               ? "Remove script from favorites"
@@ -101,28 +125,26 @@ function ScriptCard({ script }: ScriptCardProps) {
           }
           onClick={handleFavoriteToggle}
         >
-          <Heart
-            className={cn(
-              "size-4 text-primary",
-              script.favorite && "fill-current"
-            )}
-          />
+          <Heart className={cn("size-4", script.favorite && "fill-current")} />
         </Button>
         <Button
           variant="ghost"
           size="icon"
+          className="text-muted-foreground hover:text-primary"
           title="Export script as JSON"
           onClick={() => exportScriptToJSON(script)}
         >
-          <FileDown className="size-4 text-primary" />
+          <FileDown className="size-4" />
         </Button>
+        <Separator orientation="vertical" className="mx-1 h-6" />
         <Button
           variant="ghost"
           size="icon"
+          className="text-muted-foreground hover:text-destructive"
           title="Delete script"
           onClick={() => setDeleteDialogOpen(true)}
         >
-          <X className="size-4 text-destructive" />
+          <X className="size-4" />
         </Button>
       </div>
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
