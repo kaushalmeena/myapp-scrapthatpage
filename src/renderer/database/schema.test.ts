@@ -1,14 +1,13 @@
 import { describe, expect, it } from "vitest";
+import type { Script } from "@/types/script";
 import {
   parseStoredScript,
   prepareScriptForWrite,
   SCRIPT_SCHEMA_VERSION
 } from "./schema";
 
-import { Script } from "@/types/script";
-
 const validScript: Script = {
-  favorite: 0,
+  favorite: false,
   name: "Test",
   description: "A script",
   operations: [

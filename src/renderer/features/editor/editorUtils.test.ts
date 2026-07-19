@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Script } from "@/types/script";
+import type { Script } from "@/types/script";
 import {
   computeOperationNumbers,
   denormalizeState,
@@ -9,7 +9,7 @@ import {
 
 const script: Script = {
   id: 7,
-  favorite: 1,
+  favorite: true,
   name: "Movies",
   description: "Scrape movie titles",
   operations: [
@@ -86,7 +86,7 @@ describe("computeOperationNumbers", () => {
 describe("validateEditorState", () => {
   it("returns errors for missing required fields, numbered by position", () => {
     const state = normalizeScript({
-      favorite: 0,
+      favorite: false,
       name: "",
       description: "",
       operations: [

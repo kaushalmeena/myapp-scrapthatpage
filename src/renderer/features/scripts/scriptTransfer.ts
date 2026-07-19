@@ -1,5 +1,5 @@
-import { scriptSchema, SCRIPT_SCHEMA_VERSION } from "@/database/schema";
-import { Script } from "@/types/script";
+import { SCRIPT_SCHEMA_VERSION, scriptSchema } from "@/database/schema";
+import type { Script } from "@/types/script";
 
 // Marker written into exported files so imports can recognize them.
 const FILE_KIND = "scrap-that-page/script";

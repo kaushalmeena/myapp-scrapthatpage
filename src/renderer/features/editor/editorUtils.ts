@@ -1,16 +1,16 @@
-import { cloneDeep } from "lodash";
 import { produce } from "immer";
+import { cloneDeep } from "lodash";
+import type { Script } from "@/types/script";
 import { LARGE_OPERATIONS } from "../../../common/constants/largeOperations";
-import {
+import type {
   SmallInput,
   SmallOperation
 } from "../../../common/types/smallOperation";
 import { validateWithRules } from "../../../common/utils/operation";
-import { Script } from "@/types/script";
 import {
   createEditorOperation,
   initialScriptEditorState,
-  ScriptEditorState
+  type ScriptEditorState
 } from "./scriptEditorSlice";
 
 const getOperationTemplate = (type: SmallOperation["type"]) => {

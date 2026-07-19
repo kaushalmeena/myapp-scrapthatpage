@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
-import { ExtractOperationResult } from "../../../common/types/scraper";
-import { SmallOperation } from "../../../common/types/smallOperation";
+import type { ExtractOperationResult } from "../../../common/types/scraper";
+import type { SmallOperation } from "../../../common/types/smallOperation";
 import {
   downloadAsCSV,
   getRunnerGenerator,
@@ -146,6 +146,7 @@ describe("downloadAsCSV", () => {
     });
 
     expect(captured).toBeDefined();
+    // biome-ignore lint/style/noNonNullAssertion: asserted defined on the line above
     const text = await captured!.text();
     expect(text).toBe(
       'name,note\r\nplain,"with,comma"\r\n"say ""hi""","line\nbreak"'

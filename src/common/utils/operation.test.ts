@@ -21,8 +21,8 @@ describe("replaceFormatWithInputs", () => {
     ).toBe("");
   });
 
-  it("renders 'undefined' for empty values", () => {
-    expect(replaceFormatWithInputs("{0}", [{ value: "" }])).toBe("undefined");
+  it("renders an ellipsis placeholder for empty values", () => {
+    expect(replaceFormatWithInputs("{0}", [{ value: "" }])).toBe("…");
   });
 });
 

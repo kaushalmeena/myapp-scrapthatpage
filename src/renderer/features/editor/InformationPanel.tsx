@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,7 +6,7 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { selectInformation, updateInformation } from "./scriptEditorSlice";
 
-function InformationPanel() {
+export default function InformationPanel() {
   const dispatch = useAppDispatch();
   const information = useAppSelector(selectInformation);
 
@@ -28,6 +28,7 @@ function InformationPanel() {
         <Input
           id="script-name"
           name="name"
+          placeholder="e.g. Product price tracker"
           value={information.name.value}
           aria-invalid={Boolean(information.name.error)}
           onChange={handleInformationChange}
@@ -41,7 +42,8 @@ function InformationPanel() {
         <Textarea
           id="script-description"
           name="description"
-          rows={5}
+          rows={3}
+          placeholder="What does this script scrape, and from where?"
           value={information.description.value}
           aria-invalid={Boolean(information.description.error)}
           onChange={handleInformationChange}
@@ -55,5 +57,3 @@ function InformationPanel() {
     </div>
   );
 }
-
-export default InformationPanel;

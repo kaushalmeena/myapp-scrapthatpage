@@ -1,7 +1,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { FileUp, Search } from "lucide-react";
 import {
-  ChangeEvent,
+  type ChangeEvent,
   useDeferredValue,
   useMemo,
   useRef,
@@ -17,22 +17,18 @@ import { TOAST_MESSAGES } from "@/lib/messages";
 import ScriptList from "./ScriptList";
 import { parseScriptImport } from "./scriptTransfer";
 
-function SearchScreen() {
+export default function SearchScreen() {
   const [search, setSearch] = useState("");
   // Defer the query so filtering doesn't block typing on large script lists.
   const query = useDeferredValue(search);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const scripts = useLiveQuery(() => db.fetchAllScripts(), []);
+  const scripts = useLiveQuery(() => db.getScripts(), []);
 
   const filteredScripts = useMemo(() => {
-    if (!scripts) {
-      return [];
-    }
-    if (!query) {
-      return scripts;
-    }
+    if (!scripts) return [];
+    if (!query) return scripts;
     // Case-insensitive substring match. Avoids `new RegExp(query)`, which throws
     // on invalid patterns (e.g. an unbalanced "(") typed into the search box.
     const needle = query.toLowerCase();
@@ -66,31 +62,35 @@ function SearchScreen() {
 
   return (
     <>
-      <PageHeader title="Search" />
-      <AsyncContent
-        status={scripts === undefined ? "loading" : "loaded"}
-        error=""
-      >
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              className="pl-8"
-              placeholder="Search scripts…"
-              value={search}
-              onChange={handleSearchChange}
-            />
-          </div>
-          <Button variant="outline" onClick={handleImportClick}>
+      <PageHeader
+        title="Scripts"
+        subtitle={
+          scripts
+            ? `${scripts.length} ${scripts.length === 1 ? "script" : "scripts"}`
+            : undefined
+        }
+        actions={
+          <Button variant="outline" size="sm" onClick={handleImportClick}>
             <FileUp className="size-4" />
             Import
           </Button>
-          <input
-            type="file"
-            accept="application/json,.json"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={handleImportFileChange}
+        }
+      />
+      <input
+        type="file"
+        accept="application/json,.json"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleImportFileChange}
+      />
+      <AsyncContent status={scripts === undefined ? "loading" : "loaded"}>
+        <div className="relative">
+          <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            className="pl-8"
+            placeholder="Search scripts by name…"
+            value={search}
+            onChange={handleSearchChange}
           />
         </div>
         <div className="mt-4">
@@ -100,5 +100,3 @@ function SearchScreen() {
     </>
   );
 }
-
-export default SearchScreen;

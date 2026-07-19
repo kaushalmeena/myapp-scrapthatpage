@@ -5,4 +5,4 @@ import db from "@/database";
 // from "not found" (null) so screens can show the right state; updates
 // automatically whenever the record changes in IndexedDB.
 export const useScriptById = (id: number) =>
-  useLiveQuery(async () => (await db.fetchScriptById(id)) ?? null, [id]);
+  useLiveQuery(async () => (await db.getScriptById(id)) ?? null, [id]);

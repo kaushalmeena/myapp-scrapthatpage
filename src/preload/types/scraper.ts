@@ -1,4 +1,4 @@
-import {
+import type {
   ExecuteResponse,
   PickElementResponse,
   ScraperConfig,

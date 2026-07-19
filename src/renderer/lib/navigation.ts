@@ -1,4 +1,11 @@
-import { Heart, LucideIcon, Search, Settings, SquarePlus } from "lucide-react";
+import {
+  Heart,
+  History,
+  House,
+  Library,
+  type LucideIcon,
+  Settings
+} from "lucide-react";
 
 export type PageLink = {
   title: string;
@@ -7,28 +14,36 @@ export type PageLink = {
   Icon: LucideIcon;
 };
 
-export const PAGE_LINKS: PageLink[] = [
+// Main navigation, in sidebar order. Subtitles surface in the command palette
+// and dashboard as short explanations of where each page leads.
+export const NAV_LINKS: PageLink[] = [
   {
-    title: "Create",
-    subtitle: "Create a new script",
-    route: "/create",
-    Icon: SquarePlus
+    title: "Home",
+    subtitle: "Overview and quick actions",
+    route: "/",
+    Icon: House
+  },
+  {
+    title: "Scripts",
+    subtitle: "Browse, search and import your scripts",
+    route: "/search",
+    Icon: Library
   },
   {
     title: "Favorites",
-    subtitle: "List your favorite scripts",
+    subtitle: "Scripts you marked as favorite",
     route: "/favorites",
     Icon: Heart
   },
   {
-    title: "Search",
-    subtitle: "Search scripts using a query",
-    route: "/search",
-    Icon: Search
+    title: "History",
+    subtitle: "Past runs and their results",
+    route: "/history",
+    Icon: History
   },
   {
     title: "Settings",
-    subtitle: "Show app settings",
+    subtitle: "Theme and scraping preferences",
     route: "/settings",
     Icon: Settings
   }

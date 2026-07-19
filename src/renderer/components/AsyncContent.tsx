@@ -1,19 +1,21 @@
-import { ReactNode } from "react";
-import { Loader2, AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
+import type { ReactNode } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export type FetchStatus = "loading" | "loaded" | "error";
 
-type AsyncContentProps = {
-  status: FetchStatus;
-  error: string;
-  children: ReactNode;
-};
-
 // Renders the shared loading spinner / error alert for a data fetch and shows
 // its children only once loaded. Centralizes the status handling that every
 // data-backed screen would otherwise repeat.
-function AsyncContent({ status, error, children }: AsyncContentProps) {
+export default function AsyncContent({
+  status,
+  error,
+  children
+}: {
+  status: FetchStatus;
+  error?: string;
+  children: ReactNode;
+}) {
   if (status === "loaded") {
     return <>{children}</>;
   }
@@ -34,5 +36,3 @@ function AsyncContent({ status, error, children }: AsyncContentProps) {
     </div>
   );
 }
-
-export default AsyncContent;

@@ -1,4 +1,4 @@
-import { TableData } from "@/features/runner/types";
+import type { TableData } from "@/features/runner/types";
 
 export type RunLogEntry = {
   timestamp: number;

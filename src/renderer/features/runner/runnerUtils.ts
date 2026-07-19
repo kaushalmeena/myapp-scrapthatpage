@@ -1,15 +1,15 @@
 import ExcelJS from "exceljs";
-import { Play, RotateCw, Square } from "lucide-react";
 import { produce } from "immer";
+import { Play, RotateCw, Square } from "lucide-react";
 import { evaluate } from "mathjs";
-import {
+import type {
   ExtractOperationResult,
   ScraperOperation
 } from "../../../common/types/scraper";
-import { SmallOperation } from "../../../common/types/smallOperation";
-import { VariableMapping } from "../../../common/types/variable";
+import type { SmallOperation } from "../../../common/types/smallOperation";
+import type { VariableMapping } from "../../../common/types/variable";
 import { INITIAL_TABLE_DATA } from "./constants";
-import {
+import type {
   RunnerCardInfo,
   RunnerGenerator,
   RunnerHeaderInfo,
@@ -202,7 +202,7 @@ export const getRunnerTableData = (
 ): TableData =>
   produce(oldTableData || INITIAL_TABLE_DATA, (draft) => {
     let rowIdx = 0;
-    let colIdx = draft.cols.findIndex((col) => col === result.name);
+    let colIdx = draft.cols.indexOf(result.name);
 
     if (colIdx === -1) {
       // push() returns the new length, so the appended column's index is one
@@ -229,37 +229,37 @@ export const getRunnerHeaderInfo = (
   switch (operation.type) {
     case "open":
       return {
-        heading: "OPEN",
+        heading: "Open",
         message: `${operation.url}`
       };
     case "extract":
       return {
-        heading: "EXTRACT",
+        heading: "Extract",
         message: `${operation.name} [${operation.selector}]`
       };
     case "click":
       return {
-        heading: "CLICK",
+        heading: "Click",
         message: `[${operation.selector}]`
       };
     case "type":
       return {
-        heading: "TYPE",
+        heading: "Type",
         message: `[${operation.selector}] ${operation.text}`
       };
     case "wait":
       return {
-        heading: "WAIT",
+        heading: "Wait",
         message: `[${operation.selector}] up to ${operation.timeoutMs}ms`
       };
     case "delay":
       return {
-        heading: "DELAY",
+        heading: "Delay",
         message: `${operation.ms}ms`
       };
     case "scroll":
       return {
-        heading: "SCROLL",
+        heading: "Scroll",
         message: operation.selector ? `[${operation.selector}]` : "page bottom"
       };
   }
@@ -269,32 +269,32 @@ export const getRunnerCardInfo = (status: RunnerStatus): RunnerCardInfo => {
   switch (status) {
     case "ready":
       return {
-        title: "Start execution",
+        title: "Run script",
         color: "default",
         Icon: Play
       };
     case "started":
       return {
-        title: "Stop execution",
+        title: "Stop run",
         color: "default",
         Icon: Square
       };
     case "stopped":
       return {
-        title: "Restart execution",
+        title: "Run again",
         color: "default",
         Icon: RotateCw
       };
     case "finished":
       return {
-        title: "Restart execution",
+        title: "Run again",
         color: "success",
         tone: "success",
         Icon: RotateCw
       };
     case "error":
       return {
-        title: "Restart execution",
+        title: "Run again",
         color: "destructive",
         tone: "error",
         Icon: RotateCw

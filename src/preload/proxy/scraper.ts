@@ -1,10 +1,10 @@
 import { ipcRenderer } from "electron";
-import { ScraperAPI } from "../types/scraper";
 import {
   ScraperChannel,
-  ScraperConfig,
-  ScraperOperation
+  type ScraperConfig,
+  type ScraperOperation
 } from "../../common/types/scraper";
+import type { ScraperAPI } from "../types/scraper";
 
 export const ScraperProxy: ScraperAPI = {
   openWindow: () => ipcRenderer.send(ScraperChannel.OPEN_WINDOW),

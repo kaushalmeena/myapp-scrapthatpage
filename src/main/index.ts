@@ -1,5 +1,5 @@
+import path from "node:path";
 import { app, BrowserWindow, shell } from "electron";
-import path from "path";
 import Scraper from "./lib/Scraper";
 import { connectScraperProxy, disconnectScraperProxy } from "./proxy/scraper";
 
@@ -53,6 +53,14 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 700,
+    minWidth: 800,
+    minHeight: 500,
+    // Frameless look on macOS: the traffic lights float over the sidebar and
+    // the renderer marks its own drag regions. Other platforms keep their
+    // native frame.
+    ...(process.platform === "darwin"
+      ? { titleBarStyle: "hiddenInset" as const }
+      : {}),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       // Explicit secure defaults (see electron-development skill): keep the

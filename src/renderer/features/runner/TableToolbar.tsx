@@ -14,13 +14,13 @@ import {
   downloadAsJSON,
   downloadAsXLSX
 } from "./runnerUtils";
-import { TableData } from "./types";
+import type { TableData } from "./types";
 
-type TableToolbarProps = {
-  data: TableData;
-};
+export default function TableToolbar({ data }: { data: TableData }) {
+  const handleCSVDownload = () => downloadAsCSV(data);
 
-function TableToolbar({ data }: TableToolbarProps) {
+  const handleJSONDownload = () => downloadAsJSON(data);
+
   const handleXLSXDownload = () =>
     downloadAsXLSX(data).catch(() => toast.error("Export failed"));
 
@@ -30,8 +30,14 @@ function TableToolbar({ data }: TableToolbarProps) {
       .catch(() => toast.error("Export failed"));
 
   return (
-    <div className="flex flex-row items-center justify-between border-b p-3">
-      <h3 className="font-semibold">Results</h3>
+    <div className="flex flex-row items-center justify-between border-b px-4 py-2.5">
+      <h3 className="text-sm font-semibold">
+        Results
+        <span className="ml-2 font-normal text-muted-foreground">
+          {data.rows.length} {data.rows.length === 1 ? "row" : "rows"} ·{" "}
+          {data.cols.length} {data.cols.length === 1 ? "column" : "columns"}
+        </span>
+      </h3>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm">
@@ -40,10 +46,10 @@ function TableToolbar({ data }: TableToolbarProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => downloadAsCSV(data)}>
+          <DropdownMenuItem onClick={handleCSVDownload}>
             Download as CSV
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => downloadAsJSON(data)}>
+          <DropdownMenuItem onClick={handleJSONDownload}>
             Download as JSON
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleXLSXDownload}>
@@ -58,5 +64,3 @@ function TableToolbar({ data }: TableToolbarProps) {
     </div>
   );
 }
-
-export default TableToolbar;

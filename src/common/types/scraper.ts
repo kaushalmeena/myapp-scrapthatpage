@@ -1,4 +1,4 @@
-export const enum ScraperChannel {
+export enum ScraperChannel {
   OPEN_WINDOW = "open_window",
   CLOSE_WINDOW = "close_window",
   GET_VERSION = "get_version",

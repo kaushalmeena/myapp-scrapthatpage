@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { FileSearch, Moon, Pencil, Play, Sun } from "lucide-react";
+import { Moon, Pencil, Play, SquarePlus, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import {
@@ -12,20 +12,20 @@ import {
   CommandSeparator
 } from "@/components/ui/command";
 import db from "@/database";
-import { PAGE_LINKS } from "@/lib/navigation";
+import { selectTheme, updateTheme } from "@/features/settings/settingsSlice";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { selectTheme, updateTheme } from "@/features/settings/settingsSlice";
+import { NAV_LINKS } from "@/lib/navigation";
 
 // App-wide command palette on Cmd/Ctrl+K: navigation, quick actions, and
 // per-script run/edit commands.
-function CommandPalette() {
+export default function CommandPalette() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
 
-  const scripts = useLiveQuery(() => db.fetchAllScripts(), []);
+  const scripts = useLiveQuery(() => db.getScripts(), []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -43,17 +43,20 @@ function CommandPalette() {
     action();
   };
 
+  const handleCreateSelect = () => runCommand(() => navigate("/create"));
+
+  const handleToggleTheme = () =>
+    runCommand(() =>
+      dispatch(updateTheme(theme === "dark" ? "light" : "dark"))
+    );
+
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput placeholder="Type a command or search…" />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Navigate">
-          <CommandItem onSelect={() => runCommand(() => navigate("/"))}>
-            <FileSearch className="size-4" />
-            Home
-          </CommandItem>
-          {PAGE_LINKS.map(({ title, route, Icon }) => (
+          {NAV_LINKS.map(({ title, route, Icon }) => (
             <CommandItem
               key={route}
               onSelect={() => runCommand(() => navigate(route))}
@@ -62,20 +65,14 @@ function CommandPalette() {
               {title}
             </CommandItem>
           ))}
-          <CommandItem onSelect={() => runCommand(() => navigate("/history"))}>
-            <Play className="size-4" />
-            History
-          </CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Actions">
-          <CommandItem
-            onSelect={() =>
-              runCommand(() =>
-                dispatch(updateTheme(theme === "dark" ? "light" : "dark"))
-              )
-            }
-          >
+          <CommandItem onSelect={handleCreateSelect}>
+            <SquarePlus className="size-4" />
+            New script
+          </CommandItem>
+          <CommandItem onSelect={handleToggleTheme}>
             {theme === "dark" ? (
               <Sun className="size-4" />
             ) : (
@@ -119,5 +116,3 @@ function CommandPalette() {
     </CommandDialog>
   );
 }
-
-export default CommandPalette;

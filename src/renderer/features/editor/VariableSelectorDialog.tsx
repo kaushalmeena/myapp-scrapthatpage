@@ -1,3 +1,4 @@
+import EmptyState from "@/components/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
@@ -5,10 +6,9 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import EmptyState from "@/components/EmptyState";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { Variable } from "../../../common/types/variable";
+import type { Variable } from "../../../common/types/variable";
 import {
   hideVariableSelector,
   selectVariableSelector,
@@ -16,7 +16,7 @@ import {
   updateInputWithVariable
 } from "./scriptEditorSlice";
 
-function VariableSelectorDialog() {
+export default function VariableSelectorDialog() {
   const dispatch = useAppDispatch();
   const selector = useAppSelector(selectVariableSelector);
   const variables = useAppSelector(selectVariables);
@@ -66,5 +66,3 @@ function VariableSelectorDialog() {
     </Dialog>
   );
 }
-
-export default VariableSelectorDialog;

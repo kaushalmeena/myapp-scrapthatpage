@@ -1,20 +1,25 @@
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList
+} from "@/components/ui/command";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { LARGE_OPERATIONS } from "../../../common/constants/largeOperations";
-import { LargeOperation } from "../../../common/types/largeOperation";
+import type { LargeOperation } from "../../../common/types/largeOperation";
+import { OPERATION_ICONS } from "./operationIcons";
 import {
   appendOperation,
   hideOperationSelector,
   selectOperationSelector
 } from "./scriptEditorSlice";
 
-function OperationSelectorDialog() {
+// Searchable step picker (same command-palette interaction as Cmd+K):
+// type to filter, Enter or click to add the step.
+export default function OperationSelectorDialog() {
   const dispatch = useAppDispatch();
   const selector = useAppSelector(selectOperationSelector);
 
@@ -30,31 +35,38 @@ function OperationSelectorDialog() {
   };
 
   return (
-    <Dialog open={selector.target !== null} onOpenChange={handleOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Select Operation</DialogTitle>
-        </DialogHeader>
-        <div className="max-h-96 overflow-y-auto">
-          <div className="flex flex-col gap-1">
-            {LARGE_OPERATIONS.map((operation) => (
-              <button
+    <CommandDialog
+      open={selector.target !== null}
+      onOpenChange={handleOpenChange}
+      title="Add a step"
+      description="Search for a step to add to the script"
+    >
+      <CommandInput placeholder="Search steps…" />
+      <CommandList>
+        <CommandEmpty>No matching steps.</CommandEmpty>
+        <CommandGroup heading="Steps">
+          {LARGE_OPERATIONS.map((operation) => {
+            const Icon = OPERATION_ICONS[operation.type];
+            return (
+              <CommandItem
                 key={`operation-${operation.type}`}
-                type="button"
-                className="w-full cursor-pointer rounded-md p-3 text-left transition-colors hover:bg-accent"
-                onClick={() => handleSelect(operation)}
+                value={`${operation.name} ${operation.description}`}
+                onSelect={() => handleSelect(operation)}
               >
-                <p className="font-medium">{operation.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {operation.description}
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+                <Icon className="size-4" />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">
+                    {operation.name}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {operation.description}
+                  </p>
+                </div>
+              </CommandItem>
+            );
+          })}
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
   );
 }
-
-export default OperationSelectorDialog;

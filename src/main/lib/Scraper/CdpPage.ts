@@ -1,4 +1,4 @@
-import { WebContents } from "electron";
+import type { WebContents } from "electron";
 
 // Minimal Puppeteer-style Page driver built on Electron's in-process CDP
 // (webContents.debugger). Unlike puppeteer-in-electron this needs no
@@ -36,7 +36,7 @@ interface WaitForSelectorOptions {
   visible?: boolean;
 }
 
-class CdpPage {
+export default class CdpPage {
   private webContents: WebContents;
 
   private attachPromise?: Promise<void>;
@@ -334,5 +334,3 @@ class CdpPage {
     }
   }
 }
-
-export default CdpPage;

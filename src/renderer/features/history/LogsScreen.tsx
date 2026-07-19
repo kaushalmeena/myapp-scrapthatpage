@@ -1,28 +1,30 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { useParams } from "react-router";
 import AsyncContent from "@/components/AsyncContent";
+import FadeIn from "@/components/FadeIn";
 import PageHeader from "@/components/PageHeader";
 import { Badge } from "@/components/ui/badge";
 import db from "@/database";
 import ResultTable from "@/features/runner/ResultTable";
-import RunLog from "@/features/runner/RunLog";
+import RunLogPanel from "@/features/runner/RunLogPanel";
 import { cn } from "@/lib/utils";
 
-function RunDetailScreen() {
+export default function LogsScreen() {
   const params = useParams();
 
   const runId = Number(params.runId);
 
   // Distinguishes "still loading" (undefined) from "not found" (null), same
   // pattern as useScriptById.
-  const run = useLiveQuery(
-    async () => (await db.fetchRunById(runId)) ?? null,
-    [runId]
-  );
+  const run = useLiveQuery(async () => db.getRunById(runId) ?? null, [runId]);
 
   return (
     <>
-      <PageHeader title="Run detail" />
+      <PageHeader
+        back
+        title="Run details"
+        subtitle={run ? run.scriptName : undefined}
+      />
       <AsyncContent
         status={run === undefined ? "loading" : run ? "loaded" : "error"}
         error="Run not found."
@@ -30,7 +32,6 @@ function RunDetailScreen() {
         {run && (
           <>
             <div className="mb-6 flex items-center gap-3">
-              <p className="truncate font-medium">{run.scriptName}</p>
               <p className="text-sm text-muted-foreground">
                 {new Date(run.startedAt).toLocaleString()}
               </p>
@@ -43,15 +44,17 @@ function RunDetailScreen() {
                 {run.status}
               </Badge>
             </div>
-            {run.tableData && <ResultTable data={run.tableData} />}
-            <div className="mt-6">
-              <RunLog log={run.log} />
-            </div>
+            {run.tableData && (
+              <FadeIn>
+                <ResultTable data={run.tableData} />
+              </FadeIn>
+            )}
+            <FadeIn className="mt-6" delay={0.05}>
+              <RunLogPanel log={run.log} />
+            </FadeIn>
           </>
         )}
       </AsyncContent>
     </>
   );
 }
-
-export default RunDetailScreen;

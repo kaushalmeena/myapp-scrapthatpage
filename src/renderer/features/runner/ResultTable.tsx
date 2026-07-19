@@ -17,15 +17,11 @@ import {
   TableRow
 } from "@/components/ui/table";
 import TableToolbar from "./TableToolbar";
-import { TableData } from "./types";
+import type { TableData } from "./types";
 
 const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
 
-type ResultTableProps = {
-  data: TableData;
-};
-
-function ResultTable({ data }: ResultTableProps) {
+export default function ResultTable({ data }: { data: TableData }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -36,13 +32,17 @@ function ResultTable({ data }: ResultTableProps) {
     setPage(0);
   };
 
+  const handlePrevPage = () => setPage(page - 1);
+
+  const handleNextPage = () => setPage(page + 1);
+
   const pageRows = data.rows.slice(
     page * rowsPerPage,
     (page + 1) * rowsPerPage
   );
 
   return (
-    <div className="rounded-lg border bg-card">
+    <div className="allow-select overflow-hidden rounded-xl border bg-card">
       <TableToolbar data={data} />
       <Table>
         <TableHeader>
@@ -57,14 +57,14 @@ function ResultTable({ data }: ResultTableProps) {
             <TableRow key={`tr-${rowIdx}`}>
               {row.map((item, colIdx) => (
                 <TableCell key={`td-${rowIdx}-${colIdx}`}>
-                  {item || ""}
+                  {item || <span className="text-muted-foreground">—</span>}
                 </TableCell>
               ))}
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <div className="flex items-center justify-end gap-4 p-2 text-sm">
+      <div className="flex items-center justify-end gap-4 border-t p-2 text-sm">
         <span className="text-muted-foreground">Rows per page</span>
         <Select
           value={String(rowsPerPage)}
@@ -90,7 +90,7 @@ function ResultTable({ data }: ResultTableProps) {
             size="icon"
             title="Previous page"
             disabled={page === 0}
-            onClick={() => setPage(page - 1)}
+            onClick={handlePrevPage}
           >
             <ChevronLeft className="size-4" />
           </Button>
@@ -99,7 +99,7 @@ function ResultTable({ data }: ResultTableProps) {
             size="icon"
             title="Next page"
             disabled={page >= pageCount - 1}
-            onClick={() => setPage(page + 1)}
+            onClick={handleNextPage}
           >
             <ChevronRight className="size-4" />
           </Button>
@@ -108,5 +108,3 @@ function ResultTable({ data }: ResultTableProps) {
     </div>
   );
 }
-
-export default ResultTable;

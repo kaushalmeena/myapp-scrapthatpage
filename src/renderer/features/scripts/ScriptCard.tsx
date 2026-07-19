@@ -16,17 +16,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { TOAST_MESSAGES } from "@/lib/messages";
 import db from "@/database";
-import { Script } from "@/types/script";
+import { TOAST_MESSAGES } from "@/lib/messages";
 import { cn } from "@/lib/utils";
+import type { Script } from "@/types/script";
 import { exportScriptToJSON } from "./scriptTransfer";
 
-type ScriptCardProps = {
-  script: Script;
-};
-
-function ScriptCard({ script }: ScriptCardProps) {
+export default function ScriptCard({ script }: { script: Script }) {
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
@@ -34,11 +30,15 @@ function ScriptCard({ script }: ScriptCardProps) {
 
   const handleUpdateClick = () => navigate(`/update/${script.id}`);
 
+  const handleExportClick = () => exportScriptToJSON(script);
+
+  const handleDeleteClick = () => setDeleteDialogOpen(true);
+
   const handleDeleteConfirm = () => {
     if (script.id === undefined) {
       return;
     }
-    db.deleteScriptById(script.id)
+    db.deleteScript(script.id)
       .then(() => {
         toast.success(TOAST_MESSAGES.SCRIPT_DELETE_SUCCESS);
       })
@@ -48,14 +48,12 @@ function ScriptCard({ script }: ScriptCardProps) {
   };
 
   const handleFavoriteToggle = () => {
-    if (script.id === undefined) {
-      return;
-    }
-    const nextFavorite = 1 - script.favorite;
+    if (script.id === undefined) return;
+    const nextFavorite = !script.favorite;
     const nextToastMessage = nextFavorite
       ? TOAST_MESSAGES.SCRIPT_FAVORITE_ADD
       : TOAST_MESSAGES.SCRIPT_FAVORITE_REMOVE;
-    db.updateScriptFavoriteField(script.id, nextFavorite)
+    db.setScriptFavorite(script.id, nextFavorite)
       .then(() => {
         toast.info(nextToastMessage);
       })
@@ -132,7 +130,7 @@ function ScriptCard({ script }: ScriptCardProps) {
           size="icon"
           className="text-muted-foreground hover:text-primary"
           title="Export script as JSON"
-          onClick={() => exportScriptToJSON(script)}
+          onClick={handleExportClick}
         >
           <FileDown className="size-4" />
         </Button>
@@ -142,7 +140,7 @@ function ScriptCard({ script }: ScriptCardProps) {
           size="icon"
           className="text-muted-foreground hover:text-destructive"
           title="Delete script"
-          onClick={() => setDeleteDialogOpen(true)}
+          onClick={handleDeleteClick}
         >
           <X className="size-4" />
         </Button>
@@ -169,5 +167,3 @@ function ScriptCard({ script }: ScriptCardProps) {
     </Card>
   );
 }
-
-export default ScriptCard;

@@ -1,7 +1,7 @@
-import { Script } from "../types/script";
+import type { Script } from "../types/script";
 
 export const mostPopularMoviesScript: Script = {
-  favorite: 0,
+  favorite: false,
   name: "Most Popular Movies",
   description: "Fetches list of popular movies from IMDb",
   operations: [

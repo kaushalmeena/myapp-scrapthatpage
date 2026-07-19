@@ -1,5 +1,5 @@
-import { ValidationRule } from "./validation";
-import { VariablePicker, VariableSetter } from "./variable";
+import type { ValidationRule } from "./validation";
+import type { VariablePicker, VariableSetter } from "./variable";
 
 // Number of columns (out of a 12-column grid) an input occupies in the editor.
 export type InputWidth = 4 | 6 | 12;
@@ -151,7 +151,9 @@ type LargeScrollOperation = {
 };
 
 export type LargeInput =
-  LargeTextInput | LargeSelectInput | LargeOperationBoxInput;
+  | LargeTextInput
+  | LargeSelectInput
+  | LargeOperationBoxInput;
 
 export type LargeOperation =
   | LargeOpenOperation

@@ -1,9 +1,9 @@
-import {
+import type {
   ExecuteResponse,
   ScraperOperation,
   ScraperResult
 } from "../../common/types/scraper";
-import Scraper from "../lib/Scraper";
+import type Scraper from "../lib/Scraper";
 
 const processOperation = async (
   operation: ScraperOperation,

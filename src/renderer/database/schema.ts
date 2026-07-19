@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { SmallOperation } from "../../common/types/smallOperation";
-import { Script } from "@/types/script";
+import type { Script } from "@/types/script";
+import type { SmallOperation } from "../../common/types/smallOperation";
 
 // Version stamped onto every script written to IndexedDB. Bump it (and add a
-// case to `migrateScript`) whenever the stored shape changes.
+// migration to `parseStoredScript`) whenever the stored shape changes.
 export const SCRIPT_SCHEMA_VERSION = 1;
 
 const textInputSchema = z.object({
@@ -90,18 +90,16 @@ export const smallOperationSchema =
 export const scriptSchema: z.ZodType<Script, Script> = z.object({
   id: z.number().optional(),
   version: z.number().optional(),
-  favorite: z.number().int().min(0).max(1),
+  favorite: z.boolean(),
   name: z.string().min(1),
   description: z.string(),
   operations: z.array(smallOperationSchema)
 });
 
-// Validates a record read from IndexedDB, upgrading older stored shapes to the
-// current version. Returns null for records that are unreadable, so callers
-// can skip them instead of crashing the whole list.
+// Validates a record read from IndexedDB. Version-based migrations go here as
+// the stored shape evolves. Returns null for records that are unreadable, so
+// callers can skip them instead of crashing the whole list.
 export const parseStoredScript = (raw: unknown): Script | null => {
-  // Version-based migrations go here as the schema evolves, e.g.:
-  // if (version < 2) { raw = upgradeV1ToV2(raw); }
   const result = scriptSchema.safeParse(raw);
   if (!result.success) {
     console.warn("Skipping invalid stored script:", result.error.message);

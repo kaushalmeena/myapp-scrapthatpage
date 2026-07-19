@@ -1,7 +1,7 @@
 import {
   closestCenter,
   DndContext,
-  DragEndEvent,
+  type DragEndEvent,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -18,25 +18,25 @@ import {
 } from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import EmptyState from "@/components/EmptyState";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
+import OperationCard from "./OperationCard";
 import {
   getListIds,
-  OperationListRef,
+  type OperationListRef,
   reorderOperation,
   showOperationSelector
 } from "./scriptEditorSlice";
-import OperationCard from "./OperationCard";
 
-type OperationsPanelProps = {
+export default function OperationsPanel({
+  listRef,
+  numberPrefix
+}: {
   listRef: OperationListRef;
   // Display-number prefix for this list ("" at the root, "2.1." inside the
   // first box of the second operation, and so on).
   numberPrefix: string;
-};
-
-function OperationsPanel({ listRef, numberPrefix }: OperationsPanelProps) {
+}) {
   const dispatch = useAppDispatch();
   // Immer keeps untouched arrays referentially stable, so the default
   // reference equality only re-renders this list when it actually changes.
@@ -48,7 +48,9 @@ function OperationsPanel({ listRef, numberPrefix }: OperationsPanelProps) {
   // starting a drag.
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
   );
 
   const handleAddClick = () => dispatch(showOperationSelector(listRef));
@@ -66,44 +68,49 @@ function OperationsPanel({ listRef, numberPrefix }: OperationsPanelProps) {
     }
   };
 
+  const isRootList = listRef.parentId === null;
+
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex justify-end">
-        <Button
-          variant="outline"
-          size="sm"
-          title="Add operation"
-          onClick={handleAddClick}
+      {ids.length > 0 ? (
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+          onDragEnd={handleDragEnd}
         >
-          <Plus className="size-4" />
-          Add
-        </Button>
-      </div>
-      <div className="flex flex-col gap-2">
-        {ids.length > 0 ? (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={ids} strategy={verticalListSortingStrategy}>
-              {ids.map((id, index) => (
-                <OperationCard
-                  key={id}
-                  id={id}
-                  listRef={listRef}
-                  number={`${numberPrefix}${index + 1}`}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-        ) : (
-          <EmptyState message="No operations added" />
-        )}
-      </div>
+          <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+            {ids.map((id, index) => (
+              <OperationCard
+                key={id}
+                id={id}
+                listRef={listRef}
+                number={`${numberPrefix}${index + 1}`}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
+      ) : (
+        isRootList && (
+          <div className="rounded-lg border border-dashed px-4 py-6 text-center">
+            <p className="text-sm font-medium">No steps yet</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Most scripts start with “Open page” to load the site you want to
+              scrape.
+            </p>
+          </div>
+        )
+      )}
+      <Button
+        variant="outline"
+        size="sm"
+        className="w-full justify-center gap-2 border-dashed text-muted-foreground hover:text-foreground"
+        title="Add a step"
+        onClick={handleAddClick}
+      >
+        <Plus className="size-4" />
+        Add step
+      </Button>
     </div>
   );
 }
-
-export default OperationsPanel;

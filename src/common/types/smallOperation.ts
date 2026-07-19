@@ -80,7 +80,9 @@ type SmallScrollOperation = {
 };
 
 export type SmallInput =
-  SmallTextInput | SmallSelectInput | SmallOperationBoxInput;
+  | SmallTextInput
+  | SmallSelectInput
+  | SmallOperationBoxInput;
 
 export type SmallOperation =
   | SmallOpenOperation

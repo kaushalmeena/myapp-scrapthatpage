@@ -14,7 +14,8 @@
     "paths": {
       "@/*": ["./src/renderer/*"]
     },
-    "types": ["vite/client", "@testing-library/jest-dom"]
+    "types": ["vite/client", "@testing-library/jest-dom"],
+    "strict": true
   },
   "ts-node": {
     "compilerOptions": {

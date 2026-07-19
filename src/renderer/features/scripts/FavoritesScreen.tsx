@@ -4,20 +4,15 @@ import PageHeader from "@/components/PageHeader";
 import db from "@/database";
 import ScriptList from "./ScriptList";
 
-function FavoritesScreen() {
-  const scripts = useLiveQuery(() => db.fetchAllFavoriteScripts(), []);
+export default function FavoritesScreen() {
+  const scripts = useLiveQuery(() => db.getFavoriteScripts(), []);
 
   return (
     <>
-      <PageHeader title="Favorites" />
-      <AsyncContent
-        status={scripts === undefined ? "loading" : "loaded"}
-        error=""
-      >
+      <PageHeader title="Favorites" subtitle="Scripts you marked as favorite" />
+      <AsyncContent status={scripts === undefined ? "loading" : "loaded"}>
         <ScriptList scripts={scripts ?? []} />
       </AsyncContent>
     </>
   );
 }
-
-export default FavoritesScreen;

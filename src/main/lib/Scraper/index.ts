@@ -1,5 +1,5 @@
 import { BrowserWindow } from "electron";
-import { ScraperConfig } from "../../../common/types/scraper";
+import type { ScraperConfig } from "../../../common/types/scraper";
 import CdpPage from "./CdpPage";
 
 // Auto-wait budget for an element to appear before an operation acts on it.
@@ -87,7 +87,7 @@ const sleep = (ms: number): Promise<void> =>
 // webContents.debugger (in-process — works in packaged/signed builds, unlike a
 // remote debugging port). CdpPage supplies Puppeteer-style auto-waiting
 // primitives, so operations tolerate content that renders after navigation.
-class Scraper {
+export default class Scraper {
   private mainWindow: BrowserWindow;
 
   private scraperWindow?: BrowserWindow;
@@ -311,5 +311,3 @@ class Scraper {
     }
   }
 }
-
-export default Scraper;

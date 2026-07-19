@@ -4,7 +4,7 @@ import type { ConfigEnv, Plugin, UserConfig } from "vite";
 
 export const builtins = [
   "electron",
-  ...builtinModules.map((m) => [m, `node:${m}`]).flat()
+  ...builtinModules.flatMap((m) => [m, `node:${m}`])
 ];
 
 // Only Electron and Node builtins may stay external: the packaged app ships
@@ -42,7 +42,8 @@ export function getDefineKeys(names: string[]) {
       VITE_NAME: `${NAME}_VITE_NAME`
     };
 
-    return { ...acc, [name]: keys };
+    acc[name] = keys;
+    return acc;
   }, define);
 }
 
@@ -55,14 +56,12 @@ export function getBuildDefine(env: ConfigEnv<"build">) {
   const define = Object.entries(defineKeys).reduce(
     (acc, [name, keys]) => {
       const { VITE_DEV_SERVER_URL, VITE_NAME } = keys;
-      const def = {
-        [VITE_DEV_SERVER_URL]:
-          command === "serve"
-            ? JSON.stringify(process.env[VITE_DEV_SERVER_URL])
-            : undefined,
-        [VITE_NAME]: JSON.stringify(name)
-      };
-      return { ...acc, ...def };
+      acc[VITE_DEV_SERVER_URL] =
+        command === "serve"
+          ? JSON.stringify(process.env[VITE_DEV_SERVER_URL])
+          : undefined;
+      acc[VITE_NAME] = JSON.stringify(name);
+      return acc;
     },
     {} as Record<string, unknown>
   );

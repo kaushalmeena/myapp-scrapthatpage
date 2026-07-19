@@ -1,23 +1,21 @@
-import { Loader2, LucideIcon } from "lucide-react";
+import { Loader2, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ActionButtonColor } from "./types";
+import type { ActionButtonColor } from "./types";
 
-type ActionButtonProps = {
-  spinning: boolean;
-  title: string;
-  color: ActionButtonColor;
-  Icon: LucideIcon;
-  onClick: () => void;
-};
-
-function ActionButton({
+export default function ActionButton({
   spinning,
   title,
   color,
   Icon,
   onClick
-}: ActionButtonProps) {
+}: {
+  spinning: boolean;
+  title: string;
+  color: ActionButtonColor;
+  Icon: LucideIcon;
+  onClick: () => void;
+}) {
   return (
     <div className="relative">
       <Button
@@ -38,5 +36,3 @@ function ActionButton({
     </div>
   );
 }
-
-export default ActionButton;

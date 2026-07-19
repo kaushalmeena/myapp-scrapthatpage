@@ -1,13 +1,13 @@
 export const TOAST_MESSAGES = {
-  SCRIPT_CREATE_SUCCESS: "Script successfully created!",
-  SCRIPT_CREATE_FAILURE: "Error occurred while creating script.",
-  SCRIPT_UPDATE_SUCCESS: "Script successfully updated!",
-  SCRIPT_UPDATE_FAILURE: "Error occurred while updating script.",
-  SCRIPT_DELETE_SUCCESS: "Script successfully deleted!",
-  SCRIPT_DELETE_FAILURE: "Error occurred while deleting.",
-  SCRIPT_FAVORITE_ADD: "Script added to favorites.",
-  SCRIPT_FAVORITE_REMOVE: "Script removed from favorites.",
-  SCRIPT_IMPORT_SUCCESS: "Script imported!",
+  SCRIPT_CREATE_SUCCESS: "Script created",
+  SCRIPT_CREATE_FAILURE: "Couldn't create the script. Please try again.",
+  SCRIPT_UPDATE_SUCCESS: "Changes saved",
+  SCRIPT_UPDATE_FAILURE: "Couldn't save changes. Please try again.",
+  SCRIPT_DELETE_SUCCESS: "Script deleted",
+  SCRIPT_DELETE_FAILURE: "Couldn't delete the script. Please try again.",
+  SCRIPT_FAVORITE_ADD: "Added to favorites",
+  SCRIPT_FAVORITE_REMOVE: "Removed from favorites",
+  SCRIPT_IMPORT_SUCCESS: "Script imported",
   SCRIPT_IMPORT_FAILURE:
-    "Could not import script — the file is not a valid script export."
+    "Couldn't import this file — it isn't a valid script export."
 };

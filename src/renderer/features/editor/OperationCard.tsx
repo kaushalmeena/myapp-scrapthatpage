@@ -1,6 +1,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Copy, Eye, EyeOff, GripVertical, X } from "lucide-react";
+import { ChevronDown, Copy, GripVertical, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,14 +10,16 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { cn } from "@/lib/utils";
 import {
+  hasAnyInputValue,
   isOperationValid,
   replaceFormatWithInputs
 } from "../../../common/utils/operation";
 import OperationInput from "./OperationInput";
+import { OPERATION_ICONS } from "./operationIcons";
 import {
   deleteOperation,
   duplicateOperation,
-  OperationListRef
+  type OperationListRef
 } from "./scriptEditorSlice";
 
 const INPUT_WIDTH_CLASSES: Record<number, string> = {
@@ -25,18 +28,18 @@ const INPUT_WIDTH_CLASSES: Record<number, string> = {
   12: "col-span-12"
 };
 
-type OperationCardProps = {
+export default function OperationCard({
+  id,
+  listRef,
+  number
+}: {
   id: string;
   listRef: OperationListRef;
   // Display number like "2" or "2.3" (position within nested lists).
   number: string;
-};
-
-function OperationCard({ id, listRef, number }: OperationCardProps) {
+}) {
   const dispatch = useAppDispatch();
-  const operation = useAppSelector(
-    (state) => state.scriptEditor.operations[id]
-  );
+  const operation = useAppSelector((s) => s.scriptEditor.operations[id]);
 
   const [expanded, setExpanded] = useState(false);
 
@@ -60,26 +63,30 @@ function OperationCard({ id, listRef, number }: OperationCardProps) {
 
   const handleDeleteClick = () => dispatch(deleteOperation({ listRef, id }));
 
-  const operationSubheader = replaceFormatWithInputs(
-    operation.format,
-    operation.inputs
-  );
+  // Until the user fills something in, the format string is all placeholders;
+  // show the step description instead so new steps stay self-explanatory.
+  const operationSubheader = hasAnyInputValue(operation.inputs)
+    ? replaceFormatWithInputs(operation.format, operation.inputs)
+    : operation.description;
+
+  const TypeIcon = OPERATION_ICONS[operation.type];
+  const invalid = !isOperationValid(operation);
 
   return (
     <Card
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={cn(
-        "gap-0 py-0",
-        !isOperationValid(operation) && "bg-destructive/10",
+        "gap-0 overflow-hidden py-0",
+        invalid && "border-destructive/50 bg-destructive/5",
         isDragging && "relative z-10 opacity-60 shadow-lg"
       )}
     >
-      <div className="flex flex-row items-center gap-1 p-2">
+      <div className="flex flex-row items-stretch">
         <button
           type="button"
           title="Drag to reorder"
-          className="cursor-grab touch-none rounded-md p-1.5 text-muted-foreground hover:bg-accent active:cursor-grabbing"
+          className="flex shrink-0 cursor-grab touch-none items-center px-2 text-muted-foreground transition-colors hover:bg-accent active:cursor-grabbing"
           {...attributes}
           {...listeners}
         >
@@ -87,22 +94,43 @@ function OperationCard({ id, listRef, number }: OperationCardProps) {
         </button>
         <button
           type="button"
-          className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-accent"
+          className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 py-2.5 pr-3 pl-1 text-left transition-colors hover:bg-accent"
+          title={expanded ? "Hide step settings" : "Edit step settings"}
           onClick={handleExpandToggle}
         >
-          <Badge variant="outline">{number}</Badge>
-          <span className="min-w-0">
-            <span className="block truncate font-medium">{operation.name}</span>
+          <span
+            className={cn(
+              "flex size-7 shrink-0 items-center justify-center rounded-md",
+              invalid
+                ? "bg-destructive/10 text-destructive"
+                : "bg-primary/10 text-primary"
+            )}
+          >
+            <TypeIcon className="size-4" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="flex items-center gap-2">
+              <span className="truncate text-sm font-medium">
+                {operation.name}
+              </span>
+              <Badge
+                variant="outline"
+                className="px-1.5 py-0 text-[10px] text-muted-foreground"
+              >
+                {number}
+              </Badge>
+            </span>
             <span className="block truncate text-sm text-muted-foreground">
-              {operationSubheader}
+              {operationSubheader.trim() || operation.description}
             </span>
           </span>
         </button>
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-0.5 pr-2 pl-1">
           <Button
             variant="ghost"
             size="icon"
-            title="Duplicate operation"
+            className="text-muted-foreground hover:text-primary"
+            title="Duplicate step"
             onClick={handleDuplicateClick}
           >
             <Copy className="size-4" />
@@ -110,47 +138,61 @@ function OperationCard({ id, listRef, number }: OperationCardProps) {
           <Button
             variant="ghost"
             size="icon"
-            title={expanded ? "Hide operation inputs" : "Show operation inputs"}
-            onClick={handleExpandToggle}
+            className="text-muted-foreground hover:text-destructive"
+            title="Delete step"
+            onClick={handleDeleteClick}
           >
-            {expanded ? (
-              <Eye className="size-4 text-primary" />
-            ) : (
-              <EyeOff className="size-4 text-primary" />
-            )}
+            <X className="size-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            title="Delete operation"
-            onClick={handleDeleteClick}
+            className="text-muted-foreground"
+            title={expanded ? "Hide step settings" : "Edit step settings"}
+            onClick={handleExpandToggle}
           >
-            <X className="size-4 text-destructive" />
+            <ChevronDown
+              className={cn(
+                "size-4 transition-transform",
+                expanded && "rotate-180"
+              )}
+            />
           </Button>
         </div>
       </div>
-      {expanded && (
-        <div className="border-t p-4">
-          <div className="grid grid-cols-12 gap-3">
-            {operation.inputs.map((input, inputIndex) => (
-              <div
-                key={`${id}-input-${inputIndex}`}
-                className={
-                  INPUT_WIDTH_CLASSES["width" in input ? input.width : 12]
-                }
-              >
-                <OperationInput
-                  operationId={id}
-                  inputIndex={inputIndex}
-                  numberPrefix={`${number}.`}
-                />
+      {/* Height auto-animation so the settings section slides open/closed
+          instead of snapping. initial={false} skips the animation on mount. */}
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            key="step-settings"
+            className="overflow-hidden"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+          >
+            <div className="border-t p-4">
+              <div className="grid grid-cols-12 gap-3">
+                {operation.inputs.map((input, inputIndex) => (
+                  <div
+                    key={`${id}-input-${inputIndex}`}
+                    className={
+                      INPUT_WIDTH_CLASSES["width" in input ? input.width : 12]
+                    }
+                  >
+                    <OperationInput
+                      operationId={id}
+                      inputIndex={inputIndex}
+                      numberPrefix={`${number}.`}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 }
-
-export default OperationCard;

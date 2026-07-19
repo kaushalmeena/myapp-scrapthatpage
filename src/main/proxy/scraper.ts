@@ -1,12 +1,12 @@
 import { app, ipcMain } from "electron";
-import Scraper from "../lib/Scraper";
-import { executeOperation } from "../utils/scraper";
 import {
-  PickElementResponse,
+  type PickElementResponse,
   ScraperChannel,
-  ScraperConfig,
-  ScraperOperation
+  type ScraperConfig,
+  type ScraperOperation
 } from "../../common/types/scraper";
+import type Scraper from "../lib/Scraper";
+import { executeOperation } from "../utils/scraper";
 
 const SCRAPER_OPERATION_TYPES = [
   "open",

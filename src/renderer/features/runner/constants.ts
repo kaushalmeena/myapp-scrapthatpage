@@ -1,4 +1,4 @@
-import { TableData } from "./types";
+import type { TableData } from "./types";
 
 export const INITIAL_TABLE_DATA: TableData = {
   cols: [],

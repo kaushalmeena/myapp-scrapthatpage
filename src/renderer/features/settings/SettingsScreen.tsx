@@ -1,5 +1,5 @@
 import { Eye, Palette, Timer } from "lucide-react";
-import { ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
 import PageHeader from "@/components/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,13 +19,13 @@ import {
   selectOperationDelayMs,
   selectShowScraperWindow,
   selectTheme,
-  ThemeType,
+  type ThemeType,
   updateOperationDelayMs,
   updateShowScraperWindow,
   updateTheme
 } from "./settingsSlice";
 
-function SettingsScreen() {
+export default function SettingsScreen() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
   const showScraperWindow = useAppSelector(selectShowScraperWindow);
@@ -45,7 +45,10 @@ function SettingsScreen() {
 
   return (
     <>
-      <PageHeader title="Settings" />
+      <PageHeader
+        title="Settings"
+        subtitle="Appearance and scraping preferences"
+      />
       <Card className="max-w-md p-4">
         <div className="flex items-center gap-4">
           <Palette className="size-5 text-muted-foreground" />
@@ -66,7 +69,8 @@ function SettingsScreen() {
           <div className="flex-1">
             <Label>Show scraper window</Label>
             <p className="text-xs text-muted-foreground">
-              Hide to run scripts headless in the background
+              Turn off to run scripts in the background without opening a
+              browser window
             </p>
           </div>
           <Switch
@@ -78,9 +82,10 @@ function SettingsScreen() {
         <div className="flex items-center gap-4">
           <Timer className="size-5 text-muted-foreground" />
           <div className="flex-1">
-            <Label>Delay between operations</Label>
+            <Label>Delay between steps</Label>
             <p className="text-xs text-muted-foreground">
-              Pause inserted between operations (ms), for politeness
+              Pause (in ms) between steps so sites aren&apos;t hammered with
+              rapid-fire actions
             </p>
           </div>
           <Input
@@ -95,5 +100,3 @@ function SettingsScreen() {
     </>
   );
 }
-
-export default SettingsScreen;

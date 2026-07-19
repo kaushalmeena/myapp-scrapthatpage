@@ -1,24 +1,24 @@
 import {
   createSlice,
   current,
-  Draft,
+  type Draft,
   nanoid,
-  PayloadAction
+  type PayloadAction
 } from "@reduxjs/toolkit";
 import { cloneDeep } from "lodash";
 import type { RootState } from "@/app/store";
-import {
+import type {
   LargeOperation,
   LargeSelectInput,
   LargeTextInput
 } from "../../../common/types/largeOperation";
-import { SmallOperation } from "../../../common/types/smallOperation";
-import {
+import type { SmallOperation } from "../../../common/types/smallOperation";
+import type { ValidationRule } from "../../../common/types/validation";
+import type {
   Variable,
   VariablePickerMode,
   VariableType
 } from "../../../common/types/variable";
-import { ValidationRule } from "../../../common/types/validation";
 import { validateWithRules } from "../../../common/utils/operation";
 
 // The editor holds operations NORMALIZED: a flat id -> operation map plus id
@@ -73,7 +73,7 @@ export type EditorSnapshot = {
 export type ScriptEditorState = {
   id?: number;
   version?: number;
-  favorite: number;
+  favorite: boolean;
   information: {
     name: EditorField;
     description: EditorField;
@@ -96,7 +96,7 @@ export type ScriptEditorState = {
 };
 
 export const initialScriptEditorState: ScriptEditorState = {
-  favorite: 0,
+  favorite: false,
   information: {
     name: {
       value: "",
@@ -175,7 +175,7 @@ export const getListIds = (
     return state.rootIds;
   }
   const input = state.operations[ref.parentId]?.inputs[ref.inputIndex ?? -1];
-  if (!input || input.type !== "operation_box") {
+  if (input?.type !== "operation_box") {
     throw new Error("Operation list ref does not point at an operation_box");
   }
   return input.operationIds;
@@ -191,14 +191,15 @@ export const createEditorOperation = (
   name: template.name,
   description: template.description,
   format: template.format,
-  inputs: template.inputs.map((input): EditorInput =>
-    input.type === "operation_box"
-      ? {
-          label: input.label,
-          type: "operation_box",
-          operationIds: [] as string[]
-        }
-      : cloneDeep(input)
+  inputs: template.inputs.map(
+    (input): EditorInput =>
+      input.type === "operation_box"
+        ? {
+            label: input.label,
+            type: "operation_box",
+            operationIds: [] as string[]
+          }
+        : cloneDeep(input)
   )
 });
 

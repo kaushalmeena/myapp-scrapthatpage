@@ -1,5 +1,5 @@
 import { CopyPlus, Crosshair } from "lucide-react";
-import { ChangeEvent, useId, useState } from "react";
+import { type ChangeEvent, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,22 +17,20 @@ import { cn } from "@/lib/utils";
 import OperationsPanel from "./OperationsPanel";
 import { showVariableSelector, updateInput } from "./scriptEditorSlice";
 
-type OperationInputProps = {
+export default function OperationInput({
+  operationId,
+  inputIndex,
+  numberPrefix
+}: {
   operationId: string;
   inputIndex: number;
   // Number prefix for nested operation lists rendered by box inputs.
   numberPrefix: string;
-};
-
-function OperationInput({
-  operationId,
-  inputIndex,
-  numberPrefix
-}: OperationInputProps) {
+}) {
   const dispatch = useAppDispatch();
   const inputId = useId();
   const input = useAppSelector(
-    (state) => state.scriptEditor.operations[operationId]?.inputs[inputIndex]
+    (s) => s.scriptEditor.operations[operationId]?.inputs[inputIndex]
   );
 
   const [picking, setPicking] = useState(false);
@@ -164,5 +162,3 @@ function OperationInput({
       );
   }
 }
-
-export default OperationInput;

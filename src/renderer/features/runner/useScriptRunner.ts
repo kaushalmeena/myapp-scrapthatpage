@@ -1,19 +1,19 @@
-import { useRef, useState } from "react";
-import { ScraperResult } from "../../../common/types/scraper";
+import { useEffect, useRef, useState } from "react";
 import db from "@/database";
 import {
   selectOperationDelayMs,
   selectShowScraperWindow
 } from "@/features/settings/settingsSlice";
 import { useAppSelector } from "@/hooks/useAppSelector";
-import { Run, RunLogEntry } from "@/types/run";
-import { Script } from "@/types/script";
-import { RunnerGenerator, RunnerStatus, TableData } from "./types";
+import type { Run, RunLogEntry } from "@/types/run";
+import type { Script } from "@/types/script";
+import type { ScraperResult } from "../../../common/types/scraper";
 import {
   getRunnerGenerator,
   getRunnerHeaderInfo,
   getRunnerTableData
 } from "./runnerUtils";
+import type { RunnerGenerator, RunnerStatus, TableData } from "./types";
 
 type HookReturnType = {
   status: RunnerStatus;
@@ -21,6 +21,10 @@ type HookReturnType = {
   message: string;
   result: TableData | null;
   log: RunLogEntry[];
+  // Number of steps executed so far in the current/last run.
+  stepsCompleted: number;
+  // Wall-clock duration of the current/last run, ticking while it runs.
+  elapsedMs: number;
   start: () => void;
   stop: () => void;
 };
@@ -30,10 +34,12 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   const operationDelayMs = useAppSelector(selectOperationDelayMs);
 
   const [status, setStatus] = useState<RunnerStatus>("ready");
-  const [heading, setHeading] = useState("READY");
-  const [message, setMessage] = useState("Ready to start");
+  const [heading, setHeading] = useState("Ready");
+  const [message, setMessage] = useState("Press play to run this script");
   const [result, setResult] = useState<TableData | null>(null);
   const [log, setLog] = useState<RunLogEntry[]>([]);
+  const [stepsCompleted, setStepsCompleted] = useState(0);
+  const [elapsedMs, setElapsedMs] = useState(0);
 
   const statusRef = useRef<RunnerStatus>("stopped");
   const generatorRef = useRef<RunnerGenerator | undefined>(undefined);
@@ -44,6 +50,25 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   const startedAtRef = useRef(0);
   // Guards against persisting the same run twice (e.g. stop after finish).
   const persistedRef = useRef(false);
+  // Ticks the elapsed-time display while a run is in progress.
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(
+    undefined
+  );
+
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = undefined;
+    }
+    if (startedAtRef.current > 0) {
+      setElapsedMs(Date.now() - startedAtRef.current);
+    }
+  };
+
+  // Clear the ticker if the screen unmounts mid-run. Mount/unmount only, so
+  // stopTimer is intentionally not a dependency.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: unmount-only cleanup
+  useEffect(() => stopTimer, []);
 
   const appendLogEntry = (
     entryHeading: string,
@@ -65,7 +90,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
       return;
     }
     persistedRef.current = true;
-    db.addRun({
+    db.createRun({
       scriptId: script.id,
       scriptName: script.name,
       startedAt: startedAtRef.current,
@@ -112,7 +137,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
 
     const operation = operationData.value;
     if (!operation) {
-      showError("Didn't found any operation to execute");
+      showError("This script has no steps to run.");
       return;
     }
 
@@ -125,6 +150,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
       .runOperation(operation)
       .then((res) => {
         if (res.status === "success") {
+          setStepsCompleted((prev) => prev + 1);
           processScraperResult(res.result);
           // Politeness delay between operations; the guard at the top of
           // executeNextOperation re-checks the status once the timer fires.
@@ -139,7 +165,7 @@ export const useScriptRunner = (script: Script): HookReturnType => {
       })
       .catch((err) => {
         console.error(err);
-        showError("Error occurred in executing operation");
+        showError("Something went wrong while running this step.");
       });
   };
 
@@ -156,37 +182,46 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     persistedRef.current = false;
     setResult(null);
     setLog([]);
+    setStepsCompleted(0);
+    setElapsedMs(0);
+    stopTimer();
+    timerRef.current = setInterval(() => {
+      setElapsedMs(Date.now() - startedAtRef.current);
+    }, 500);
     setStatus("started");
-    setHeading("STARTED");
-    setMessage("Execution is running");
+    setHeading("Running");
+    setMessage("Working through the script steps…");
     executeNextOperation();
   };
 
   const stop = () => {
+    stopTimer();
     statusRef.current = "stopped";
     setStatus("stopped");
-    setHeading("STOPPED");
-    setMessage("Execution is stopped");
-    appendLogEntry("STOPPED", "Execution is stopped", "info");
+    setHeading("Stopped");
+    setMessage("Run stopped before it finished");
+    appendLogEntry("Stopped", "Run stopped before it finished", "info");
     persistRun("stopped");
   };
 
   const finish = () => {
+    stopTimer();
     statusRef.current = "stopped";
     setStatus("finished");
-    setHeading("FINISHED");
-    setMessage("Execution is finished");
-    appendLogEntry("FINISHED", "Execution is finished", "success");
+    setHeading("Finished");
+    setMessage("All steps completed");
+    appendLogEntry("Finished", "All steps completed", "success");
     persistRun("finished");
   };
 
   const showError = (error: string) => {
+    stopTimer();
     window.scraper.closeWindow();
     statusRef.current = "stopped";
     setStatus("error");
-    setHeading("ERROR");
+    setHeading("Error");
     setMessage(error);
-    appendLogEntry("ERROR", error, "error");
+    appendLogEntry("Error", error, "error");
     persistRun("error");
   };
 
@@ -196,6 +231,8 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     message,
     result,
     log,
+    stepsCompleted,
+    elapsedMs,
     start,
     stop
   };

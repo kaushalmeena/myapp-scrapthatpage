@@ -1,10 +1,10 @@
-import { LargeOperation } from "../types/largeOperation";
+import type { LargeOperation } from "../types/largeOperation";
 
 export const LARGE_OPERATIONS: LargeOperation[] = [
   {
-    name: "OPEN",
+    name: "Open page",
     type: "open",
-    description: "Open url for web scrapping.",
+    description: "Go to a URL in the scraper window.",
     format: "{0}",
     inputs: [
       {
@@ -31,9 +31,10 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "Extract",
+    name: "Extract data",
     type: "extract",
-    description: "Scraps specified elements from opened page.",
+    description:
+      "Collect text or attribute values from every element matching a selector.",
     format: "{0} [{1}]",
     inputs: [
       {
@@ -75,11 +76,11 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
         error: "",
         options: [
           {
-            label: "Text",
+            label: "Text content",
             value: "textContent"
           },
           {
-            label: "Href",
+            label: "Link URL (href)",
             value: "href"
           }
         ],
@@ -93,9 +94,9 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "CLICK",
+    name: "Click element",
     type: "click",
-    description: "Click on specified element.",
+    description: "Click the first element matching a selector.",
     format: "[{0}]",
     inputs: [
       {
@@ -119,9 +120,9 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "TYPE",
+    name: "Type text",
     type: "type",
-    description: "Type text into specified input.",
+    description: "Type text into an input or editable field.",
     format: "[{0}] {1}",
     inputs: [
       {
@@ -158,9 +159,9 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "SET",
+    name: "Set variable",
     type: "set",
-    description: "Set specified data to a variable.",
+    description: "Store a value in a variable for later steps.",
     format: "{0} [{1}]",
     inputs: [
       {
@@ -225,9 +226,9 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "INCREASE",
+    name: "Increase variable",
     type: "increase",
-    description: "Increase specified variable",
+    description: "Add an amount to a number variable.",
     format: "{0} [+{1}]",
     inputs: [
       {
@@ -270,9 +271,9 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "DECREASE",
+    name: "Decrease variable",
     type: "decrease",
-    description: "Decrease specified variable",
+    description: "Subtract an amount from a number variable.",
     format: "{0} [-{1}]",
     inputs: [
       {
@@ -315,9 +316,9 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "IF",
+    name: "If condition",
     type: "if",
-    description: "Executes block only if specified condition is true.",
+    description: "Run the nested steps only when the condition is true.",
     format: "{0}",
     inputs: [
       {
@@ -345,9 +346,9 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "WHILE",
+    name: "While loop",
     type: "while",
-    description: "Executes block until specified condition become false.",
+    description: "Repeat the nested steps while the condition stays true.",
     format: "{0}",
     inputs: [
       {
@@ -375,9 +376,9 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "WAIT",
+    name: "Wait for element",
     type: "wait",
-    description: "Waits until specified element appears on the page.",
+    description: "Pause until an element appears on the page.",
     format: "[{0}] {1}ms",
     inputs: [
       {
@@ -417,9 +418,9 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "DELAY",
+    name: "Delay",
     type: "delay",
-    description: "Pauses execution for the given number of milliseconds.",
+    description: "Pause for a fixed number of milliseconds.",
     format: "{0}ms",
     inputs: [
       {
@@ -441,13 +442,14 @@ export const LARGE_OPERATIONS: LargeOperation[] = [
     ]
   },
   {
-    name: "SCROLL",
+    name: "Scroll",
     type: "scroll",
-    description: "Scrolls to an element, or to the page bottom when empty.",
+    description:
+      "Scroll to an element, or to the page bottom to load lazy content.",
     format: "[{0}]",
     inputs: [
       {
-        label: "Selector (empty = page bottom)",
+        label: "Selector (leave empty for page bottom)",
         type: "text",
         elementPicker: true,
         width: 12,
