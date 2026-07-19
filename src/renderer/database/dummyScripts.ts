@@ -12,6 +12,11 @@ export const mostPopularMoviesScript: Script = {
       ]
     },
     {
+      // IMDb lazy-renders the chart; scrolling to the bottom loads all 100.
+      type: "scroll",
+      inputs: [{ type: "text", value: "" }]
+    },
+    {
       type: "extract",
       inputs: [
         { type: "text", value: "Title" },

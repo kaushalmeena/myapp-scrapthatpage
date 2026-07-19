@@ -5,9 +5,6 @@ import {
 } from "../../common/types/scraper";
 import Scraper from "../lib/Scraper";
 
-// How long click/type wait for their target element before failing.
-const AUTO_WAIT_TIMEOUT_MS = 10000;
-
 const processOperation = async (
   operation: ScraperOperation,
   scraper: Scraper
@@ -19,39 +16,20 @@ const processOperation = async (
       await scraper.loadURL(operation.url);
       break;
     case "extract":
-      {
-        // Values are JSON-encoded before being embedded in the injected script
-        // so selectors/attributes containing quotes can't break out of the
-        // string literal or inject arbitrary code.
-        const rawData = await scraper.executeJavascript(`
-          Array.from(document.querySelectorAll(${JSON.stringify(
-            operation.selector
-          )})).map((element) => element[${JSON.stringify(operation.attribute)}]);
-        `);
-        result = {
-          ...operation,
-          url: scraper.getActiveURL(),
-          data: rawData as string[]
-        };
-      }
+      result = {
+        ...operation,
+        url: scraper.getActiveURL(),
+        data: await scraper.extract(operation.selector, operation.attribute)
+      };
       break;
     case "click":
-      // Auto-wait so clicks tolerate content that loads after navigation.
-      await scraper.waitForSelector(operation.selector, AUTO_WAIT_TIMEOUT_MS);
-      await scraper.executeJavascript(`
-          document.querySelector(${JSON.stringify(operation.selector)}).click();
-        `);
+      await scraper.click(operation.selector);
       break;
     case "type":
-      await scraper.waitForSelector(operation.selector, AUTO_WAIT_TIMEOUT_MS);
-      await scraper.executeJavascript(`
-          document.querySelector(${JSON.stringify(
-            operation.selector
-          )}).value = ${JSON.stringify(operation.text)};
-        `);
+      await scraper.type(operation.selector, operation.text);
       break;
     case "wait":
-      await scraper.waitForSelector(operation.selector, operation.timeoutMs);
+      await scraper.waitFor(operation.selector, operation.timeoutMs);
       break;
     case "delay":
       await scraper.delay(operation.ms);

@@ -30,6 +30,24 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
+// The scraper window usually runs behind the main window or hidden (headless
+// runs). Stop Chromium from throttling or freezing it when it is backgrounded
+// or occluded, so timers, scrolling and lazy content keep working during a run.
+app.commandLine.appendSwitch("disable-background-timer-throttling");
+app.commandLine.appendSwitch("disable-renderer-backgrounding");
+app.commandLine.appendSwitch("disable-backgrounding-occluded-windows");
+
+// Dev-only escape hatch: expose a CDP port so external tooling can drive the
+// app during development. Signed/packaged builds ignore this switch (macOS
+// blocks remote debugging), which is fine — the scraper itself uses the
+// in-process webContents.debugger and never needs a port.
+if (process.env.STP_REMOTE_DEBUG) {
+  app.commandLine.appendSwitch(
+    "remote-debugging-port",
+    process.env.STP_REMOTE_DEBUG
+  );
+}
+
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -61,7 +79,7 @@ const createWindow = () => {
     );
   }
 
-  // Initialize scraper instance
+  // Initialize scraper instance (drives its own child window over CDP)
   const scraper = new Scraper(mainWindow);
 
   // Connect scraper ipcMain handles
