@@ -1,19 +1,18 @@
 import { builtinModules } from "node:module";
 import type { AddressInfo } from "node:net";
 import type { ConfigEnv, Plugin, UserConfig } from "vite";
-import pkg from "./package.json";
 
 export const builtins = [
   "electron",
   ...builtinModules.map((m) => [m, `node:${m}`]).flat()
 ];
 
-export const external = [
-  ...builtins,
-  ...Object.keys(
-    "dependencies" in pkg ? (pkg.dependencies as Record<string, unknown>) : {}
-  )
-];
+// Only Electron and Node builtins may stay external: the packaged app ships
+// just the Vite bundles (no node_modules), so every package.json dependency
+// used by the main process must be bundled in. Externalizing dependencies here
+// (the Forge template default) makes the packaged app die on startup with
+// "Cannot find module" for the first external require.
+export const external = [...builtins];
 
 export function getBuildConfig(env: ConfigEnv<"build">): UserConfig {
   const { root, mode, command } = env;
