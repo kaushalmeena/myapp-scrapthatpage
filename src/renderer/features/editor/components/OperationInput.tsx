@@ -1,5 +1,5 @@
 import { OPERATION_SCHEMA } from "@common/constants/operationSchema";
-import { useAppSelector } from "@/hooks/useAppSelector";
+import { useEditorStore } from "../editorStore";
 import OperationPanel from "./OperationPanel";
 import SelectInput from "./SelectInput";
 import TextInput from "./TextInput";
@@ -20,11 +20,9 @@ export default function OperationInput({
 }) {
   // Selecting type and input separately keeps this component from re-rendering
   // when a sibling input in the same operation changes.
-  const type = useAppSelector(
-    (s) => s.scriptEditor.operations[operationId]?.type
-  );
-  const input = useAppSelector(
-    (s) => s.scriptEditor.operations[operationId]?.inputs[inputIndex]
+  const type = useEditorStore((s) => s.operations[operationId]?.type);
+  const input = useEditorStore(
+    (s) => s.operations[operationId]?.inputs[inputIndex]
   );
 
   if (!type || !input) {

@@ -1,13 +1,12 @@
 import { motion } from "motion/react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
-import { selectTheme } from "@/features/settings/settingsSlice";
-import { useAppSelector } from "@/hooks/useAppSelector";
+import { useSettingsStore } from "@/features/settings/settingsStore";
 import CommandPalette from "./CommandPalette";
 import Sidebar from "./Sidebar";
 
 export default function MainLayout() {
-  const theme = useAppSelector(selectTheme);
+  const theme = useSettingsStore((s) => s.theme);
   const { pathname } = useLocation();
 
   return (

@@ -2,24 +2,20 @@ import type { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
-import { selectInformation, updateInformation } from "../scriptEditorSlice";
+import { selectInformation, useEditorStore } from "../editorStore";
 
 export default function InformationPanel() {
-  const dispatch = useAppDispatch();
-  const information = useAppSelector(selectInformation);
+  const information = useEditorStore(selectInformation);
+  const updateInformation = useEditorStore((s) => s.actions.updateInformation);
 
   const handleInformationChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) =>
-    dispatch(
-      updateInformation({
-        // The two fields render with name="name" / name="description".
-        key: event.target.name as "name" | "description",
-        value: event.target.value
-      })
-    );
+    updateInformation({
+      // The two fields render with name="name" / name="description".
+      key: event.target.name as "name" | "description",
+      value: event.target.value
+    });
 
   return (
     <div className="flex flex-col gap-4">

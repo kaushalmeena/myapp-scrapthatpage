@@ -18,14 +18,11 @@ import {
 } from "@dnd-kit/sortable";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
 import {
   getOperationIds,
   type OperationListRef,
-  reorderOperation,
-  showOperationPicker
-} from "../scriptEditorSlice";
+  useEditorStore
+} from "../editorStore";
 import OperationCard from "./OperationCard";
 
 export default function OperationPanel({
@@ -37,10 +34,12 @@ export default function OperationPanel({
   // first box of the second operation, and so on).
   numberPrefix: string;
 }) {
-  const dispatch = useAppDispatch();
+  const { reorderOperation, showOperationPicker } = useEditorStore(
+    (s) => s.actions
+  );
   // Immer keeps untouched arrays referentially stable, so the default
   // reference equality only re-renders this list when it actually changes.
-  const ids = useAppSelector((s) => getOperationIds(s.scriptEditor, listRef));
+  const ids = useEditorStore((s) => getOperationIds(s, listRef));
 
   // A small activation distance keeps plain clicks (expand, buttons) from
   // starting a drag.
@@ -51,18 +50,16 @@ export default function OperationPanel({
     })
   );
 
-  const handleAddClick = () => dispatch(showOperationPicker(listRef));
+  const handleAddClick = () => showOperationPicker(listRef);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      dispatch(
-        reorderOperation({
-          listRef,
-          from: ids.indexOf(String(active.id)),
-          to: ids.indexOf(String(over.id))
-        })
-      );
+      reorderOperation({
+        listRef,
+        from: ids.indexOf(String(active.id)),
+        to: ids.indexOf(String(over.id))
+      });
     }
   };
 

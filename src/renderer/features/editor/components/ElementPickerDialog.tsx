@@ -11,25 +11,22 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
 import { TOAST_MESSAGES } from "@/lib/messages";
 import {
-  hideElementPicker,
   selectElementPicker,
   selectFirstOpenUrl,
-  updateInput
-} from "../scriptEditorSlice";
+  useEditorStore
+} from "../editorStore";
 
 // Store-driven (like VariablePickerDialog): opens for whichever input started
 // the pick. Prompts for a URL, opens it in the scraper window, then lets the
 // user click an element there and writes its CSS selector back to that input.
 export default function ElementPickerDialog() {
-  const dispatch = useAppDispatch();
-  const { target } = useAppSelector(selectElementPicker);
+  const { target } = useEditorStore(selectElementPicker);
+  const { hideElementPicker, updateInput } = useEditorStore((s) => s.actions);
   // Default to the page the script already opens, so picking usually targets
   // the right site without retyping.
-  const defaultUrl = useAppSelector(selectFirstOpenUrl);
+  const defaultUrl = useEditorStore(selectFirstOpenUrl);
   const [url, setUrl] = useState(defaultUrl);
   const urlInputId = useId();
 
@@ -41,7 +38,7 @@ export default function ElementPickerDialog() {
     }
   }, [isOpen, defaultUrl]);
 
-  const handlePickerClose = () => dispatch(hideElementPicker());
+  const handlePickerClose = () => hideElementPicker();
 
   const handlePickClick = async () => {
     const raw = url.trim();
@@ -56,7 +53,7 @@ export default function ElementPickerDialog() {
       await window.scraper.loadURL(pageUrl);
       const res = await window.scraper.pickElement();
       if (res.status === "success") {
-        dispatch(updateInput({ operationId, inputIndex, value: res.selector }));
+        updateInput({ operationId, inputIndex, value: res.selector });
         toast.success(TOAST_MESSAGES.ELEMENT_PICK_SUCCESS);
       } else if (res.status === "error") {
         toast.error(res.message);

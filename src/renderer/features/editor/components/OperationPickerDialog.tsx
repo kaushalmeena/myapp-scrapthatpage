@@ -11,30 +11,26 @@ import {
   CommandItem,
   CommandList
 } from "@/components/ui/command";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
 import { OPERATION_ICONS } from "../constants/operationIcons";
-import {
-  appendOperation,
-  hideOperationPicker,
-  selectOperationPicker
-} from "../scriptEditorSlice";
+import { selectOperationPicker, useEditorStore } from "../editorStore";
 
 // Searchable step picker (same command-palette interaction as Cmd+K):
 // type to filter, Enter or click to add the step.
 export default function OperationPickerDialog() {
-  const dispatch = useAppDispatch();
-  const selector = useAppSelector(selectOperationPicker);
+  const selector = useEditorStore(selectOperationPicker);
+  const { appendOperation, hideOperationPicker } = useEditorStore(
+    (s) => s.actions
+  );
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      dispatch(hideOperationPicker());
+      hideOperationPicker();
     }
   };
 
   const handleSelect = (type: OperationType) => {
-    dispatch(appendOperation(type));
-    dispatch(hideOperationPicker());
+    appendOperation(type);
+    hideOperationPicker();
   };
 
   return (

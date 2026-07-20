@@ -13,34 +13,26 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
-import {
-  selectShowWindow,
-  selectStepDelayMs,
-  selectTheme,
-  type Theme,
-  updateShowWindow,
-  updateStepDelayMs,
-  updateTheme
-} from "./settingsSlice";
+import { type Theme, useSettingsStore } from "./settingsStore";
 
 export default function SettingsScreen() {
-  const dispatch = useAppDispatch();
-  const theme = useAppSelector(selectTheme);
-  const showWindow = useAppSelector(selectShowWindow);
-  const stepDelayMs = useAppSelector(selectStepDelayMs);
+  const theme = useSettingsStore((s) => s.theme);
+  const showWindow = useSettingsStore((s) => s.showWindow);
+  const stepDelayMs = useSettingsStore((s) => s.stepDelayMs);
+  const setTheme = useSettingsStore((s) => s.setTheme);
+  const setShowWindow = useSettingsStore((s) => s.setShowWindow);
+  const setStepDelayMs = useSettingsStore((s) => s.setStepDelayMs);
 
   const changeTheme = (value: string) => {
-    dispatch(updateTheme(value as Theme));
+    setTheme(value as Theme);
   };
 
   const changeShowWindow = (value: boolean) => {
-    dispatch(updateShowWindow(value));
+    setShowWindow(value);
   };
 
   const changeStepDelay = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(updateStepDelayMs(Number(event.target.value) || 0));
+    setStepDelayMs(Number(event.target.value) || 0);
   };
 
   return (

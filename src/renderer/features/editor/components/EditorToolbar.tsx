@@ -1,8 +1,7 @@
 import { Redo2, Undo2 } from "lucide-react";
+import { useStore } from "zustand";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
-import { redo, selectCanRedo, selectCanUndo, undo } from "../scriptEditorSlice";
+import { useEditorStore } from "../editorStore";
 
 // Editor action bar: undo/redo on the left, cancel/submit on the right.
 export default function EditorToolbar({
@@ -15,9 +14,11 @@ export default function EditorToolbar({
   onSubmit: () => void;
   onCancel: () => void;
 }) {
-  const dispatch = useAppDispatch();
-  const canUndo = useAppSelector(selectCanUndo);
-  const canRedo = useAppSelector(selectCanRedo);
+  const { undo, redo, pastStates, futureStates } = useStore(
+    useEditorStore.temporal
+  );
+  const canUndo = pastStates.length > 0;
+  const canRedo = futureStates.length > 0;
 
   return (
     <div className="mb-4 flex items-center justify-between">
@@ -28,7 +29,7 @@ export default function EditorToolbar({
           className="text-muted-foreground"
           title="Undo (Cmd/Ctrl+Z)"
           disabled={!canUndo}
-          onClick={() => dispatch(undo())}
+          onClick={() => undo()}
         >
           <Undo2 className="size-4" />
         </Button>
@@ -38,7 +39,7 @@ export default function EditorToolbar({
           className="text-muted-foreground"
           title="Redo (Shift+Cmd/Ctrl+Z)"
           disabled={!canRedo}
-          onClick={() => dispatch(redo())}
+          onClick={() => redo()}
         >
           <Redo2 className="size-4" />
         </Button>

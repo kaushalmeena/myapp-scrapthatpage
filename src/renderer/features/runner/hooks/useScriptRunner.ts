@@ -1,11 +1,7 @@
 import type { ScraperResult } from "@common/types/scraper";
 import { useRef, useState } from "react";
 import db from "@/database";
-import {
-  selectShowWindow,
-  selectStepDelayMs
-} from "@/features/settings/settingsSlice";
-import { useAppSelector } from "@/hooks/useAppSelector";
+import { useSettingsStore } from "@/features/settings/settingsStore";
 import type { Run, RunLogEntry } from "@/types/run";
 import type { Script } from "@/types/script";
 import type { RunnerGenerator, RunnerStatus, TableData } from "../types";
@@ -32,8 +28,8 @@ type HookReturnType = {
 };
 
 export const useScriptRunner = (script: Script): HookReturnType => {
-  const showWindow = useAppSelector(selectShowWindow);
-  const stepDelayMs = useAppSelector(selectStepDelayMs);
+  const showWindow = useSettingsStore((s) => s.showWindow);
+  const stepDelayMs = useSettingsStore((s) => s.stepDelayMs);
 
   const [status, setStatus] = useState<RunnerStatus>("ready");
   const [heading, setHeading] = useState("Ready");

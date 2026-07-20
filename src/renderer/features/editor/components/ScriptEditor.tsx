@@ -1,14 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
-import store from "@/app/store";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
 import type { Script } from "@/types/script";
+import { getOperationIds, useEditorStore } from "../editorStore";
 import { useUndoRedoShortcuts } from "../hooks/useUndoRedoShortcuts";
-import { getOperationIds, replaceState } from "../scriptEditorSlice";
 import {
   denormalizeState,
   normalizeScript,
@@ -31,23 +28,25 @@ export default function ScriptEditor({
   submitLabel: string;
   onSubmit: (script: Script) => void;
 }) {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const stepCount = useAppSelector(
-    (s) => getOperationIds(s.scriptEditor, { parentId: null }).length
+  const replaceState = useEditorStore((s) => s.actions.replaceState);
+  const stepCount = useEditorStore(
+    (s) => getOperationIds(s, { parentId: null }).length
   );
 
   useUndoRedoShortcuts();
 
   useEffect(() => {
-    dispatch(replaceState(normalizeScript(script)));
-  }, [dispatch, script]);
+    replaceState(normalizeScript(script));
+    // The loaded script is the baseline, not an undoable change.
+    useEditorStore.temporal.getState().clear();
+  }, [replaceState, script]);
 
   const handleSubmit = () => {
-    const currentState = store.getState().scriptEditor;
+    const currentState = useEditorStore.getState();
     const { errors, validatedState } = validateEditorState(currentState);
     if (errors.length > 0) {
-      dispatch(replaceState(validatedState));
+      replaceState(validatedState);
       toast.error(errors.slice(0, 5).join("\n"));
     } else {
       onSubmit(denormalizeState(currentState));

@@ -5,7 +5,7 @@ import AsyncContent from "./AsyncContent";
 describe("AsyncContent", () => {
   it("shows a spinner while loading", () => {
     const { container } = render(
-      <AsyncContent status="loading" error="">
+      <AsyncContent status="loading">
         <p>content</p>
       </AsyncContent>
     );
@@ -25,7 +25,7 @@ describe("AsyncContent", () => {
 
   it("renders children once loaded", () => {
     render(
-      <AsyncContent status="loaded" error="">
+      <AsyncContent status="loaded">
         <p>content</p>
       </AsyncContent>
     );

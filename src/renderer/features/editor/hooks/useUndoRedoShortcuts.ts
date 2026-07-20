@@ -1,12 +1,10 @@
 import { useEffect } from "react";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { redo, undo } from "../scriptEditorSlice";
+import { useEditorStore } from "../editorStore";
 
 // Standard editor shortcuts: Cmd/Ctrl+Z undoes, Shift+Cmd/Ctrl+Z redoes.
 // Skipped while focus is in a text field so native text undo still works.
+// Undo/redo are driven by zundo's temporal store.
 export const useUndoRedoShortcuts = () => {
-  const dispatch = useAppDispatch();
-
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (
@@ -23,9 +21,14 @@ export const useUndoRedoShortcuts = () => {
         return;
       }
       event.preventDefault();
-      dispatch(event.shiftKey ? redo() : undo());
+      const { undo, redo } = useEditorStore.temporal.getState();
+      if (event.shiftKey) {
+        redo();
+      } else {
+        undo();
+      }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [dispatch]);
+  }, []);
 };

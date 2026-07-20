@@ -7,29 +7,28 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
 import {
-  hideVariablePicker,
   selectVariablePicker,
   selectVariables,
-  updateInputWithVariable
-} from "../scriptEditorSlice";
+  useEditorStore
+} from "../editorStore";
 
 export default function VariablePickerDialog() {
-  const dispatch = useAppDispatch();
-  const selector = useAppSelector(selectVariablePicker);
-  const variables = useAppSelector(selectVariables);
+  const selector = useEditorStore(selectVariablePicker);
+  const variables = useEditorStore(selectVariables);
+  const { hideVariablePicker, updateInputWithVariable } = useEditorStore(
+    (s) => s.actions
+  );
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      dispatch(hideVariablePicker());
+      hideVariablePicker();
     }
   };
 
   const handleSelect = (variable: Variable) => {
-    dispatch(updateInputWithVariable(variable));
-    dispatch(hideVariablePicker());
+    updateInputWithVariable(variable);
+    hideVariablePicker();
   };
 
   const filteredVariables =

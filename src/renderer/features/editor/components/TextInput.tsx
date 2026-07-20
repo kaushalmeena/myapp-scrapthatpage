@@ -4,13 +4,8 @@ import { type ChangeEvent, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { cn } from "@/lib/utils";
-import {
-  showElementPicker,
-  showVariablePicker,
-  updateInput
-} from "../scriptEditorSlice";
+import { useEditorStore } from "../editorStore";
 
 export default function TextInput({
   operationId,
@@ -25,7 +20,9 @@ export default function TextInput({
   error: string;
   schema: TextInputSchema;
 }) {
-  const dispatch = useAppDispatch();
+  const { updateInput, showVariablePicker, showElementPicker } = useEditorStore(
+    (s) => s.actions
+  );
   const inputId = useId();
 
   const hasVariablePicker = Boolean(schema.variablePicker);
@@ -38,15 +35,13 @@ export default function TextInput({
         : "";
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) =>
-    dispatch(
-      updateInput({ operationId, inputIndex, value: event.target.value })
-    );
+    updateInput({ operationId, inputIndex, value: event.target.value });
 
   const handleVariablePickerOpen = () =>
-    dispatch(showVariablePicker({ operationId, inputIndex }));
+    showVariablePicker({ operationId, inputIndex });
 
   const handleElementPickerOpen = () =>
-    dispatch(showElementPicker({ operationId, inputIndex }));
+    showElementPicker({ operationId, inputIndex });
 
   return (
     <div className="flex flex-col gap-1.5">

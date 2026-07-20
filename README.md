@@ -70,7 +70,7 @@ lazily rendered content still loads.
 
 - [Electron](https://www.electronjs.org/) + [Electron Forge](https://www.electronforge.io/) (packaging) with [Vite](https://vite.dev/) (bundling)
 - [React](https://react.dev/) + [shadcn/ui](https://ui.shadcn.com/) + [Tailwind CSS v4](https://tailwindcss.com/) + [Motion](https://motion.dev/) (animations)
-- [Redux Toolkit](https://redux-toolkit.js.org/) (editor state) + [Dexie](https://dexie.org/) (IndexedDB) + [Zod](https://zod.dev/) (validation)
+- [Zustand](https://zustand.docs.pmnd.rs/) (state — with [zundo](https://github.com/charkour/zundo) for editor undo/redo) + [Dexie](https://dexie.org/) (IndexedDB) + [Zod](https://zod.dev/) (validation)
 - [TypeScript](https://www.typescriptlang.org/) (strict) + [Vitest](https://vitest.dev/) (tests) + [Biome](https://biomejs.dev/) (lint & format)
 
 ## Getting started

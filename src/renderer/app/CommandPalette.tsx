@@ -12,9 +12,7 @@ import {
   CommandSeparator
 } from "@/components/ui/command";
 import db from "@/database";
-import { selectTheme, updateTheme } from "@/features/settings/settingsSlice";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
+import { useSettingsStore } from "@/features/settings/settingsStore";
 import { NAV_LINKS } from "@/lib/navigation";
 
 // App-wide command palette on Cmd/Ctrl+K: navigation, quick actions, and
@@ -22,8 +20,8 @@ import { NAV_LINKS } from "@/lib/navigation";
 export default function CommandPalette() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const theme = useAppSelector(selectTheme);
+  const theme = useSettingsStore((s) => s.theme);
+  const setTheme = useSettingsStore((s) => s.setTheme);
 
   const scripts = useLiveQuery(() => db.getScripts(), []);
 
@@ -46,9 +44,7 @@ export default function CommandPalette() {
   const handleCreateSelect = () => runCommand(() => navigate("/create"));
 
   const handleToggleTheme = () =>
-    runCommand(() =>
-      dispatch(updateTheme(theme === "dark" ? "light" : "dark"))
-    );
+    runCommand(() => setTheme(theme === "dark" ? "light" : "dark"));
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>

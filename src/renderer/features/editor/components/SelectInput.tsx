@@ -8,8 +8,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { updateInput } from "../scriptEditorSlice";
+import { useEditorStore } from "../editorStore";
 
 export default function SelectInput({
   operationId,
@@ -24,11 +23,11 @@ export default function SelectInput({
   error: string;
   schema: SelectInputSchema;
 }) {
-  const dispatch = useAppDispatch();
+  const updateInput = useEditorStore((s) => s.actions.updateInput);
   const inputId = useId();
 
   const handleChange = (next: string) =>
-    dispatch(updateInput({ operationId, inputIndex, value: next }));
+    updateInput({ operationId, inputIndex, value: next });
 
   return (
     <div className="flex flex-col gap-1.5">

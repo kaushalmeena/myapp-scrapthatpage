@@ -11,15 +11,9 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useAppDispatch } from "@/hooks/useAppDispatch";
-import { useAppSelector } from "@/hooks/useAppSelector";
 import { cn } from "@/lib/utils";
 import { OPERATION_ICONS } from "../constants/operationIcons";
-import {
-  deleteOperation,
-  duplicateOperation,
-  type OperationListRef
-} from "../scriptEditorSlice";
+import { type OperationListRef, useEditorStore } from "../editorStore";
 import OperationInput from "./OperationInput";
 
 const INPUT_WIDTH_CLASSES: Record<number, string> = {
@@ -38,8 +32,10 @@ export default function OperationCard({
   // Display number like "2" or "2.3" (position within nested lists).
   number: string;
 }) {
-  const dispatch = useAppDispatch();
-  const operation = useAppSelector((s) => s.scriptEditor.operations[id]);
+  const operation = useEditorStore((s) => s.operations[id]);
+  const { duplicateOperation, deleteOperation } = useEditorStore(
+    (s) => s.actions
+  );
 
   const [expanded, setExpanded] = useState(false);
 
@@ -58,10 +54,9 @@ export default function OperationCard({
 
   const handleExpandToggle = () => setExpanded((prev) => !prev);
 
-  const handleDuplicateClick = () =>
-    dispatch(duplicateOperation({ listRef, id }));
+  const handleDuplicateClick = () => duplicateOperation({ listRef, id });
 
-  const handleDeleteClick = () => dispatch(deleteOperation({ listRef, id }));
+  const handleDeleteClick = () => deleteOperation({ listRef, id });
 
   const schema = OPERATION_SCHEMA[operation.type];
   // Until the user fills something in, the format string is all placeholders;

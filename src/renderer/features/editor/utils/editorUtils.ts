@@ -7,9 +7,9 @@ import {
   createEditorOperation,
   type EditorInput,
   type EditorOperation,
-  initialScriptEditorState,
-  type ScriptEditorState
-} from "../scriptEditorSlice";
+  type EditorState,
+  initialEditorState
+} from "../editorHelpers";
 
 /**
  * Copies a stored input's data onto its editor counterpart. Inputs line up by
@@ -33,8 +33,8 @@ const applyInput = (
  * gets an id and lands in the flat `operations` map, nesting is expressed as
  * id lists, and variables are derived from "set" operations.
  */
-export const normalizeScript = (script: Script): ScriptEditorState => {
-  const state = structuredClone(initialScriptEditorState);
+export const normalizeScript = (script: Script): EditorState => {
+  const state = structuredClone(initialEditorState);
 
   const addOperation = (data: Operation): string => {
     const operation = createEditorOperation(data.type);
@@ -91,7 +91,7 @@ const toOperation = (
 /**
  * Converts the normalized editor state back into a storable script.
  */
-export const denormalizeState = (state: ScriptEditorState): Script => ({
+export const denormalizeState = (state: EditorState): Script => ({
   id: state.id,
   version: state.version,
   favorite: state.favorite,
@@ -107,7 +107,7 @@ export const denormalizeState = (state: ScriptEditorState): Script => ({
  * @returns a map of operation id to its display number.
  */
 export const computeOperationNumbers = (
-  state: Pick<ScriptEditorState, "operations" | "rootIds">
+  state: Pick<EditorState, "operations" | "rootIds">
 ): Record<string, string> => {
   const numbers: Record<string, string> = {};
 
@@ -135,7 +135,7 @@ export const computeOperationNumbers = (
  *   fields/cards) plus a copy of the state with per-field error strings filled
  *   in for display.
  */
-export const validateEditorState = (state: ScriptEditorState) => {
+export const validateEditorState = (state: EditorState) => {
   const errors: string[] = [];
   const numbers = computeOperationNumbers(state);
 

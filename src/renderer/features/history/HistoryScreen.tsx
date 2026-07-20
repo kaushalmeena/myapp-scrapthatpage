@@ -37,7 +37,7 @@ export default function HistoryScreen() {
           </Button>
         }
       />
-      <AsyncContent status={runs === undefined ? "loading" : "loaded"} error="">
+      <AsyncContent status={runs === undefined ? "loading" : "loaded"}>
         {runs && runs.length === 0 ? (
           <EmptyState message="No runs yet — results will appear here after you run a script" />
         ) : (
