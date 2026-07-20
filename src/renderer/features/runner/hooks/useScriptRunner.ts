@@ -1,9 +1,9 @@
 import type { ScraperResult } from "@common/types/scraper";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import db from "@/database";
 import {
-  selectOperationDelayMs,
-  selectShowScraperWindow
+  selectShowWindow,
+  selectStepDelayMs
 } from "@/features/settings/settingsSlice";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import type { Run, RunLogEntry } from "@/types/run";
@@ -14,6 +14,8 @@ import {
   getRunnerHeaderInfo,
   getRunnerTableData
 } from "../utils/runnerUtils";
+import { useElapsedTimer } from "./useElapsedTimer";
+import { useRunLog } from "./useRunLog";
 
 type HookReturnType = {
   status: RunnerStatus;
@@ -30,60 +32,25 @@ type HookReturnType = {
 };
 
 export const useScriptRunner = (script: Script): HookReturnType => {
-  const showScraperWindow = useAppSelector(selectShowScraperWindow);
-  const operationDelayMs = useAppSelector(selectOperationDelayMs);
+  const showWindow = useAppSelector(selectShowWindow);
+  const stepDelayMs = useAppSelector(selectStepDelayMs);
 
   const [status, setStatus] = useState<RunnerStatus>("ready");
   const [heading, setHeading] = useState("Ready");
   const [message, setMessage] = useState("Press play to run this script");
   const [result, setResult] = useState<TableData | null>(null);
-  const [log, setLog] = useState<RunLogEntry[]>([]);
   const [stepsCompleted, setStepsCompleted] = useState(0);
-  const [elapsedMs, setElapsedMs] = useState(0);
+
+  const timer = useElapsedTimer();
+  const runLog = useRunLog();
 
   const statusRef = useRef<RunnerStatus>("stopped");
   const generatorRef = useRef<RunnerGenerator | undefined>(undefined);
-  // Async operation callbacks capture stale state, so the latest result and
-  // log are mirrored into refs for use when persisting the run.
+  // Async callbacks capture stale state, so the latest result is mirrored into
+  // a ref for use when persisting the run.
   const resultRef = useRef<TableData | null>(null);
-  const logRef = useRef<RunLogEntry[]>([]);
-  const startedAtRef = useRef(0);
   // Guards against persisting the same run twice (e.g. stop after finish).
   const persistedRef = useRef(false);
-  // Ticks the elapsed-time display while a run is in progress.
-  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(
-    undefined
-  );
-
-  const stopTimer = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = undefined;
-    }
-    if (startedAtRef.current > 0) {
-      setElapsedMs(Date.now() - startedAtRef.current);
-    }
-  };
-
-  // Clear the ticker if the screen unmounts mid-run. Mount/unmount only, so
-  // stopTimer is intentionally not a dependency.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: unmount-only cleanup
-  useEffect(() => stopTimer, []);
-
-  const appendLogEntry = (
-    entryHeading: string,
-    entryMessage: string,
-    entryStatus: RunLogEntry["status"]
-  ) => {
-    const entry: RunLogEntry = {
-      timestamp: Date.now(),
-      heading: entryHeading,
-      message: entryMessage,
-      status: entryStatus
-    };
-    logRef.current = [...logRef.current, entry];
-    setLog(logRef.current);
-  };
 
   const persistRun = (runStatus: Run["status"]) => {
     if (persistedRef.current) {
@@ -93,29 +60,71 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     db.createRun({
       scriptId: script.id,
       scriptName: script.name,
-      startedAt: startedAtRef.current,
+      startedAt: timer.getStartedAt(),
       finishedAt: Date.now(),
       status: runStatus,
       tableData: resultRef.current,
-      log: logRef.current
+      log: runLog.getEntries()
     }).catch((err) => {
       console.error(err);
     });
   };
 
   const processScraperResult = (data: ScraperResult) => {
-    if (!data) {
-      return;
+    if (data?.type === "extract") {
+      setResult((prev) => {
+        const next = getRunnerTableData(data, prev);
+        resultRef.current = next;
+        return next;
+      });
     }
-    switch (data.type) {
-      case "extract":
-        setResult((prev) => {
-          const next = getRunnerTableData(data, prev);
-          resultRef.current = next;
-          return next;
-        });
-        break;
-    }
+  };
+
+  // Common tail for every run outcome: stop the timer, freeze the status, log
+  // the outcome and persist the run.
+  const endRun = (outcome: {
+    status: RunnerStatus;
+    heading: string;
+    message: string;
+    logStatus: RunLogEntry["status"];
+    runStatus: Run["status"];
+  }) => {
+    timer.stop();
+    statusRef.current = "stopped";
+    setStatus(outcome.status);
+    setHeading(outcome.heading);
+    setMessage(outcome.message);
+    runLog.append(outcome.heading, outcome.message, outcome.logStatus);
+    persistRun(outcome.runStatus);
+  };
+
+  const finish = () =>
+    endRun({
+      status: "finished",
+      heading: "Finished",
+      message: "All steps completed",
+      logStatus: "success",
+      runStatus: "finished"
+    });
+
+  const stop = () =>
+    endRun({
+      status: "stopped",
+      heading: "Stopped",
+      message: "Run stopped before it finished",
+      logStatus: "info",
+      runStatus: "stopped"
+    });
+
+  const showError = (error: string) => {
+    window.scraper.closeWindow();
+    endRun({
+      status: "error",
+      heading: "Error",
+      message: error,
+      logStatus: "error",
+      runStatus: "error"
+    });
   };
 
   const executeNextOperation = () => {
@@ -124,7 +133,6 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     }
 
     const operationData = generatorRef.current?.next();
-
     if (!operationData) {
       return;
     }
@@ -141,26 +149,26 @@ export const useScriptRunner = (script: Script): HookReturnType => {
       return;
     }
 
-    const { heading, message } = getRunnerHeaderInfo(operation);
-    setHeading(heading);
-    setMessage(message);
-    appendLogEntry(heading, message, "info");
+    const info = getRunnerHeaderInfo(operation);
+    setHeading(info.heading);
+    setMessage(info.message);
+    runLog.append(info.heading, info.message, "info");
 
     window.scraper
       .runOperation(operation)
       .then((res) => {
-        if (res.status === "success") {
-          setStepsCompleted((prev) => prev + 1);
-          processScraperResult(res.result);
-          // Politeness delay between operations; the guard at the top of
-          // executeNextOperation re-checks the status once the timer fires.
-          if (operationDelayMs > 0) {
-            setTimeout(executeNextOperation, operationDelayMs);
-          } else {
-            executeNextOperation();
-          }
-        } else {
+        if (res.status !== "success") {
           showError(res.message);
+          return;
+        }
+        setStepsCompleted((prev) => prev + 1);
+        processScraperResult(res.result);
+        // Politeness delay between operations; the guard at the top of
+        // executeNextOperation re-checks the status once the timer fires.
+        if (stepDelayMs > 0) {
+          setTimeout(executeNextOperation, stepDelayMs);
+        } else {
+          executeNextOperation();
         }
       })
       .catch((err) => {
@@ -170,59 +178,19 @@ export const useScriptRunner = (script: Script): HookReturnType => {
   };
 
   const start = () => {
-    window.scraper.configure({ showWindow: showScraperWindow });
+    window.scraper.configure({ showWindow });
     statusRef.current = "started";
     generatorRef.current = createRunnerGenerator(script.operations);
     resultRef.current = null;
-    logRef.current = [];
-    // `start` is only ever invoked from click handlers, never during render,
-    // so reading the clock here is safe.
-    // eslint-disable-next-line react-hooks/purity
-    startedAtRef.current = Date.now();
     persistedRef.current = false;
     setResult(null);
-    setLog([]);
     setStepsCompleted(0);
-    setElapsedMs(0);
-    stopTimer();
-    timerRef.current = setInterval(() => {
-      setElapsedMs(Date.now() - startedAtRef.current);
-    }, 500);
+    runLog.reset();
+    timer.start();
     setStatus("started");
     setHeading("Running");
     setMessage("Working through the script steps…");
     executeNextOperation();
-  };
-
-  const stop = () => {
-    stopTimer();
-    statusRef.current = "stopped";
-    setStatus("stopped");
-    setHeading("Stopped");
-    setMessage("Run stopped before it finished");
-    appendLogEntry("Stopped", "Run stopped before it finished", "info");
-    persistRun("stopped");
-  };
-
-  const finish = () => {
-    stopTimer();
-    statusRef.current = "stopped";
-    setStatus("finished");
-    setHeading("Finished");
-    setMessage("All steps completed");
-    appendLogEntry("Finished", "All steps completed", "success");
-    persistRun("finished");
-  };
-
-  const showError = (error: string) => {
-    stopTimer();
-    window.scraper.closeWindow();
-    statusRef.current = "stopped";
-    setStatus("error");
-    setHeading("Error");
-    setMessage(error);
-    appendLogEntry("Error", error, "error");
-    persistRun("error");
   };
 
   return {
@@ -230,9 +198,9 @@ export const useScriptRunner = (script: Script): HookReturnType => {
     heading,
     message,
     result,
-    log,
+    log: runLog.log,
     stepsCompleted,
-    elapsedMs,
+    elapsedMs: timer.elapsedMs,
     start,
     stop
   };

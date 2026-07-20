@@ -152,7 +152,7 @@ export const validateEditorState = (state: ScriptEditorState) => {
     const orderedIds = Object.keys(numbers).sort((a, b) =>
       numbers[a].localeCompare(numbers[b], undefined, { numeric: true })
     );
-    
+
     for (const id of orderedIds) {
       const operation = draft.operations[id];
       const schema = OPERATION_SCHEMA[operation.type];

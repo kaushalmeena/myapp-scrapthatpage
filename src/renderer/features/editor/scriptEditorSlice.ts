@@ -94,6 +94,9 @@ export type ScriptEditorState = {
     filterType: VariableType;
     updateMode: VariablePickerMode;
   };
+  elementPicker: {
+    target: { operationId: string; inputIndex: number } | null;
+  };
 };
 
 export const initialScriptEditorState: ScriptEditorState = {
@@ -123,6 +126,9 @@ export const initialScriptEditorState: ScriptEditorState = {
     target: null,
     filterType: "any",
     updateMode: "set"
+  },
+  elementPicker: {
+    target: null
   }
 };
 
@@ -454,6 +460,23 @@ const scriptEditorSlice = createSlice({
     },
     hideVariablePicker(state) {
       state.variablePicker.target = null;
+    },
+    showElementPicker(
+      state,
+      action: PayloadAction<{ operationId: string; inputIndex: number }>
+    ) {
+      const { operationId, inputIndex } = action.payload;
+      const operation = state.operations[operationId];
+      if (!operation) {
+        return;
+      }
+      const schema = OPERATION_SCHEMA[operation.type].inputs[inputIndex];
+      if (schema.type === "text" && schema.elementPicker) {
+        state.elementPicker.target = { operationId, inputIndex };
+      }
+    },
+    hideElementPicker(state) {
+      state.elementPicker.target = null;
     }
   }
 });
@@ -472,7 +495,9 @@ export const {
   showOperationPicker,
   hideOperationPicker,
   showVariablePicker,
-  hideVariablePicker
+  hideVariablePicker,
+  showElementPicker,
+  hideElementPicker
 } = scriptEditorSlice.actions;
 
 export const scriptEditorReducer = scriptEditorSlice.reducer;
@@ -483,6 +508,8 @@ export const selectOperationPicker = (state: RootState) =>
   state.scriptEditor.operationPicker;
 export const selectVariablePicker = (state: RootState) =>
   state.scriptEditor.variablePicker;
+export const selectElementPicker = (state: RootState) =>
+  state.scriptEditor.elementPicker;
 export const selectVariables = (state: RootState) =>
   state.scriptEditor.variables;
 export const selectCanUndo = (state: RootState) =>

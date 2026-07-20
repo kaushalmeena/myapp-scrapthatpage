@@ -1,30 +1,24 @@
-import { Redo2, Undo2 } from "lucide-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import store from "@/app/store";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import type { Script } from "@/types/script";
-import {
-  getOperationIds,
-  redo,
-  replaceState,
-  selectCanRedo,
-  selectCanUndo,
-  undo
-} from "../scriptEditorSlice";
+import { useUndoRedoShortcuts } from "../hooks/useUndoRedoShortcuts";
+import { getOperationIds, replaceState } from "../scriptEditorSlice";
 import {
   denormalizeState,
   normalizeScript,
   validateEditorState
 } from "../utils/editorUtils";
+import EditorToolbar from "./EditorToolbar";
+import ElementPickerDialog from "./ElementPickerDialog";
 import InformationPanel from "./InformationPanel";
-import OperationPickerDialog from "./OperationPickerDialog";
 import OperationPanel from "./OperationPanel";
+import OperationPickerDialog from "./OperationPickerDialog";
 import VariablePickerDialog from "./VariablePickerDialog";
 
 export default function ScriptEditor({
@@ -39,41 +33,17 @@ export default function ScriptEditor({
 }) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const canUndo = useAppSelector(selectCanUndo);
-  const canRedo = useAppSelector(selectCanRedo);
   const stepCount = useAppSelector(
     (s) => getOperationIds(s.scriptEditor, { parentId: null }).length
   );
 
-  // Standard editor shortcuts: Cmd/Ctrl+Z undoes, Shift+Cmd/Ctrl+Z redoes.
-  // Skipped while focus is in a text field so native text undo still works.
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        !(event.metaKey || event.ctrlKey) ||
-        event.key.toLowerCase() !== "z"
-      ) {
-        return;
-      }
-      const target = event.target as HTMLElement | null;
-      if (
-        target &&
-        (target.tagName === "INPUT" || target.tagName === "TEXTAREA")
-      ) {
-        return;
-      }
-      event.preventDefault();
-      dispatch(event.shiftKey ? redo() : undo());
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [dispatch]);
+  useUndoRedoShortcuts();
 
   useEffect(() => {
     dispatch(replaceState(normalizeScript(script)));
   }, [dispatch, script]);
 
-  const handleSubmitClick = () => {
+  const handleSubmit = () => {
     const currentState = store.getState().scriptEditor;
     const { errors, validatedState } = validateEditorState(currentState);
     if (errors.length > 0) {
@@ -84,44 +54,15 @@ export default function ScriptEditor({
     }
   };
 
-  const handleUndoClick = () => dispatch(undo());
-
-  const handleRedoClick = () => dispatch(redo());
-
-  const handleCancelClick = () => navigate(-1);
+  const handleCancel = () => navigate(-1);
 
   return (
     <>
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground"
-            title="Undo (Cmd/Ctrl+Z)"
-            disabled={!canUndo}
-            onClick={handleUndoClick}
-          >
-            <Undo2 className="size-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground"
-            title="Redo (Shift+Cmd/Ctrl+Z)"
-            disabled={!canRedo}
-            onClick={handleRedoClick}
-          >
-            <Redo2 className="size-4" />
-          </Button>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" onClick={handleCancelClick}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmitClick}>{submitLabel}</Button>
-        </div>
-      </div>
+      <EditorToolbar
+        submitLabel={submitLabel}
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+      />
 
       <div className="flex flex-col gap-4">
         <Card className="gap-0 overflow-hidden p-0">
@@ -154,6 +95,7 @@ export default function ScriptEditor({
 
       <OperationPickerDialog />
       <VariablePickerDialog />
+      <ElementPickerDialog />
     </>
   );
 }

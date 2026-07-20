@@ -40,9 +40,7 @@ export default function OperationPanel({
   const dispatch = useAppDispatch();
   // Immer keeps untouched arrays referentially stable, so the default
   // reference equality only re-renders this list when it actually changes.
-  const ids = useAppSelector((s) =>
-    getOperationIds(s.scriptEditor, listRef)
-  );
+  const ids = useAppSelector((s) => getOperationIds(s.scriptEditor, listRef));
 
   // A small activation distance keeps plain clicks (expand, buttons) from
   // starting a drag.

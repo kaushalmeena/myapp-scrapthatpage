@@ -11,44 +11,52 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import { TOAST_MESSAGES } from "@/lib/messages";
-import { selectFirstOpenUrl } from "../scriptEditorSlice";
+import {
+  hideElementPicker,
+  selectElementPicker,
+  selectFirstOpenUrl,
+  updateInput
+} from "../scriptEditorSlice";
 
-// Prompts for a URL, opens it in the scraper window, then lets the user click
-// an element there and reports back its CSS selector.
-export default function ElementPickerDialog({
-  open,
-  onOpenChange,
-  onPicked
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onPicked: (selector: string) => void;
-}) {
-  const urlInputId = useId();
+// Store-driven (like VariablePickerDialog): opens for whichever input started
+// the pick. Prompts for a URL, opens it in the scraper window, then lets the
+// user click an element there and writes its CSS selector back to that input.
+export default function ElementPickerDialog() {
+  const dispatch = useAppDispatch();
+  const { target } = useAppSelector(selectElementPicker);
   // Default to the page the script already opens, so picking usually targets
   // the right site without retyping.
   const defaultUrl = useAppSelector(selectFirstOpenUrl);
   const [url, setUrl] = useState(defaultUrl);
+  const urlInputId = useId();
+
+  const isOpen = target != null;
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       setUrl(defaultUrl);
     }
-  }, [open, defaultUrl]);
+  }, [isOpen, defaultUrl]);
+
+  const handlePickerClose = () => dispatch(hideElementPicker());
 
   const handlePickClick = async () => {
     const raw = url.trim();
-    if (!raw) return;
+    if (!target || !raw) {
+      return;
+    }
     // Accept bare hosts like "example.com" by defaulting to https.
-    const target = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
-    onOpenChange(false);
+    const pageUrl = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    const { operationId, inputIndex } = target;
+    handlePickerClose();
     try {
-      await window.scraper.loadURL(target);
+      await window.scraper.loadURL(pageUrl);
       const res = await window.scraper.pickElement();
       if (res.status === "success") {
-        onPicked(res.selector);
+        dispatch(updateInput({ operationId, inputIndex, value: res.selector }));
         toast.success(TOAST_MESSAGES.ELEMENT_PICK_SUCCESS);
       } else if (res.status === "error") {
         toast.error(res.message);
@@ -67,7 +75,7 @@ export default function ElementPickerDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handlePickerClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Pick an element</DialogTitle>
@@ -91,7 +99,7 @@ export default function ElementPickerDialog({
           />
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+          <Button variant="ghost" onClick={handlePickerClose}>
             Cancel
           </Button>
           <Button disabled={!url.trim()} onClick={handlePickClick}>

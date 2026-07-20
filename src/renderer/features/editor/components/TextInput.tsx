@@ -1,13 +1,16 @@
 import type { TextInputSchema } from "@common/types/operationSchema";
 import { CopyPlus, Crosshair } from "lucide-react";
-import { type ChangeEvent, useId, useState } from "react";
+import { type ChangeEvent, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { cn } from "@/lib/utils";
-import { showVariablePicker, updateInput } from "../scriptEditorSlice";
-import ElementPickerDialog from "./ElementPickerDialog";
+import {
+  showElementPicker,
+  showVariablePicker,
+  updateInput
+} from "../scriptEditorSlice";
 
 export default function TextInput({
   operationId,
@@ -24,7 +27,6 @@ export default function TextInput({
 }) {
   const dispatch = useAppDispatch();
   const inputId = useId();
-  const [pickerOpen, setPickerOpen] = useState(false);
 
   const hasVariablePicker = Boolean(schema.variablePicker);
   const hasElementPicker = Boolean(schema.elementPicker);
@@ -43,8 +45,8 @@ export default function TextInput({
   const handleVariablePickerOpen = () =>
     dispatch(showVariablePicker({ operationId, inputIndex }));
 
-  const handlePicked = (selector: string) =>
-    dispatch(updateInput({ operationId, inputIndex, value: selector }));
+  const handleElementPickerOpen = () =>
+    dispatch(showElementPicker({ operationId, inputIndex }));
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -82,20 +84,13 @@ export default function TextInput({
               "absolute top-1",
               hasVariablePicker ? "right-8" : "right-1"
             )}
-            onClick={() => setPickerOpen(true)}
+            onClick={handleElementPickerOpen}
           >
             <Crosshair className="size-4" />
           </Button>
         )}
       </div>
       {error && <p className="text-xs text-destructive">{error}</p>}
-      {hasElementPicker && (
-        <ElementPickerDialog
-          open={pickerOpen}
-          onOpenChange={setPickerOpen}
-          onPicked={handlePicked}
-        />
-      )}
     </div>
   );
 }

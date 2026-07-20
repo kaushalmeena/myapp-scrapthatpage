@@ -16,31 +16,31 @@ import { Switch } from "@/components/ui/switch";
 import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useAppSelector } from "@/hooks/useAppSelector";
 import {
-  selectOperationDelayMs,
-  selectShowScraperWindow,
+  selectShowWindow,
+  selectStepDelayMs,
   selectTheme,
   type Theme,
-  updateOperationDelayMs,
-  updateShowScraperWindow,
+  updateShowWindow,
+  updateStepDelayMs,
   updateTheme
 } from "./settingsSlice";
 
 export default function SettingsScreen() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
-  const showScraperWindow = useAppSelector(selectShowScraperWindow);
-  const operationDelayMs = useAppSelector(selectOperationDelayMs);
+  const showWindow = useAppSelector(selectShowWindow);
+  const stepDelayMs = useAppSelector(selectStepDelayMs);
 
   const changeTheme = (value: string) => {
     dispatch(updateTheme(value as Theme));
   };
 
-  const changeShowScraperWindow = (value: boolean) => {
-    dispatch(updateShowScraperWindow(value));
+  const changeShowWindow = (value: boolean) => {
+    dispatch(updateShowWindow(value));
   };
 
-  const changeOperationDelay = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(updateOperationDelayMs(Number(event.target.value) || 0));
+  const changeStepDelay = (event: ChangeEvent<HTMLInputElement>) => {
+    dispatch(updateStepDelayMs(Number(event.target.value) || 0));
   };
 
   return (
@@ -73,10 +73,7 @@ export default function SettingsScreen() {
               browser window
             </p>
           </div>
-          <Switch
-            checked={showScraperWindow}
-            onCheckedChange={changeShowScraperWindow}
-          />
+          <Switch checked={showWindow} onCheckedChange={changeShowWindow} />
         </div>
         <Separator />
         <div className="flex items-center gap-4">
@@ -92,8 +89,8 @@ export default function SettingsScreen() {
             type="number"
             className="h-8 w-24"
             min={0}
-            value={operationDelayMs}
-            onChange={changeOperationDelay}
+            value={stepDelayMs}
+            onChange={changeStepDelay}
           />
         </div>
       </Card>
