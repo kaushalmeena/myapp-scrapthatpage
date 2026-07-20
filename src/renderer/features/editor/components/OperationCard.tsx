@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { OPERATION_ICONS } from "../constants/operationIcons";
-import { type OperationListRef, useEditorStore } from "../editorStore";
+import { type OperationListRef, useEditorStore } from "../store/editorStore";
 import OperationInput from "./OperationInput";
 
 const INPUT_WIDTH_CLASSES: Record<number, string> = {

@@ -19,16 +19,20 @@ type SettingsActions = {
 
 // Persisted to localStorage by zustand's `persist` middleware (replaces the
 // hand-rolled load/save + store subscription).
-export const useSettingsStore = create<SettingsState & SettingsActions>()(
+export const useSettingsStore = create<
+  SettingsState & { actions: SettingsActions }
+>()(
   persist(
     (set) => ({
       showWindow: true,
       theme: "light",
       stepDelayMs: 0,
-      setShowWindow: (showWindow) => set({ showWindow }),
-      setTheme: (theme) => set({ theme }),
-      setStepDelayMs: (stepDelayMs) =>
-        set({ stepDelayMs: Math.max(0, stepDelayMs) })
+      actions: {
+        setShowWindow: (showWindow) => set({ showWindow }),
+        setTheme: (theme) => set({ theme }),
+        setStepDelayMs: (stepDelayMs) =>
+          set({ stepDelayMs: Math.max(0, stepDelayMs) })
+      }
     }),
     {
       name: "settings",

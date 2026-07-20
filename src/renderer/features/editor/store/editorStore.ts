@@ -15,15 +15,15 @@ import {
   getUpdatedInputValueWithVariable,
   initialEditorState,
   type OperationListRef
-} from "./editorHelpers";
+} from "../utils/editorUtils";
 
 export type {
   EditorInput,
   EditorOperation,
   EditorState,
   OperationListRef
-} from "./editorHelpers";
-export { createEditorOperation, getOperationIds } from "./editorHelpers";
+} from "../utils/editorUtils";
+export { createEditorOperation, getOperationIds } from "../utils/editorUtils";
 
 // How long rapid edits (e.g. typing) are coalesced into a single undo step.
 const HISTORY_THROTTLE_MS = 400;

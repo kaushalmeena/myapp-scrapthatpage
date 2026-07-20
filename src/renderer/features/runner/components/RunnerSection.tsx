@@ -1,37 +1,37 @@
+import { useEffect } from "react";
 import FadeIn from "@/components/FadeIn";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { Script } from "@/types/script";
-import { useScriptRunner } from "../hooks/useScriptRunner";
+import { useRunnerStore } from "../store/runnerStore";
 import { getRunnerCardInfo } from "../utils/runnerUtils";
 import ActionButton from "./ActionButton";
+import ElapsedStat from "./ElapsedStat";
 import ResultTable from "./ResultTable";
 import RunLogPanel from "./RunLogPanel";
-import RunStat from "./RunStat";
+import RunnerStat from "./RunnerStat";
 import StepsPreview from "./StepsPreview";
 
-// "1:07"-style duration for the live stats strip.
-const formatElapsed = (ms: number) => {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
-};
-
-// Drives a run and renders the runner card, live stats, steps preview, result
-// table and run log. Owns the runner hook so the whole run UI updates together.
+// Renders the runner card, live stats, steps preview, result table and run log.
+// Subscribes to the runner store per-slice; elapsed time is isolated in
+// ElapsedStat so its 500ms tick doesn't re-render the rest.
 export default function RunnerSection({ script }: { script: Script }) {
-  const {
-    status,
-    heading,
-    message,
-    result,
-    log,
-    stepsCompleted,
-    elapsedMs,
-    start,
-    stop
-  } = useScriptRunner(script);
+  const status = useRunnerStore((s) => s.status);
+  const heading = useRunnerStore((s) => s.heading);
+  const message = useRunnerStore((s) => s.message);
+  const result = useRunnerStore((s) => s.result);
+  const log = useRunnerStore((s) => s.log);
+  const stepsCompleted = useRunnerStore((s) => s.stepsCompleted);
+  const start = useRunnerStore((s) => s.start);
+  const stop = useRunnerStore((s) => s.stop);
+  const reset = useRunnerStore((s) => s.reset);
+
+  // Fresh "ready" state when opening a script's run screen (no-op mid-run).
+  // Depends on script.id so switching scripts (same route, no remount) resets.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset on script switch is intentional
+  useEffect(() => {
+    reset();
+  }, [reset, script.id]);
 
   const { title, color, tone, Icon } = getRunnerCardInfo(status);
 
@@ -53,7 +53,7 @@ export default function RunnerSection({ script }: { script: Script }) {
           title={title}
           color={color}
           Icon={Icon}
-          onClick={running ? stop : start}
+          onClick={running ? stop : () => start(script)}
         />
         <div className="min-w-0 flex-1">
           <p className="font-semibold">{heading}</p>
@@ -63,12 +63,12 @@ export default function RunnerSection({ script }: { script: Script }) {
         </div>
         {hasRun && (
           <div className="flex shrink-0 items-center gap-6 pr-2">
-            <RunStat label="steps run" value={String(stepsCompleted)} />
-            <RunStat
+            <RunnerStat label="steps run" value={String(stepsCompleted)} />
+            <RunnerStat
               label="rows"
               value={String(result ? result.rows.length : 0)}
             />
-            <RunStat label="elapsed" value={formatElapsed(elapsedMs)} />
+            <ElapsedStat />
           </div>
         )}
       </Card>

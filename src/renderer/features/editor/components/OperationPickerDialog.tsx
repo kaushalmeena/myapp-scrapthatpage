@@ -12,7 +12,7 @@ import {
   CommandList
 } from "@/components/ui/command";
 import { OPERATION_ICONS } from "../constants/operationIcons";
-import { selectOperationPicker, useEditorStore } from "../editorStore";
+import { selectOperationPicker, useEditorStore } from "../store/editorStore";
 
 // Searchable step picker (same command-palette interaction as Cmd+K):
 // type to filter, Enter or click to add the step.

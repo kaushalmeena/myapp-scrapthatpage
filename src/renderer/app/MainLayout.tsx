@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
-import { useSettingsStore } from "@/features/settings/settingsStore";
+import { useSettingsStore } from "@/features/settings/store/settingsStore";
 import CommandPalette from "./CommandPalette";
 import Sidebar from "./Sidebar";
 

@@ -1,5 +1,5 @@
 // A single labeled figure in the runner's live stats strip (steps/rows/elapsed).
-export default function RunStat({
+export default function RunnerStat({
   label,
   value
 }: {

@@ -14,6 +14,6 @@ export type Run = {
   startedAt: number;
   finishedAt: number;
   status: "finished" | "stopped" | "error";
-  tableData: TableData | null;
+  result: TableData | null;
   log: RunLogEntry[];
 };

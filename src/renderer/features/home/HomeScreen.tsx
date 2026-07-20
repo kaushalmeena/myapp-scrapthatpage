@@ -198,9 +198,7 @@ export default function HomeScreen() {
                   </span>
                   <span className="block truncate text-xs text-muted-foreground">
                     {new Date(run.startedAt).toLocaleString()}
-                    {run.tableData
-                      ? ` · ${run.tableData.rows.length} rows`
-                      : ""}
+                    {run.result ? ` · ${run.result.rows.length} rows` : ""}
                   </span>
                 </span>
               </button>

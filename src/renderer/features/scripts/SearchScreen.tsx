@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import db from "@/database";
 import { TOAST_MESSAGES } from "@/lib/messages";
 import ScriptList from "./components/ScriptList";
-import { parseScriptImport } from "./utils/scriptTransfer";
+import { parseScriptImport } from "./utils/scriptUtils";
 
 export default function SearchScreen() {
   const [search, setSearch] = useState("");

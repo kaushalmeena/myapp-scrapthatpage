@@ -22,7 +22,7 @@ import {
   getOperationIds,
   type OperationListRef,
   useEditorStore
-} from "../editorStore";
+} from "../store/editorStore";
 import OperationCard from "./OperationCard";
 
 export default function OperationPanel({

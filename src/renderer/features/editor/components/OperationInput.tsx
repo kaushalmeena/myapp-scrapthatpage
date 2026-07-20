@@ -1,5 +1,5 @@
 import { OPERATION_SCHEMA } from "@common/constants/operationSchema";
-import { useEditorStore } from "../editorStore";
+import { useEditorStore } from "../store/editorStore";
 import OperationPanel from "./OperationPanel";
 import SelectInput from "./SelectInput";
 import TextInput from "./TextInput";

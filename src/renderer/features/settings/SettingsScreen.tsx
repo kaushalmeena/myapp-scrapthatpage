@@ -13,15 +13,15 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { type Theme, useSettingsStore } from "./settingsStore";
+import { type Theme, useSettingsStore } from "./store/settingsStore";
 
 export default function SettingsScreen() {
-  const theme = useSettingsStore((s) => s.theme);
   const showWindow = useSettingsStore((s) => s.showWindow);
+  const theme = useSettingsStore((s) => s.theme);
   const stepDelayMs = useSettingsStore((s) => s.stepDelayMs);
-  const setTheme = useSettingsStore((s) => s.setTheme);
-  const setShowWindow = useSettingsStore((s) => s.setShowWindow);
-  const setStepDelayMs = useSettingsStore((s) => s.setStepDelayMs);
+  const { setShowWindow, setTheme, setStepDelayMs } = useSettingsStore(
+    (s) => s.actions
+  );
 
   const changeTheme = (value: string) => {
     setTheme(value as Theme);

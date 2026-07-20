@@ -44,9 +44,9 @@ export default function LogsScreen() {
                 {run.status}
               </Badge>
             </div>
-            {run.tableData && (
+            {run.result && (
               <FadeIn>
-                <ResultTable data={run.tableData} />
+                <ResultTable data={run.result} />
               </FadeIn>
             )}
             <FadeIn className="mt-6" delay={0.05}>

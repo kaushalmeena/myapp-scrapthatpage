@@ -11,7 +11,7 @@ import {
   selectVariablePicker,
   selectVariables,
   useEditorStore
-} from "../editorStore";
+} from "../store/editorStore";
 
 export default function VariablePickerDialog() {
   const selector = useEditorStore(selectVariablePicker);

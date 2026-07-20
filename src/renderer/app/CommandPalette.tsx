@@ -12,7 +12,7 @@ import {
   CommandSeparator
 } from "@/components/ui/command";
 import db from "@/database";
-import { useSettingsStore } from "@/features/settings/settingsStore";
+import { useSettingsStore } from "@/features/settings/store/settingsStore";
 import { NAV_LINKS } from "@/lib/navigation";
 
 // App-wide command palette on Cmd/Ctrl+K: navigation, quick actions, and
@@ -21,7 +21,7 @@ export default function CommandPalette() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const theme = useSettingsStore((s) => s.theme);
-  const setTheme = useSettingsStore((s) => s.setTheme);
+  const setTheme = useSettingsStore((s) => s.actions.setTheme);
 
   const scripts = useLiveQuery(() => db.getScripts(), []);
 

@@ -48,7 +48,7 @@ export default function HistoryCard({ run }: { run: Run }) {
           <span className="block truncate font-medium">{run.scriptName}</span>
           <span className="block truncate text-sm text-muted-foreground">
             {new Date(run.startedAt).toLocaleString()} · {durationSeconds}s ·{" "}
-            {run.tableData ? `${run.tableData.rows.length} rows` : "no data"}
+            {run.result ? `${run.result.rows.length} rows` : "no data"}
           </span>
         </span>
       </button>

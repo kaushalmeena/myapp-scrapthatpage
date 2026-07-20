@@ -16,7 +16,7 @@ import {
   selectElementPicker,
   selectFirstOpenUrl,
   useEditorStore
-} from "../editorStore";
+} from "../store/editorStore";
 
 // Store-driven (like VariablePickerDialog): opens for whichever input started
 // the pick. Prompts for a URL, opens it in the scraper window, then lets the

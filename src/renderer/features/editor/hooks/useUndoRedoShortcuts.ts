@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useEditorStore } from "../editorStore";
+import { useEditorStore } from "../store/editorStore";
 
 // Standard editor shortcuts: Cmd/Ctrl+Z undoes, Shift+Cmd/Ctrl+Z redoes.
 // Skipped while focus is in a text field so native text undo still works.

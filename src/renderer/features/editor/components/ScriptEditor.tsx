@@ -4,8 +4,8 @@ import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import type { Script } from "@/types/script";
-import { getOperationIds, useEditorStore } from "../editorStore";
 import { useUndoRedoShortcuts } from "../hooks/useUndoRedoShortcuts";
+import { getOperationIds, useEditorStore } from "../store/editorStore";
 import {
   denormalizeState,
   normalizeScript,

@@ -1,7 +1,7 @@
 import { Redo2, Undo2 } from "lucide-react";
 import { useStore } from "zustand";
 import { Button } from "@/components/ui/button";
-import { useEditorStore } from "../editorStore";
+import { useEditorStore } from "../store/editorStore";
 
 // Editor action bar: undo/redo on the left, cancel/submit on the right.
 export default function EditorToolbar({

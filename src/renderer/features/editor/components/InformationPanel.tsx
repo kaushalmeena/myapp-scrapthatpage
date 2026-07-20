@@ -2,7 +2,7 @@ import type { ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { selectInformation, useEditorStore } from "../editorStore";
+import { selectInformation, useEditorStore } from "../store/editorStore";
 
 export default function InformationPanel() {
   const information = useEditorStore(selectInformation);
